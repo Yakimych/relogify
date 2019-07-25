@@ -3,15 +3,10 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   <div>
-    <div>
-      {ReasonReact.string("url parts: ")}
-      {url.path
-       |> List.map(p => <div> {ReasonReact.string(p)} </div>)
-       |> Array.of_list
-       |> ReasonReact.array}
-    </div>
+    <div> {ReasonReact.string("Result log")} </div>
     <>
       {switch (url.path) {
+       | [] => <Home />
        | [communityName] => <CommunityStartPage communityName />
        | [communityName, playerName] =>
          <PlayerResultsPage communityName playerName />
