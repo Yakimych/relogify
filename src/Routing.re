@@ -3,12 +3,22 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   <div>
-    {ReasonReact.string("url: ")}
-    <ul>
+    <div>
+      {ReasonReact.string("url parts: ")}
       {url.path
-       |> List.map(p => <li> {ReasonReact.string(p)} </li>)
+       |> List.map(p => <div> {ReasonReact.string(p)} </div>)
        |> Array.of_list
        |> ReasonReact.array}
-    </ul>
+    </div>
+    <>
+      {switch (url.path) {
+       | [communityName] => <CommunityStartPage communityName />
+       | [communityName, playerName] =>
+         <PlayerResultsPage communityName playerName />
+       | [communityName, player1Name, player2Name] =>
+         <HeadToHeadPage communityName player1Name player2Name />
+       | _ => <div> {ReasonReact.string("Invalid route")} </div>
+       }}
+    </>
   </div>;
 };
