@@ -60,64 +60,65 @@ let make =
             <TableCell style=dateStyle> {text("Date")} </TableCell>
           </TableRow>
         </TableHead>
+        <TableBody>
+          {results
+           ->Belt.Array.map(r => {
+               let player1Won = r.player1goals > r.player2goals;
+               let player2Won = !player1Won;
+               // TODO: Fix date formatting
+               //  let formattedDate = formatDate(new Date(r.date));
+               let formattedDate = "2019-01-02";
+
+               let resultIsFresh =
+                 newResults
+                 ->Belt.Option.map(n => n->Belt.Array.some(nr => nr == r))
+                 ->Belt.Option.getWithDefault(false);
+               let newResultsClassName = resultIsFresh ? "highlighted" : "";
+
+               <TableRow
+                 key={string_of_int(r.id)} className=newResultsClassName>
+                 <TableCell style=headToHeadStyle>
+                   <Link
+                     url={
+                       "/"
+                       ++ communityName
+                       ++ "/"
+                       ++ r.player1.name
+                       ++ "/"
+                       ++ r.player2.name
+                     }>
+                     {text("H2H")}
+                   </Link>
+                 </TableCell>
+                 <TableCell style={getPlayerStyle(player1Won)} align="right">
+                   <Link
+                     url={"/" ++ communityName ++ "/" ++ r.player1.name}
+                     style=playerLinkStyle>
+                     {text(r.player1.name)}
+                   </Link>
+                 </TableCell>
+                 <TableCell style=numberCellStyle>
+                   {text(string_of_int(r.player1goals))}
+                 </TableCell>
+                 <TableCell style=colonStyle> {text(":")} </TableCell>
+                 <TableCell style=numberCellStyle>
+                   {text(string_of_int(r.player2goals))}
+                 </TableCell>
+                 <TableCell style={getPlayerStyle(player2Won)}>
+                   <Link
+                     url={"/" ++ communityName ++ "/" ++ r.player2.name}
+                     style=playerLinkStyle>
+                     {text(r.player2.name)}
+                   </Link>
+                 </TableCell>
+                 <TableCell align="right">
+                   {text(r.extratime ? "X" : "")}
+                 </TableCell>
+                 <TableCell> {text(formattedDate)} </TableCell>
+               </TableRow>;
+             })
+           ->ReasonReact.array}
+        </TableBody>
       </Table>
     </Paper>
-    <TableBody>
-      {results
-       ->Belt.Array.map(r => {
-           let player1Won = r.player1goals > r.player2goals;
-           let player2Won = !player1Won;
-           // TODO: Fix date formatting
-           //  let formattedDate = formatDate(new Date(r.date));
-           let formattedDate = "2019-01-02";
-
-           let resultIsFresh =
-             newResults
-             ->Belt.Option.map(n => n->Belt.Array.some(nr => nr == r))
-             ->Belt.Option.getWithDefault(false);
-           let newResultsClassName = resultIsFresh ? "highlighted" : "";
-
-           <TableRow key={string_of_int(r.id)} className=newResultsClassName>
-             <TableCell style=headToHeadStyle>
-               <Link
-                 url={
-                   "/"
-                   ++ communityName
-                   ++ "/"
-                   ++ r.player1.name
-                   ++ "/"
-                   ++ r.player2.name
-                 }>
-                 {text("H2H")}
-               </Link>
-             </TableCell>
-             <TableCell style={getPlayerStyle(player1Won)} align="right">
-               <Link
-                 url={"/" ++ communityName ++ "/" ++ r.player1.name}
-                 style=playerLinkStyle>
-                 {text(r.player1.name)}
-               </Link>
-             </TableCell>
-             <TableCell style=numberCellStyle>
-               {text(string_of_int(r.player1goals))}
-             </TableCell>
-             <TableCell style=colonStyle> {text(":")} </TableCell>
-             <TableCell style=numberCellStyle>
-               {text(string_of_int(r.player2goals))}
-             </TableCell>
-             <TableCell style={getPlayerStyle(player2Won)}>
-               <Link
-                 url={"/" ++ communityName ++ "/" ++ r.player2.name}
-                 style=playerLinkStyle>
-                 {text(r.player2.name)}
-               </Link>
-             </TableCell>
-             <TableCell align="right">
-               {text(r.extratime ? "X" : "")}
-             </TableCell>
-             <TableCell> {text(formattedDate)} </TableCell>
-           </TableRow>;
-         })
-       ->ReasonReact.array}
-    </TableBody>
   </>;
