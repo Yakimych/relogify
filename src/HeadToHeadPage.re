@@ -7,6 +7,22 @@ type playerStats = {
 
 let text = ReasonReact.string;
 
+let fakePlayer1: ResultsTable.player = {name: "FakePlayer1"};
+
+let fakePlayer2: ResultsTable.player = {name: "FakePlayer2"};
+
+let fakeResult: ResultsTable.result = {
+  id: 1,
+  player1: fakePlayer1,
+  player2: fakePlayer2,
+  player1goals: 5,
+  player2goals: 0,
+  date: "2019-02-03",
+  extratime: false,
+};
+
+let fakeResults: array(ResultsTable.result) = [|fakeResult|];
+
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
   let stats = {
@@ -20,13 +36,11 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
     <div>
       <Link url={"/" ++ communityName}> {text("Start page")} </Link>
     </div>
-    <MaterialUiBox textAlign="center">
-      <MaterialUiTypography variant="h5">
-        {text("Head to Head")}
-      </MaterialUiTypography>
-      <MaterialUiTypography variant="h4">
+    <Box textAlign="center">
+      <Typography variant="h5"> {text("Head to Head")} </Typography>
+      <Typography variant="h4">
         {text(player1Name ++ " vs " ++ player2Name)}
-      </MaterialUiTypography>
+      </Typography>
       <div>
         <span className="stats-player-goals">
           {text("(" ++ string_of_int(stats.goalsScored) ++ ")")}
@@ -44,6 +58,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
           {text("(" ++ string_of_int(stats.goalsConceded) ++ ")")}
         </span>
       </div>
-    </MaterialUiBox>
+    </Box>
+    <ResultsTable results=fakeResults communityName />
   </>;
 };
