@@ -59,6 +59,29 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
         </span>
       </div>
     </Box>
+    <ReactMinimalPieChart
+      data=[|
+        {
+          "title": player1Name,
+          "value": stats.numberOfWins,
+          "color": "#00cc00",
+        },
+        {
+          "title": player2Name,
+          "value": stats.numberOfLosses,
+          "color": "#ff2200",
+        },
+      |]
+      style={ReactDOMRe.Style.make(~height="100px", ~marginBottom="10px", ())}
+      animate=true
+      lineWidth=80
+      label=true
+      labelStyle={ReactDOMRe.Style.make(
+        ~fontSize="20px",
+        ~fill="#ffffff",
+        (),
+      )}
+    />
     <ResultsTable results=fakeResults communityName />
   </>;
 };
