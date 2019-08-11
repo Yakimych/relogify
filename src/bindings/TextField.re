@@ -9,6 +9,7 @@ external make:
     ~variant: string=?,
     ~value: string=?,
     ~onChange: 'a=?,
+    ~inputProps: Js.t({..})=?,
     ~children: React.element=?,
     unit
   ) =>
