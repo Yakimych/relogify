@@ -3,10 +3,10 @@ let moreGoalsValue = "MORE_GOALS";
 
 [@react.component]
 let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
-  let (isInCustomMode, setIsInCustomMode) = React.useState(() => false);
+  let (isInCustomMode, setIsInCustomMode) = React.useState(_ => false);
 
   let handleSelectChange = (value: string) =>
-    if (value == moreGoalsValue) {
+    if (value === moreGoalsValue) {
       setIsInCustomMode(_ => true);
     } else {
       onChange(int_of_string(value));
