@@ -1,3 +1,6 @@
 [@react.component]
 let make = (~communityName) =>
-  <div> {ReasonReact.string("Community: " ++ communityName)} </div>;
+  <div>
+    {ReasonReact.string("Community: " ++ communityName)}
+    <AddResult />
+  </div>;
