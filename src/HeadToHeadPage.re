@@ -1,7 +1,12 @@
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) =>
-  <div>
-    <h1> {ReasonReact.string("Head to head in " ++ communityName)} </h1>
-    <div> {ReasonReact.string("Player1: " ++ player1Name)} </div>
-    <div> {ReasonReact.string("Player2: " ++ player2Name)} </div>
-  </div>;
+  <>
+    <MaterialUiBox textAlign="center">
+      <MaterialUiTypography variant="h5">
+        {ReasonReact.string("Head to Head")}
+      </MaterialUiTypography>
+      <MaterialUiTypography variant="h4">
+        {ReasonReact.string(player1Name ++ " vs " ++ player2Name)}
+      </MaterialUiTypography>
+    </MaterialUiBox>
+  </>;
