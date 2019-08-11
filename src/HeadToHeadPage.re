@@ -17,6 +17,9 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
   };
 
   <>
+    <div>
+      <Link url={"/" ++ communityName}> {text("Start page")} </Link>
+    </div>
     <MaterialUiBox textAlign="center">
       <MaterialUiTypography variant="h5">
         {text("Head to Head")}
