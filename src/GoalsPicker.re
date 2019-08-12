@@ -18,7 +18,7 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
            disabled
            className="highlighted"
            autoFocus=true
-           type_="number"
+           _type="number"
            style={ReactDOMRe.Style.make(~width="80px", ())}
            variant="outlined"
            value={string_of_int(selectedGoals)}

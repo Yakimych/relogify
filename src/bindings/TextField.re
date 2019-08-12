@@ -4,7 +4,7 @@ external make:
     ~disabled: bool=?,
     ~className: string=?,
     ~autoFocus: bool=?,
-    ~type_: string=?,
+    ~_type: string=?,
     ~style: ReactDOMRe.Style.t=?,
     ~variant: string=?,
     ~value: string=?,
