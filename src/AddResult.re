@@ -4,6 +4,8 @@ let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
 let formatDate = (date: Js.Date.t) =>
   Js.Date.toISOString(date)->String.sub(0, 10);
 
+[@bs.val] external alert: string => unit = "alert";
+
 [@react.component]
 let make = () => {
   let (player1Name, setPlayer1Name) = React.useState(_ => None);
@@ -18,11 +20,28 @@ let make = () => {
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
-  let addResult = () => {
-    setIsAddingResult(_ => true);
-    Js.log("Adding result");
-    setIsAddingResult(_ => false);
-  };
+  let addResult = () =>
+    // TODO: Rewrite with pattern matching
+    if (player1Name->Belt.Option.mapWithDefault(true, n =>
+          n |> String.length === 0
+        )
+        || player2Name->Belt.Option.mapWithDefault(true, n =>
+             n |> String.length === 0
+           )) {
+      alert("You must select both players!");
+    } else if (goals1 === goals2) {
+      alert("A game cannot end in a draw!");
+    } else if (Js.Math.abs_int(goals1 - goals2) != 1 && extraTime) {
+      alert(
+        "Games with Extra Time cannot have more than one goal difference!",
+      );
+    } else if (player1Name === player2Name) {
+      alert("You must select two DIFFERENT players!");
+    } else {
+      setIsAddingResult(_ => true);
+      Js.log2("Adding result: ", player1Name);
+      setIsAddingResult(_ => false);
+    };
 
   <>
     <Paper

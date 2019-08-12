@@ -54,7 +54,7 @@ let make =
                labelWidth=0
              />
            }>
-           <option key="empty" value="" disabled>
+           <option key="empty" value="" disabled=true>
              {ReasonReact.string(
                 placeholderText->Belt.Option.getWithDefault(""),
               )}
