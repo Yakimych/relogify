@@ -4,14 +4,15 @@ let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
 let formatDate = (date: Js.Date.t) =>
   Js.Date.toISOString(date)->String.sub(0, 10);
 
+// TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
 let make = () => {
-  let (player1Name, setPlayer1Name) = React.useState(_ => None);
+  let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
-  let (player2Name, setPlayer2Name) = React.useState(_ => None);
+  let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
   let (goals2, setGoals2) = React.useState(_ => 0);
 
   let (extraTime, setExtraTime) = React.useState(_ => false);
@@ -21,25 +22,30 @@ let make = () => {
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
   let addResult = () =>
-    // TODO: Rewrite with pattern matching
-    if (player1Name->Belt.Option.mapWithDefault(true, n =>
-          n |> String.length === 0
-        )
-        || player2Name->Belt.Option.mapWithDefault(true, n =>
-             n |> String.length === 0
-           )) {
-      alert("You must select both players!");
-    } else if (goals1 === goals2) {
-      alert("A game cannot end in a draw!");
-    } else if (Js.Math.abs_int(goals1 - goals2) != 1 && extraTime) {
+    switch (maybePlayer1Name, maybePlayer2Name, goals1, goals2, extraTime) {
+    | (None | Some(""), _, _, _, _)
+    | (_, None | Some(""), _, _, _) => alert("You must select both players!")
+    | (_, _, goals1, goals2, _) when goals1 === goals2 =>
+      alert("A game cannot end in a draw!")
+    | (_, _, goals1, goals2, extraTime)
+        when Js.Math.abs_int(goals1 - goals2) != 1 && extraTime =>
       alert(
         "Games with Extra Time cannot have more than one goal difference!",
-      );
-    } else if (player1Name === player2Name) {
-      alert("You must select two DIFFERENT players!");
-    } else {
+      )
+    | (Some(player1Name), Some(player2Name), _, _, _)
+        when player1Name === player2Name =>
+      alert("You must select two DIFFERENT players!")
+    | (Some(player1Name), Some(player2Name), goals1, goals2, extraTime) =>
       setIsAddingResult(_ => true);
-      Js.log2("Adding result: ", player1Name);
+      Js.logMany([|
+        "Adding result: ",
+        player1Name,
+        string_of_int(goals1),
+        string_of_int(goals2),
+        player2Name,
+        extraTime ? "ET" : "",
+        formatDate(date),
+      |]);
       setIsAddingResult(_ => false);
     };
 
@@ -51,8 +57,8 @@ let make = () => {
           disabled=isAddingResult
           placeholderText="Player1"
           playerNames=fakePlayerNames
-          selectedPlayerName=player1Name
-          onChange={v => setPlayer1Name(_ => Some(v))}
+          selectedPlayerName=maybePlayer1Name
+          onChange={v => setMaybePlayer1Name(_ => Some(v))}
         />
         <GoalsPicker
           disabled=isAddingResult
@@ -68,8 +74,8 @@ let make = () => {
           disabled=isAddingResult
           placeholderText="Player2"
           playerNames=fakePlayerNames
-          selectedPlayerName=player2Name
-          onChange={v => setPlayer2Name(_ => Some(v))}
+          selectedPlayerName=maybePlayer2Name
+          onChange={v => setMaybePlayer2Name(_ => Some(v))}
         />
       </div>
     </Paper>
