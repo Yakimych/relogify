@@ -1,3 +1,5 @@
+[%bs.raw {|require('./main.css')|}];
+
 [@react.component]
 let make = () => {
   let url = ReasonReactRouter.useUrl();

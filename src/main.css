@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.App {
+  background-color: white;
+  width: 550px;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 50px;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.winning-row {
+  background-color: #00ff7338;
+}
+
+.marked {
+  font-weight: bold;
+}
+
+.date-time {
+  font-size: small;
+}
+
+.highlighted {
+  background-color: #ffff6f;
+  animation-name: fade;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade {
+  from {
+    background-color: #ffff6f;
+  }
+  to {
+    background-color: #fff;
+  }
+}
+
+.stats-player-wins {
+  font-size: xx-large;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.stats-player-goals {
+  font-size: smaller;
+}
