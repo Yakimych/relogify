@@ -121,37 +121,33 @@ let make =
            <Table style=containerStyle size="small">
              <TableHead>
                <TableRow>
-
-                   <TableCell align="right"> {text("Player")} </TableCell>
-                   <TableCell style=numberCellStyle title="Win Percentage">
-                     <TableSortLabel
-                       active={sortBy === MatchesWon}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(WinsPerMatch)}>
-                       {text("W%")}
-                     </TableSortLabel>
-                   </TableCell>
-                 </TableRow>
-                 /*  TODO: Implement the rest */
-             </TableHead>
+                 <TableCell align="right"> {text("Player")} </TableCell>
+                 <TableCell style=numberCellStyle title="Win Percentage">
+                   <TableSortLabel
+                     active={sortBy === MatchesWon}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(WinsPerMatch)}>
+                     {text("W%")}
+                   </TableSortLabel>
+                 </TableCell>
+               </TableRow>
+             </TableHead> /*  TODO: Implement the rest */
              <TableBody>
                {leaderboardRows
                 ->Belt.List.map(r =>
                     <TableRow key={r.playerName}>
-
-                        <TableCell align="right">
-                          <Link
-                            url={"/" ++ communityName ++ "/" ++ r.playerName}
-                            style=playerLinkStyle>
-                            {text(r.playerName)}
-                          </Link>
-                        </TableCell>
-                        <TableCell style=numberCellStyle>
-                          {text(string_of_int(r.matchesWonPerPlayed) ++ "%")}
-                        </TableCell>
-                      </TableRow>
-                      /*  TODO: Implement the rest */
-                  )
+                      <TableCell align="right">
+                        <Link
+                          url={"/" ++ communityName ++ "/" ++ r.playerName}
+                          style=playerLinkStyle>
+                          {text(r.playerName)}
+                        </Link>
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(r.matchesWonPerPlayed) ++ "%")}
+                      </TableCell>
+                    </TableRow>
+                  ) /*  TODO: Implement the rest */
                 ->Array.of_list
                 ->ReasonReact.array}
              </TableBody>

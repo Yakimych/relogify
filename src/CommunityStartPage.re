@@ -9,11 +9,8 @@ let make = (~communityName) => {
   <>
     <WeeklyLeaderboard communityName dateFrom=startDate dateTo=endDate />
     <ExpansionPanel>
-      <ExpansionPanelSummary
-        expandIcon={<div> {ReasonReact.string("Expand")} </div>}>
-        <Fab size="small" color="primary">
-          <div> {ReasonReact.string("Add")} </div>
-        </Fab>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Fab size="small" color="primary"> <AddIcon /> </Fab>
       </ExpansionPanelSummary>
       <AddResult communityName dateFrom=startDate dateTo=endDate />
     </ExpansionPanel>
