@@ -8,7 +8,12 @@ let formatDate = (date: Js.Date.t) =>
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
-let make = () => {
+let make =
+    (
+      ~dateFrom: option(Js.Date.t)=?,
+      ~dateTo: option(Js.Date.t)=?,
+      ~communityName: string,
+    ) => {
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
 

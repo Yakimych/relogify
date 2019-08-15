@@ -4,7 +4,7 @@
 let make = () => {
   let url = ReasonReactRouter.useUrl();
 
-  <div>
+  <div className="App">
     <div> {ReasonReact.string("Result log")} </div>
     <>
       {switch (url.path) {
