@@ -9,8 +9,8 @@ type extendedLeaderboardRow = {
   goalsScored: int,
   goalsConceded: int,
   matchesWonPerPlayed: int,
-  goalsScoredPerMatch: int,
-  goalsConcededPerMatch: int,
+  goalsScoredPerMatch: float,
+  goalsConcededPerMatch: float,
   goalDiff: int,
 };
 
@@ -30,12 +30,22 @@ type sortDirection =
 
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
-  | WinsPerMatch => ((row: extendedLeaderboardRow) => row.matchesWonPerPlayed)
-  | MatchesWon => ((row: extendedLeaderboardRow) => row.matchesWon)
-  | MatchesLost => ((row: extendedLeaderboardRow) => row.matchesLost)
-  | GoalsScored => ((row: extendedLeaderboardRow) => row.goalsScored)
-  | GoalsConceded => ((row: extendedLeaderboardRow) => row.goalsConceded)
-  | GoalDiff => ((row: extendedLeaderboardRow) => row.goalDiff)
+  | WinsPerMatch => (
+      (row: extendedLeaderboardRow) => float_of_int(row.matchesWonPerPlayed)
+    )
+  | MatchesWon => (
+      (row: extendedLeaderboardRow) => float_of_int(row.matchesWon)
+    )
+  | MatchesLost => (
+      (row: extendedLeaderboardRow) => float_of_int(row.matchesLost)
+    )
+  | GoalsScored => (
+      (row: extendedLeaderboardRow) => float_of_int(row.goalsScored)
+    )
+  | GoalsConceded => (
+      (row: extendedLeaderboardRow) => float_of_int(row.goalsConceded)
+    )
+  | GoalDiff => ((row: extendedLeaderboardRow) => float_of_int(row.goalDiff))
   | GoalsScoredPerMatch => (
       (row: extendedLeaderboardRow) => row.goalsScoredPerMatch
     )
@@ -66,6 +76,12 @@ let getSortFunc =
   };
 };
 
+let formatGoalDiff = (diff: int) =>
+  text((diff > 0 ? "+" : "") ++ string_of_int(diff));
+
+let formatGoalsPerMatch = (goals: float) =>
+  text(Js.Float.toFixedWithPrecision(goals, ~digits=1));
+
 let fakeLeaderboardRows: array(extendedLeaderboardRow) = [|
   {
     playerName: "FakePlayer1",
@@ -74,8 +90,8 @@ let fakeLeaderboardRows: array(extendedLeaderboardRow) = [|
     goalsScored: 50,
     goalsConceded: 10,
     matchesWonPerPlayed: 60,
-    goalsScoredPerMatch: 11,
-    goalsConcededPerMatch: 5,
+    goalsScoredPerMatch: 11.5,
+    goalsConcededPerMatch: 5.3,
     goalDiff: (-10),
   },
   {
@@ -85,8 +101,8 @@ let fakeLeaderboardRows: array(extendedLeaderboardRow) = [|
     goalsScored: 5,
     goalsConceded: 21,
     matchesWonPerPlayed: 50,
-    goalsScoredPerMatch: 1,
-    goalsConcededPerMatch: 6,
+    goalsScoredPerMatch: 1.6666666667,
+    goalsConcededPerMatch: 6.9,
     goalDiff: 5,
   },
 |];
@@ -130,8 +146,66 @@ let make =
                      {text("W%")}
                    </TableSortLabel>
                  </TableCell>
+                 <TableCell style=numberCellStyle title="Number of wins">
+                   <TableSortLabel
+                     active={sortBy === MatchesWon}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(MatchesWon)}>
+                     {text("W")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell style=numberCellStyle title="Number of losses">
+                   <TableSortLabel
+                     active={sortBy === MatchesLost}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(MatchesLost)}>
+                     {text("L")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell style=numberCellStyle title="Goals scored">
+                   <TableSortLabel
+                     active={sortBy === GoalsScored}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(GoalsScored)}>
+                     {text("GS")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell style=numberCellStyle title="Goals conceded">
+                   <TableSortLabel
+                     active={sortBy === GoalsConceded}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(GoalsConceded)}>
+                     {text("GC")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell style=numberCellStyle title="Goal difference">
+                   <TableSortLabel
+                     active={sortBy === GoalDiff}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(GoalDiff)}>
+                     {text("+/-")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell
+                   style=numberCellStyle title="Goals scored per match">
+                   <TableSortLabel
+                     active={sortBy === GoalsScoredPerMatch}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(GoalsScoredPerMatch)}>
+                     {text("G/M")}
+                   </TableSortLabel>
+                 </TableCell>
+                 <TableCell
+                   style=numberCellStyle title="Goals conceded per match">
+                   <TableSortLabel
+                     active={sortBy === GoalsConcededPerMatch}
+                     direction={sortDirection === Asc ? "asc" : "desc"}
+                     onClick={_ => requestSort(GoalsConcededPerMatch)}>
+                     {text("C/M")}
+                   </TableSortLabel>
+                 </TableCell>
                </TableRow>
-             </TableHead> /*  TODO: Implement the rest */
+             </TableHead>
              <TableBody>
                {leaderboardRows
                 ->Belt.List.map(r =>
@@ -146,8 +220,29 @@ let make =
                       <TableCell style=numberCellStyle>
                         {text(string_of_int(r.matchesWonPerPlayed) ++ "%")}
                       </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(r.matchesWon))}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(r.matchesLost))}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(r.goalsScored))}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(r.goalsConceded))}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {formatGoalDiff(r.goalDiff)}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {formatGoalsPerMatch(r.goalsScoredPerMatch)}
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {formatGoalsPerMatch(r.goalsConcededPerMatch)}
+                      </TableCell>
                     </TableRow>
-                  ) /*  TODO: Implement the rest */
+                  )
                 ->Array.of_list
                 ->ReasonReact.array}
              </TableBody>
