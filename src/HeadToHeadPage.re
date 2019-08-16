@@ -1,3 +1,5 @@
+open Types;
+
 type playerStats = {
   numberOfWins: int,
   numberOfLosses: int,
@@ -7,9 +9,9 @@ type playerStats = {
 
 let text = ReasonReact.string;
 
-let fakePlayer1: ResultsTable.player = {name: "FakePlayer1"};
+let fakePlayer1: player = {name: "FakePlayer1"};
 
-let fakePlayer2: ResultsTable.player = {name: "FakePlayer2"};
+let fakePlayer2: player = {name: "FakePlayer2"};
 
 let fakeResult: ResultsTable.result = {
   id: 1,

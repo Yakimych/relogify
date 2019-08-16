@@ -1,6 +1,6 @@
 open Styles;
+open Types;
 
-type player = {name: string};
 type result = {
   id: int,
   player1: player,
@@ -42,6 +42,8 @@ let make =
       ~results: array(result),
       ~newResults: option(array(result))=?,
       ~communityName: string,
+      // TODO: highlight results
+      ~mainPlayerName: option(string)=?,
     ) =>
   <>
     <Paper style=containerStyle>
