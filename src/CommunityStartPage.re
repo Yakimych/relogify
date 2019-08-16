@@ -14,5 +14,14 @@ let make = (~communityName) => {
       </ExpansionPanelSummary>
       <AddResult communityName dateFrom=startDate dateTo=endDate />
     </ExpansionPanel>
+    <Results
+      communityName
+      dateFrom=startDate
+      dateTo=endDate
+      highlightNewResults=true
+    />
+    <Link url={"/" ++ communityName ++ "/history"}>
+      {ReasonReact.string("All Results")}
+    </Link>
   </>;
 };
