@@ -1,4 +1,5 @@
 open Styles;
+open Utils;
 open Types;
 
 type result = {
@@ -34,8 +35,6 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
-let text = ReasonReact.string;
-
 let getHighlightedClassName =
     (newResults: option(array(result)), currentResult: result) => {
   let resultIsFresh =
@@ -55,7 +54,6 @@ let make =
       ~results: array(result),
       ~newResults: option(array(result))=?,
       ~communityName: string,
-      // TODO: highlight results
       ~mainPlayerName: option(string)=?,
     ) =>
   <>
@@ -85,10 +83,7 @@ let make =
                  && mainPlayerName === Some(r.player1.name)
                  || player2Won
                  && mainPlayerName === Some(r.player2.name);
-
-               // TODO: Fix date formatting
-               //  let formattedDate = formatDate(new Date(r.date));
-               let formattedDate = "2019-01-02";
+               let formattedDate = Js.Date.make() |> formatDate;
 
                <TableRow
                  key={string_of_int(r.id)}

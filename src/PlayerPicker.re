@@ -1,3 +1,5 @@
+open Utils;
+
 let newPlayerValue = "NEW_PLAYER";
 
 [@react.component]
@@ -55,19 +57,15 @@ let make =
              />
            }>
            <option key="empty" value="" disabled=true>
-             {ReasonReact.string(
-                placeholderText->Belt.Option.getWithDefault(""),
-              )}
+             {text(placeholderText->Belt.Option.getWithDefault(""))}
            </option>
            {playerNames
             ->Belt.Array.map(p =>
-                <option value=p key={"players_" ++ p}>
-                  {ReasonReact.string(p)}
-                </option>
+                <option value=p key={"players_" ++ p}> {text(p)} </option>
               )
             ->ReasonReact.array}
            <option key="new_player" value=newPlayerValue>
-             {ReasonReact.string("+ Add new player")}
+             {text("+ Add new player")}
            </option>
          </NativeSelect>}
   </>;

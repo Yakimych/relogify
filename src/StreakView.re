@@ -1,9 +1,5 @@
 open Types;
-
-let text = ReasonReact.string;
-
-// TODO: date-fns?
-let formatDateTime = (date: Js.Date.t) => "2019-01-01";
+open Utils;
 
 [@react.component]
 let make = (~streakName: string, ~streak: streak) =>

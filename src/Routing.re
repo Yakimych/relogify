@@ -1,3 +1,5 @@
+open Utils;
+
 [%bs.raw {|require('./main.css')|}];
 
 [@react.component]
@@ -5,7 +7,7 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   <div className="App">
-    <div> {ReasonReact.string("Result log")} </div>
+    <div> {text("Result log")} </div>
     <>
       {switch (url.path) {
        | [] => <Home />
@@ -15,7 +17,7 @@ let make = () => {
          <PlayerResultsPage communityName playerName />
        | [communityName, player1Name, player2Name] =>
          <HeadToHeadPage communityName player1Name player2Name />
-       | _ => <div> {ReasonReact.string("Invalid route")} </div>
+       | _ => <div> {text("Invalid route")} </div>
        }}
     </>
   </div>;

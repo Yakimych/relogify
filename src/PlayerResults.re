@@ -1,6 +1,5 @@
+open Utils;
 open Types;
-
-let text = ReasonReact.string;
 
 type playerStats = {
   numberOfWins: int,

@@ -93,7 +93,7 @@ let make =
         variant="contained"
         color="primary"
         onClick=addResult>
-        {ReasonReact.string("Submit")}
+        {text("Submit")}
       </Button>
       <FormControlLabel
         control={
