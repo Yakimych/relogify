@@ -21,7 +21,7 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react", "bs-date-fns"],
+  "bs-dependencies": ["reason-react"],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3
 }
