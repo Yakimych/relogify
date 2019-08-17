@@ -19,7 +19,7 @@
   "dependencies": {
     "@material-ui/core": "^4.3.2",
     "@material-ui/icons": "^4.2.1",
-    "bs-date-fns": "^0.1.6",
+    "date-fns": "^1.30.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-minimal-pie-chart": "^5.0.0",
