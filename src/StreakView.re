@@ -7,7 +7,8 @@ let formatDateTime = (date: Js.Date.t) => "2019-01-01";
 
 [@react.component]
 let make = (~streakName: string, ~streak: streak) =>
-  <Paper>
+  <Paper
+    style={ReactDOMRe.Style.make(~marginTop="10px", ~marginBottom="6px", ())}>
     <Typography>
       {text(streakName ++ ": ")}
       <span className="marked">

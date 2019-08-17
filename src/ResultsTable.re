@@ -36,6 +36,19 @@ let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let text = ReasonReact.string;
 
+let getHighlightedClassName =
+    (newResults: option(array(result)), currentResult: result) => {
+  let resultIsFresh =
+    newResults
+    ->Belt.Option.map(n => n->Belt.Array.some(nr => nr == currentResult))
+    ->Belt.Option.getWithDefault(false);
+
+  resultIsFresh ? "highlighted" : "";
+};
+
+let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
+  mainPlayerWon ? "winning-row" : "";
+
 [@react.component]
 let make =
     (
@@ -67,18 +80,23 @@ let make =
            ->Belt.Array.map(r => {
                let player1Won = r.player1goals > r.player2goals;
                let player2Won = !player1Won;
+               let mainPlayerWon =
+                 player1Won
+                 && mainPlayerName === Some(r.player1.name)
+                 || player2Won
+                 && mainPlayerName === Some(r.player2.name);
+
                // TODO: Fix date formatting
                //  let formattedDate = formatDate(new Date(r.date));
                let formattedDate = "2019-01-02";
 
-               let resultIsFresh =
-                 newResults
-                 ->Belt.Option.map(n => n->Belt.Array.some(nr => nr == r))
-                 ->Belt.Option.getWithDefault(false);
-               let newResultsClassName = resultIsFresh ? "highlighted" : "";
-
                <TableRow
-                 key={string_of_int(r.id)} className=newResultsClassName>
+                 key={string_of_int(r.id)}
+                 className={
+                   getHighlightedClassName(newResults, r)
+                   ++ " "
+                   ++ getWinningLosingRowClassName(mainPlayerWon)
+                 }>
                  <TableCell style=headToHeadStyle>
                    <Link
                      url={
