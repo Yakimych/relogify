@@ -1,6 +1,5 @@
+open Utils;
 open Styles;
-
-let text = ReasonReact.string;
 
 type extendedLeaderboardRow = {
   playerName: string,

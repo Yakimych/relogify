@@ -1,18 +1,13 @@
 open Utils;
-
-let text = ReasonReact.string;
+open DateFns;
 
 [@react.component]
 let make = (~communityName: string) => {
   let (date, setDate) = React.useState(_ => Js.Date.make());
-  // TODO: addWeeks(1)
-  let incrementWeek = _ => setDate(d => d);
-  // TODO: addWeeks(-1)
-  let decrementWeek = _ => setDate(d => d);
-  // TODO: startOfWeek
-  let startDate = Js.Date.make();
-  // TODO: endOfWeek
-  let endDate = Js.Date.make();
+  let incrementWeek = _ => setDate(d => d->addWeeks(1.0));
+  let decrementWeek = _ => setDate(d => d->addWeeks(-1.0));
+  let startDate = date->startOfWeek({"weekStartsOn": 1});
+  let endDate = startDate->addWeeks(1.0);
 
   <>
     <Link url={"/" ++ communityName}> {text("Back to Start Page")} </Link>
@@ -24,8 +19,8 @@ let make = (~communityName: string) => {
         _type="date"
         value={formatDate(date)}
         onChange={e =>
-          setDate(_ => Js.Date.fromString(ReactEvent.Form.target(e)##value))
-        }
+          // TODO: Validate
+          setDate(_ => Js.Date.fromString(ReactEvent.Form.target(e)##value))}
       />
       <Button variant="contained" onClick=incrementWeek>
         {text("NEXT")}

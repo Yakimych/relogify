@@ -1,4 +1,5 @@
-// TODO: bs-date-fns or re-date?
+let text = ReasonReact.string;
+
 let formatDate = (date: Js.Date.t) => date->DateFns.format("YYYY-MM-DD");
 let formatDateTime = (date: Js.Date.t) =>
   date->DateFns.format("YYYY-MM-DD HH:mm");

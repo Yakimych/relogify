@@ -1,10 +1,10 @@
+open DateFns;
+
 [@react.component]
 let make = (~communityName) => {
   let now = Js.Date.make();
-  // TODO: startOfWeek(now, { weekStartsOn: 1});
-  let startDate = Js.Date.make();
-  // TODO: startOfWeek(endOfWeek, { weekStartsOn: 1});
-  let endDate = Js.Date.make();
+  let startDate = now->startOfWeek({"weekStartsOn": 1});
+  let endDate = now->addWeeks(1.0);
 
   <>
     <WeeklyLeaderboard communityName dateFrom=startDate dateTo=endDate />

@@ -1,3 +1,4 @@
+open Utils;
 open Types;
 
 type playerStats = {
@@ -6,8 +7,6 @@ type playerStats = {
   goalsScored: int,
   goalsConceded: int,
 };
-
-let text = ReasonReact.string;
 
 let fakePlayer1: player = {name: "FakePlayer1"};
 

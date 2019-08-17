@@ -1,3 +1,5 @@
+open Utils;
+
 let goalValues = Belt.Array.range(0, 9);
 let moreGoalsValue = "MORE_GOALS";
 
@@ -43,12 +45,12 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
                   <option
                     key={"goals_" ++ string_of_int(g)}
                     value={string_of_int(g)}>
-                    {ReasonReact.string(string_of_int(g))}
+                    {text(string_of_int(g))}
                   </option>
                 )
               ->ReasonReact.array}
              <option key="more_goals" value=moreGoalsValue>
-               {ReasonReact.string("More goals!")}
+               {text("More goals!")}
              </option>
            </NativeSelect>
          </span>}
