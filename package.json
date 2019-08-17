@@ -5,9 +5,10 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run build && jest --coverage && npm run coverage",
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
+    "watch:jest": "jest --coverage --watchAll",
     "server": "webpack-dev-server"
   },
   "keywords": [
@@ -18,17 +19,19 @@
   "dependencies": {
     "@material-ui/core": "^4.3.2",
     "@material-ui/icons": "^4.2.1",
+    "bs-date-fns": "^0.1.6",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-minimal-pie-chart": "^5.0.0",
     "reason-react": ">=0.7.0"
   },
   "devDependencies": {
-    "dotenv-webpack": "^1.6.0",
-    "css-loader": "^2.1.0",
-    "style-loader": "^0.23.1",
+    "@glennsl/bs-jest": "^0.4.9",
     "bs-platform": "^5.0.4",
+    "css-loader": "^2.1.0",
+    "dotenv-webpack": "^1.6.0",
     "html-webpack-plugin": "^3.2.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.8"

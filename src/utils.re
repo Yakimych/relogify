@@ -1,3 +1,2 @@
 // TODO: bs-date-fns or re-date?
-let formatDate = (date: Js.Date.t) =>
-  Js.Date.toISOString(date)->String.sub(0, 10);
+let formatDate = (date: Js.Date.t) => date |> DateFns.format("YYYY-MM-DD");
