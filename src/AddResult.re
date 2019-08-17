@@ -1,8 +1,6 @@
-let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
+open Utils;
 
-// TODO: bs-date-fns or re-date?
-let formatDate = (date: Js.Date.t) =>
-  Js.Date.toISOString(date)->String.sub(0, 10);
+let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";

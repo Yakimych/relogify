@@ -10,6 +10,7 @@ let make = () => {
       {switch (url.path) {
        | [] => <Home />
        | [communityName] => <CommunityStartPage communityName />
+       | [communityName, "history"] => <ResultHistory communityName />
        | [communityName, playerName] =>
          <PlayerResultsPage communityName playerName />
        | [communityName, player1Name, player2Name] =>
