@@ -15,20 +15,64 @@ let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
   ->DateFns.setSeconds(DateFns.getSeconds(now));
 
 type tempStreak = {
-  results: array(result),
+  results: list(result),
   endingResult: option(result),
 };
 
-let reduceFunc =
-    (state: array(tempStreak), result: result): array(tempStreak) => {
-  state;
-};
+let getAllStreaks =
+    (playerName: string, results: list(result)): list(tempStreak) => {
+  let initialState: list(tempStreak) = [];
 
-let getAllStreaks = (results: array(result)): array(tempStreak) => {
-  let initialState: array(tempStreak) = [||];
+  let reduceFunc =
+      (state: list(tempStreak), result: result): list(tempStreak) => {
+    let isWin =
+      result.player1.name == playerName
+      && result.player1goals > result.player2goals
+      || result.player2.name == playerName
+      && result.player1goals < result.player2goals;
 
-  let finalState: array(tempStreak) =
-    results->Belt.Array.reduce(initialState, reduceFunc);
+    let maybeCurrentStreak = state->Belt.List.head;
+    let currentStreakHasEnded =
+      maybeCurrentStreak->Belt.Option.mapWithDefault(false, s =>
+        s.endingResult->Belt.Option.isSome
+      );
+
+    /* Pattern matching? */
+    if (isWin) {
+      if (currentStreakHasEnded) {
+        [{results: [result], endingResult: None}, ...state];
+      } else {
+        [
+          {
+            results: [
+              result,
+              /* TODO: Do we actually know at this point that currentStreak is Some? */
+              ...maybeCurrentStreak->Belt.Option.mapWithDefault([], s =>
+                   s.results
+                 ),
+            ],
+            endingResult: None,
+          },
+          ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
+        ];
+      };
+    } else {
+      [
+        // Add current result as streak-ending result to current streak
+        {
+          results:
+            maybeCurrentStreak->Belt.Option.mapWithDefault([], s => s.results),
+          endingResult: Some(result),
+        },
+        ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
+      ];
+    };
+  };
+
+  let finalState: list(tempStreak) =
+    results->Belt.List.reduce(initialState, reduceFunc);
+
+  Js.log(finalState);
 
   finalState;
 };
