@@ -2,16 +2,6 @@ open Styles;
 open Utils;
 open Types;
 
-type result = {
-  id: int,
-  player1: player,
-  player2: player,
-  player1goals: int,
-  player2goals: int,
-  date: string,
-  extratime: bool,
-};
-
 let getPlayerStyle = (isWinningPlayer: bool) =>
   ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());
 

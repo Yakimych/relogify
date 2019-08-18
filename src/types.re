@@ -12,3 +12,13 @@ type streaks = {
   longestStreak: option(streak),
   currentStreak: option(streak),
 };
+
+type result = {
+  id: int,
+  player1: player,
+  player2: player,
+  player1goals: int,
+  player2goals: int,
+  date: string,
+  extratime: bool,
+};
