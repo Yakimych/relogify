@@ -14,6 +14,7 @@ let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
   ->DateFns.setMinutes(DateFns.getMinutes(now))
   ->DateFns.setSeconds(DateFns.getSeconds(now));
 
+[@bs.deriving jsConverter]
 type tempStreak = {
   results: list(result),
   endingResult: option(result),
@@ -37,7 +38,7 @@ let getAllStreaks =
         s.endingResult->Belt.Option.isSome
       );
 
-    /* Pattern matching? */
+    /* TODO: Pattern matching? */
     if (isWin) {
       if (currentStreakHasEnded) {
         [{results: [result], endingResult: None}, ...state];
@@ -56,6 +57,10 @@ let getAllStreaks =
           ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
         ];
       };
+    } else if (maybeCurrentStreak->Belt.Option.mapWithDefault(true, s =>
+                 s.endingResult->Belt.Option.isSome
+               )) {
+      state;
     } else {
       [
         // Add current result as streak-ending result to current streak
@@ -71,8 +76,6 @@ let getAllStreaks =
 
   let finalState: list(tempStreak) =
     results->Belt.List.reduce(initialState, reduceFunc);
-
-  Js.log(finalState);
 
   finalState;
 };
