@@ -12,7 +12,7 @@ let fakePlayer1: player = {name: "FakePlayer1"};
 
 let fakePlayer2: player = {name: "FakePlayer2"};
 
-let fakeResult: ResultsTable.result = {
+let fakeResult: result = {
   id: 1,
   player1: fakePlayer1,
   player2: fakePlayer2,
@@ -22,7 +22,7 @@ let fakeResult: ResultsTable.result = {
   extratime: false,
 };
 
-let fakeResults: array(ResultsTable.result) = [|fakeResult|];
+let fakeResults: array(result) = [|fakeResult|];
 
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
