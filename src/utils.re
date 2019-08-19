@@ -32,46 +32,35 @@ let getAllStreaks =
       || result.player2.name == playerName
       && result.player1goals < result.player2goals;
 
-    let maybeCurrentStreak = state->Belt.List.head;
-    let currentStreakHasEnded =
-      maybeCurrentStreak->Belt.Option.mapWithDefault(false, s =>
-        s.endingResult->Belt.Option.isSome
-      );
+    state
+    ->Belt.List.head
+    ->Belt.Option.mapWithDefault(
+        isWin ? [{results: [result], endingResult: None}] : [],
+        currentStreak => {
+          let currentStreakHasEnded =
+            currentStreak.endingResult->Belt.Option.isSome;
 
-    /* TODO: Pattern matching? */
-    if (isWin) {
-      if (currentStreakHasEnded) {
-        [{results: [result], endingResult: None}, ...state];
-      } else {
-        [
-          {
-            results: [
-              result,
-              /* TODO: Do we actually know at this point that currentStreak is Some? */
-              ...maybeCurrentStreak->Belt.Option.mapWithDefault([], s =>
-                   s.results
-                 ),
-            ],
-            endingResult: None,
-          },
-          ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
-        ];
-      };
-    } else if (maybeCurrentStreak->Belt.Option.mapWithDefault(true, s =>
-                 s.endingResult->Belt.Option.isSome
-               )) {
-      state;
-    } else {
-      [
-        // Add current result as streak-ending result to current streak
-        {
-          results:
-            maybeCurrentStreak->Belt.Option.mapWithDefault([], s => s.results),
-          endingResult: Some(result),
+          switch (isWin, currentStreakHasEnded) {
+          | (true, true) => [
+              {results: [result], endingResult: None},
+              ...state,
+            ]
+          | (true, false) => [
+              {
+                results: [result, ...currentStreak.results],
+                endingResult: None,
+              },
+              ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
+            ]
+          | (false, true) => state
+          | (false, false) => [
+              // Add current result as streak-ending result to current streak
+              {results: currentStreak.results, endingResult: Some(result)},
+              ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
+            ]
+          };
         },
-        ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
-      ];
-    };
+      );
   };
 
   let finalState: list(tempStreak) =
