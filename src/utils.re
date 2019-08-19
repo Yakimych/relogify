@@ -36,30 +36,25 @@ let getAllStreaks =
     ->Belt.List.head
     ->Belt.Option.mapWithDefault(
         isWin ? [{results: [result], endingResult: None}] : [],
-        currentStreak => {
-          let currentStreakHasEnded =
-            currentStreak.endingResult->Belt.Option.isSome;
-
-          switch (isWin, currentStreakHasEnded) {
-          | (true, true) => [
-              {results: [result], endingResult: None},
-              ...state,
-            ]
-          | (true, false) => [
-              {
-                results: [result, ...currentStreak.results],
-                endingResult: None,
-              },
-              ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
-            ]
-          | (false, true) => state
-          | (false, false) => [
-              // Add current result as streak-ending result to current streak
-              {results: currentStreak.results, endingResult: Some(result)},
-              ...state->Belt.List.tail->Belt.Option.getWithDefault([]),
-            ]
-          };
-        },
+        currentStreak =>
+        switch (isWin, currentStreak.endingResult) {
+        | (true, Some(_)) => [
+            {results: [result], endingResult: None},
+            ...state,
+          ]
+        | (true, None) => [
+            {
+              results: [result, ...currentStreak.results],
+              endingResult: None,
+            },
+            ...state->Belt.List.tailExn,
+          ]
+        | (false, Some(_)) => state
+        | (false, None) => [
+            {results: currentStreak.results, endingResult: Some(result)},
+            ...state->Belt.List.tailExn,
+          ]
+        }
       );
   };
 
