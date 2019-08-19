@@ -20,6 +20,27 @@ type tempStreak = {
   endingResult: option(result),
 };
 
+let startNewStreakWithResult = (result: result, streaks: list(tempStreak)) => [
+  {results: [result], endingResult: None},
+  ...streaks,
+];
+
+let addResultToCurrentStreak = (result: result, streaks: list(tempStreak)) => {
+  let currentStreak = streaks->Belt.List.headExn;
+  [
+    {results: [result, ...currentStreak.results], endingResult: None},
+    ...streaks->Belt.List.tailExn,
+  ];
+};
+
+let setEndingResult = (result: result, streaks: list(tempStreak)) => {
+  let currentStreak = streaks->Belt.List.headExn;
+  [
+    {results: currentStreak.results, endingResult: Some(result)},
+    ...streaks->Belt.List.tailExn,
+  ];
+};
+
 let getAllStreaks =
     (playerName: string, results: list(result)): list(tempStreak) => {
   let initialState: list(tempStreak) = [];
@@ -35,25 +56,12 @@ let getAllStreaks =
     state
     ->Belt.List.head
     ->Belt.Option.mapWithDefault(
-        isWin ? [{results: [result], endingResult: None}] : [],
-        currentStreak =>
+        isWin ? state |> startNewStreakWithResult(result) : [], currentStreak =>
         switch (isWin, currentStreak.endingResult) {
-        | (true, Some(_)) => [
-            {results: [result], endingResult: None},
-            ...state,
-          ]
-        | (true, None) => [
-            {
-              results: [result, ...currentStreak.results],
-              endingResult: None,
-            },
-            ...state->Belt.List.tailExn,
-          ]
+        | (true, Some(_)) => state |> startNewStreakWithResult(result)
+        | (true, None) => state |> addResultToCurrentStreak(result)
         | (false, Some(_)) => state
-        | (false, None) => [
-            {results: currentStreak.results, endingResult: Some(result)},
-            ...state->Belt.List.tailExn,
-          ]
+        | (false, None) => state |> setEndingResult(result)
         }
       );
   };
