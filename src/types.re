@@ -10,7 +10,6 @@ type result = {
   extratime: bool,
 };
 
-[@bs.deriving jsConverter]
 type streak = {
   results: list(result),
   endingResult: option(result),
@@ -21,7 +20,7 @@ let numberOfMatches = (streak: streak) => streak.results->Belt.List.length;
 let startedAt = (streak: streak) =>
   streak.results->Belt.List.reverse->Belt.List.headExn.date;
 
-// TODO: Merge endedAt and endedBy and return a Tuple?
+// TODO: Merge endedAt and endedBy and return a Tuple/type?
 let endedAt = (streak: streak) =>
   streak.endingResult->Belt.Option.map(r => r.date);
 
