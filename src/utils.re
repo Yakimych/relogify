@@ -14,18 +14,12 @@ let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
   ->DateFns.setMinutes(DateFns.getMinutes(now))
   ->DateFns.setSeconds(DateFns.getSeconds(now));
 
-[@bs.deriving jsConverter]
-type tempStreak = {
-  results: list(result),
-  endingResult: option(result),
-};
-
-let startNewStreakWithResult = (result: result, streaks: list(tempStreak)) => [
+let startNewStreakWithResult = (result: result, streaks: list(streak)) => [
   {results: [result], endingResult: None},
   ...streaks,
 ];
 
-let addResultToCurrentStreak = (result: result, streaks: list(tempStreak)) => {
+let addResultToCurrentStreak = (result: result, streaks: list(streak)) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: [result, ...currentStreak.results], endingResult: None},
@@ -33,7 +27,7 @@ let addResultToCurrentStreak = (result: result, streaks: list(tempStreak)) => {
   ];
 };
 
-let setEndingResult = (result: result, streaks: list(tempStreak)) => {
+let setEndingResult = (result: result, streaks: list(streak)) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: currentStreak.results, endingResult: Some(result)},
@@ -42,11 +36,10 @@ let setEndingResult = (result: result, streaks: list(tempStreak)) => {
 };
 
 let getAllStreaks =
-    (playerName: string, results: list(result)): list(tempStreak) => {
-  let initialState: list(tempStreak) = [];
+    (playerName: string, results: list(result)): list(streak) => {
+  let initialState: list(streak) = [];
 
-  let reduceFunc =
-      (state: list(tempStreak), result: result): list(tempStreak) => {
+  let reduceFunc = (state: list(streak), result: result): list(streak) => {
     let isWin =
       result.player1.name == playerName
       && result.player1goals > result.player2goals
@@ -66,7 +59,7 @@ let getAllStreaks =
       );
   };
 
-  let finalState: list(tempStreak) =
+  let finalState: list(streak) =
     results->Belt.List.reduce(initialState, reduceFunc);
 
   finalState;
