@@ -1,7 +1,7 @@
 open Jest;
 open Expect;
 open Types;
-open Utils;
+open Streaks;
 
 type testResult = {
   name1: string,
