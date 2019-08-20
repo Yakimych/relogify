@@ -17,13 +17,7 @@ let make = (~playerName: string, ~communityName: string) => {
     goalsScored: 22,
     goalsConceded: 11,
     streaks: {
-      longestStreak:
-        Some({
-          numberOfMatches: 2,
-          startedAt: Js.Date.make(),
-          endedAt: None,
-          endedBy: None,
-        }),
+      longestStreak: None,
       currentStreak: None,
     },
   };
@@ -51,11 +45,11 @@ let make = (~playerName: string, ~communityName: string) => {
       </Typography>
       {playerStats.streaks.longestStreak
        ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
-           <StreakView streak streakName="Longest winning streak" />
+           <StreakView streak streakName="Longest winning streak" playerName />
          )}
       {playerStats.streaks.currentStreak
        ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
-           <StreakView streak streakName="Ongoing winning streak" />
+           <StreakView streak streakName="Ongoing winning streak" playerName />
          )}
     </Box>
     <ResultsTable results=[||] mainPlayerName=playerName communityName />

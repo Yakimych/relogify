@@ -155,7 +155,7 @@ let toResult = (testScore: testScore) => {
 };
 
 let toTestResults: list(testScore) => list(result) = List.map(toResult);
-let toTempStreaks: list(testStreak) => list(tempStreak) =
+let toTempStreaks: list(testStreak) => list(streak) =
   List.map(s =>
     {
       results: s.scores |> List.map(toResult) |> Belt.List.reverse,
