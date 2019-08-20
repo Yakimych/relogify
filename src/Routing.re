@@ -14,7 +14,7 @@ let make = () => {
        | [communityName] => <CommunityStartPage communityName />
        | [communityName, "history"] => <ResultHistory communityName />
        | [communityName, playerName] =>
-         <PlayerResultsPage communityName playerName />
+         <PlayerResults communityName playerName />
        | [communityName, player1Name, player2Name] =>
          <HeadToHeadPage communityName player1Name player2Name />
        | _ => <div> {text("Invalid route")} </div>
