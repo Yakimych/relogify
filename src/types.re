@@ -10,6 +10,7 @@ type result = {
   extratime: bool,
 };
 
+[@bs.deriving jsConverter]
 type streak = {
   results: list(result),
   endingResult: option(result),
