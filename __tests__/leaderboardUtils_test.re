@@ -250,8 +250,8 @@ describe("getLeaderboard", () => {
       player2: {
         name: "Alice",
       },
-      player2goals: 2,
-      player1goals: 3,
+      player1goals: 2,
+      player2goals: 3,
       extratime: false,
       date: "2019-07-27T07:26:31.667+00:00",
     };
@@ -272,12 +272,12 @@ describe("getLeaderboard", () => {
       },
     ];
 
-    let leaderboard = getLeaderboard([singleResult]);
-    expect(leaderboard) |> toBe(expectedLeaderboard);
+    let leaderboard = getLeaderboard([singleResult]) |> List.sort(byName);
+    expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
   });
 
   test("should return expected leaderboard for result list", () => {
-    let leaderboard = getLeaderboard(testResults);
-    expect(leaderboard) |> toBe(expectedLeaderboard);
+    let leaderboard = getLeaderboard(testResults) |> List.sort(byName);
+    expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
   });
 });
