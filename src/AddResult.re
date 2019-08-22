@@ -1,5 +1,6 @@
 open Utils;
 open Queries;
+open Mutations;
 
 let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
 
@@ -14,9 +15,10 @@ let make =
       ~communityName: string,
     ) => {
   let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
-
   let (playersQuery, _) =
     AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
+
+  let (addResultMutation, _, _) = AddResultMutation.use();
 
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
@@ -29,6 +31,15 @@ let make =
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
+
+  let resetState = () => {
+    setMaybePlayer1Name(_ => None);
+    setMaybePlayer2Name(_ => None);
+    setGoals1(_ => 0);
+    setGoals2(_ => 0);
+    setExtraTime(_ => false);
+    setDate(_ => Js.Date.make());
+  };
 
   let addResult = () =>
     switch (maybePlayer1Name, maybePlayer2Name, goals1, goals2, extraTime) {
@@ -46,16 +57,30 @@ let make =
       alert("You must select two DIFFERENT players!")
     | (Some(player1Name), Some(player2Name), goals1, goals2, extraTime) =>
       setIsAddingResult(_ => true);
-      Js.logMany([|
-        "Adding result: ",
-        player1Name,
-        string_of_int(goals1),
-        string_of_int(goals2),
-        player2Name,
-        extraTime ? "ET" : "",
-        formatDate(date),
-      |]);
-      setIsAddingResult(_ => false);
+
+      addResultMutation(
+        ~variables=
+          AddResultMutationConfig.make(
+            ~communityName,
+            ~player1Name,
+            ~player2Name,
+            ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
+            ~player1Goals=goals1,
+            ~player2Goals=goals2,
+            ~extraTime,
+            (),
+          )##variables,
+        (),
+      )
+      |> Js.Promise.then_(_ => {
+           resetState();
+           setIsAddingResult(_ => false) |> Js.Promise.resolve;
+         })
+      |> Js.Promise.catch(e => {
+           Js.Console.error2("Error: ", e);
+           setIsAddingResult(_ => false) |> Js.Promise.resolve;
+         })
+      |> ignore;
     };
 
   switch (playersQuery) {
