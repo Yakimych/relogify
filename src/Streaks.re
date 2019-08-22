@@ -43,20 +43,13 @@ let resultStreakReducer =
     );
 };
 
-// TODO: DateFns.compareAsc?
-let byDate = (a: result, b: result) =>
-  if (a.date > b.date) {
-    1;
-  } else if (a.date < b.date) {
-    (-1);
-  } else {
-    0;
-  };
+let resultsByDate = (first: result, second: result) =>
+  DateFns.compareAsc(first.date, second.date);
 
 let getAllStreaks =
     (playerName: string, results: list(result)): list(streak) =>
   results
-  ->Belt.List.sort(byDate)
+  ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce([], resultStreakReducer(playerName));
 
 let emptyStreak = {results: [], endingResult: None};
