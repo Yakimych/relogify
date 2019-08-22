@@ -14,7 +14,7 @@ let testResults: list(result) = [
     player2goals: 4,
     player1goals: 0,
     extratime: false,
-    date: "2019-07-27T07:26:31.667+00:00",
+    date: Js.Date.fromString("2019-07-27T07:26:31.667+00:00"),
     id: 116,
   },
   {
@@ -27,7 +27,7 @@ let testResults: list(result) = [
     player2goals: 1,
     player1goals: 2,
     extratime: true,
-    date: "2019-07-27T07:26:21.42+00:00",
+    date: Js.Date.fromString("2019-07-27T07:26:21.42+00:00"),
     id: 115,
   },
   {
@@ -40,7 +40,7 @@ let testResults: list(result) = [
     player2goals: 4,
     player1goals: 6,
     extratime: false,
-    date: "2019-07-27T06:29:51.565+00:00",
+    date: Js.Date.fromString("2019-07-27T06:29:51.565+00:00"),
     id: 114,
   },
   {
@@ -53,7 +53,7 @@ let testResults: list(result) = [
     player2goals: 1,
     player1goals: 3,
     extratime: false,
-    date: "2019-07-27T06:29:32.534+00:00",
+    date: Js.Date.fromString("2019-07-27T06:29:32.534+00:00"),
     id: 113,
   },
   {
@@ -66,7 +66,7 @@ let testResults: list(result) = [
     player2goals: 12,
     player1goals: 9,
     extratime: false,
-    date: "2019-07-23T20:24:02.917+00:00",
+    date: Js.Date.fromString("2019-07-23T20:24:02.917+00:00"),
     id: 102,
   },
   {
@@ -79,7 +79,7 @@ let testResults: list(result) = [
     player2goals: 1,
     player1goals: 4,
     extratime: false,
-    date: "2019-07-23T20:12:45.985+00:00",
+    date: Js.Date.fromString("2019-07-23T20:12:45.985+00:00"),
     id: 101,
   },
   {
@@ -92,7 +92,7 @@ let testResults: list(result) = [
     player2goals: 1,
     player1goals: 2,
     extratime: true,
-    date: "2019-07-23T20:04:19.8+00:00",
+    date: Js.Date.fromString("2019-07-23T20:04:19.8+00:00"),
     id: 100,
   },
   {
@@ -105,7 +105,7 @@ let testResults: list(result) = [
     player2goals: 6,
     player1goals: 3,
     extratime: false,
-    date: "2019-07-21T20:48:17+00:00",
+    date: Js.Date.fromString("2019-07-21T20:48:17+00:00"),
     id: 103,
   },
   {
@@ -118,7 +118,7 @@ let testResults: list(result) = [
     player2goals: 0,
     player1goals: 3,
     extratime: false,
-    date: "2019-07-21T11:49:21.709+00:00",
+    date: Js.Date.fromString("2019-07-21T11:49:21.709+00:00"),
     id: 99,
   },
   {
@@ -131,7 +131,7 @@ let testResults: list(result) = [
     player2goals: 0,
     player1goals: 2,
     extratime: false,
-    date: "2019-07-21T11:48:39.637+00:00",
+    date: Js.Date.fromString("2019-07-21T11:48:39.637+00:00"),
     id: 98,
   },
   {
@@ -144,7 +144,7 @@ let testResults: list(result) = [
     player2goals: 12,
     player1goals: 0,
     extratime: false,
-    date: "2019-07-21T11:28:51.671+00:00",
+    date: Js.Date.fromString("2019-07-21T11:28:51.671+00:00"),
     id: 97,
   },
   {
@@ -157,7 +157,7 @@ let testResults: list(result) = [
     player2goals: 0,
     player1goals: 1,
     extratime: false,
-    date: "2019-07-21T11:27:56.221+00:00",
+    date: Js.Date.fromString("2019-07-21T11:27:56.221+00:00"),
     id: 96,
   },
 ];
@@ -253,7 +253,7 @@ describe("getLeaderboard", () => {
       player1goals: 2,
       player2goals: 3,
       extratime: false,
-      date: "2019-07-27T07:26:31.667+00:00",
+      date: Js.Date.fromString("2019-07-27T07:26:31.667+00:00"),
     };
     let expectedLeaderboard = [
       {

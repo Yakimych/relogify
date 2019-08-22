@@ -14,7 +14,7 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
     <Typography>
       {text("Started ")}
       <span className="date-time">
-        {text(formatDateTime(Js.Date.fromString(streak |> startedAt)))}
+        {text(formatDateTime(streak |> startedAt))}
       </span>
     </Typography>
     {streak
@@ -22,9 +22,7 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
      ->Belt.Option.mapWithDefault(ReasonReact.null, date =>
          <Typography>
            {text("Ended ")}
-           <span className="date-time">
-             {text(formatDateTime(Js.Date.fromString(date)))}
-           </span>
+           <span className="date-time"> {text(formatDateTime(date))} </span>
            {streak
             ->endedBy(playerName)
             ->Belt.Option.mapWithDefault(ReasonReact.null, player =>

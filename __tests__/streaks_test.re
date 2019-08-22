@@ -157,7 +157,7 @@ let toResult = (testScore: testResult) => {
   },
   player1goals: testScore.goals1,
   player2goals: testScore.goals2,
-  date: "2019-01-01",
+  date: Js.Date.fromString("2019-01-01"),
   extratime: false,
 };
 

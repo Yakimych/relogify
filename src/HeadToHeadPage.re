@@ -18,7 +18,7 @@ let fakeResult: result = {
   player2: fakePlayer2,
   player1goals: 5,
   player2goals: 0,
-  date: "2019-02-03",
+  date: Js.Date.fromString("2019-02-03"),
   extratime: false,
 };
 

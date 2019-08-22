@@ -6,7 +6,7 @@ type result = {
   player2: player,
   player1goals: int,
   player2goals: int,
-  date: string,
+  date: Js.Date.t,
   extratime: bool,
 };
 
