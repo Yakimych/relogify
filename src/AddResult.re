@@ -59,7 +59,7 @@ let make =
     };
 
   switch (playersQuery) {
-  | Loading => <span> {text("Loading...")} </span>
+  | Loading => <CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
