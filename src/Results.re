@@ -13,13 +13,13 @@ let make =
   // lastFetchedResultsRef
   let newResults = [||];
 
-  // let allResultsQuery =
-  //   AllResultsQueryConfig.make(~communityName, ~dateFrom, ~dateTo, ());
-
-  // let (resultsQuery, _) =
-  //   AllResultsQuery.use(~variables=allResultsQuery##variables, ());
-
-  let allResultsQuery = AllResultsQueryConfig.make(~communityName, ());
+  let allResultsQuery =
+    AllResultsQueryConfig.make(
+      ~communityName,
+      ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
+      ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+      (),
+    );
 
   let (resultsQuery, _) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());

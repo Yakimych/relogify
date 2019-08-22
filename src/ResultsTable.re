@@ -73,7 +73,7 @@ let make =
                  && mainPlayerName === Some(r.player1.name)
                  || player2Won
                  && mainPlayerName === Some(r.player2.name);
-               let formattedDate = Js.Date.make() |> formatDate;
+               let formattedDate = formatDate(r.date);
 
                <TableRow
                  key={string_of_int(r.id)}

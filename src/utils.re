@@ -11,3 +11,6 @@ let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
   ->DateFns.setHours(DateFns.getHours(now))
   ->DateFns.setMinutes(DateFns.getMinutes(now))
   ->DateFns.setSeconds(DateFns.getSeconds(now));
+
+let toJsonDate = (date: Js.Date.t): Js.Json.t =>
+  date |> Js.Date.toISOString |> Js.Json.string;

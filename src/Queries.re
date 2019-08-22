@@ -18,12 +18,11 @@ module AllPlayersQuery = ReasonApolloHooks.Query.Make(AllPlayersQueryConfig);
 
 module AllResultsQueryConfig = [%graphql
   {|
-  # query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
-  query AllResultsQuery($communityName: String!) {
+  query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
       results(
         where: {
           community: { name: { _eq: $communityName } }
-          # date: { _gte: $dateFrom, _lte: $dateTo }
+          date: { _gte: $dateFrom, _lte: $dateTo }
         }
         order_by: { date: desc }
       ) {
