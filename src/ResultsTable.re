@@ -26,10 +26,10 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let getHighlightedClassName =
-    (newResults: option(array(result)), currentResult: result) => {
+    (newResults: option(list(result)), currentResult: result) => {
   let resultIsFresh =
     newResults
-    ->Belt.Option.map(n => n->Belt.Array.some(nr => nr == currentResult))
+    ->Belt.Option.map(n => n->Belt.List.some(nr => nr == currentResult))
     ->Belt.Option.getWithDefault(false);
 
   resultIsFresh ? "highlighted" : "";
@@ -41,8 +41,8 @@ let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
 [@react.component]
 let make =
     (
-      ~results: array(result),
-      ~newResults: option(array(result))=?,
+      ~results: list(result),
+      ~newResults: option(list(result))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) =>
@@ -65,7 +65,7 @@ let make =
         </TableHead>
         <TableBody>
           {results
-           ->Belt.Array.map(r => {
+           ->Belt.List.map(r => {
                let player1Won = r.player1goals > r.player2goals;
                let player2Won = !player1Won;
                let mainPlayerWon =
@@ -122,6 +122,7 @@ let make =
                  <TableCell> {text(formattedDate)} </TableCell>
                </TableRow>;
              })
+           ->Array.of_list
            ->ReasonReact.array}
         </TableBody>
       </Table>

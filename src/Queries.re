@@ -123,19 +123,21 @@ module PlayerResultsQuery =
 
 /* TODO: bsRecord instead of a mapping function */
 open Types;
-let toRecord = (res): array(result) =>
-  res->Belt.Array.map(r =>
-    {
-      id: r##id,
-      player1: {
-        name: r##player1##name,
-      },
-      player2: {
-        name: r##player2##name,
-      },
-      player1goals: r##player1goals,
-      player2goals: r##player2goals,
-      date: r##date,
-      extratime: r##extratime,
-    }
-  );
+let toRecord = (res): list(result) =>
+  res
+  ->Belt.Array.map(r =>
+      {
+        id: r##id,
+        player1: {
+          name: r##player1##name,
+        },
+        player2: {
+          name: r##player2##name,
+        },
+        player1goals: r##player1goals,
+        player2goals: r##player2goals,
+        date: r##date,
+        extratime: r##extratime,
+      }
+    )
+  ->Belt.List.fromArray;

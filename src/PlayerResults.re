@@ -1,14 +1,8 @@
 open Utils;
+open PlayerStatsUtils;
+open Streaks;
 open Types;
 open Queries;
-
-type playerStats = {
-  numberOfWins: int,
-  numberOfLosses: int,
-  goalsScored: int,
-  goalsConceded: int,
-  streaks,
-};
 
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
@@ -18,17 +12,6 @@ let make = (~playerName: string, ~communityName: string) => {
   let (playerResultsQuery, _) =
     PlayerResultsQuery.use(~variables=playerResultsQuery##variables, ());
 
-  let playerStats: playerStats = {
-    numberOfWins: 3,
-    numberOfLosses: 1,
-    goalsScored: 22,
-    goalsConceded: 11,
-    streaks: {
-      longestStreak: None,
-      currentStreak: None,
-    },
-  };
-
   <div>
     <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
     {switch (playerResultsQuery) {
@@ -36,16 +19,21 @@ let make = (~playerName: string, ~communityName: string) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
+       let results = data##results |> toRecord;
+       let playerStats: playerStats = getPlayerStats(playerName, results);
+
+       let streaks = getAllStreaks(playerName, results);
+
        <>
          <Box textAlign="center">
            <Typography variant="h5"> {text("Player results")} </Typography>
            <Typography variant="h4"> {text(playerName)} </Typography>
            <Typography>
-             {text("Total wins: " ++ string_of_int(playerStats.numberOfWins))}
+             {text("Total wins: " ++ string_of_int(playerStats.matchesWon))}
            </Typography>
            <Typography>
              {text(
-                "Total losses: " ++ string_of_int(playerStats.numberOfLosses),
+                "Total losses: " ++ string_of_int(playerStats.matchesLost),
               )}
            </Typography>
            <Typography>
@@ -60,7 +48,8 @@ let make = (~playerName: string, ~communityName: string) => {
                 ++ string_of_int(playerStats.goalsConceded),
               )}
            </Typography>
-           {playerStats.streaks.longestStreak
+           {streaks
+            ->getLongestStreak
             ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
                 <StreakView
                   streak
@@ -68,7 +57,8 @@ let make = (~playerName: string, ~communityName: string) => {
                   playerName
                 />
               )}
-           {playerStats.streaks.currentStreak
+           {streaks
+            ->getCurrentStreak
             ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
                 <StreakView
                   streak
@@ -82,7 +72,7 @@ let make = (~playerName: string, ~communityName: string) => {
            mainPlayerName=playerName
            communityName
          />
-       </>
+       </>;
      }}
   </div>;
 };

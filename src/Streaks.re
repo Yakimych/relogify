@@ -43,6 +43,34 @@ let resultStreakReducer =
     );
 };
 
+// TODO: DateFns.compareAsc?
+let byDate = (a: result, b: result) =>
+  if (a.date > b.date) {
+    1;
+  } else if (a.date < b.date) {
+    (-1);
+  } else {
+    0;
+  };
+
 let getAllStreaks =
     (playerName: string, results: list(result)): list(streak) =>
-  results->Belt.List.reduce([], resultStreakReducer(playerName));
+  results
+  ->Belt.List.sort(byDate)
+  ->Belt.List.reduce([], resultStreakReducer(playerName));
+
+let emptyStreak = {results: [], endingResult: None};
+
+let getLongestStreak = (streaks: list(streak)): option(streak) =>
+  streaks->Belt.List.reduce(None, (longestStreak, currentStreak) =>
+    Belt.List.length(currentStreak.results)
+    >= longestStreak->Belt.Option.mapWithDefault(0, s =>
+         s.results->Belt.List.length
+       )
+      ? Some(currentStreak) : longestStreak
+  );
+
+let getCurrentStreak = (streaks: list(streak)): option(streak) =>
+  streaks
+  ->Belt.List.keep(s => s.endingResult->Belt.Option.isNone)
+  ->Belt.List.head;
