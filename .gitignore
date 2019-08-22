@@ -7,3 +7,4 @@ npm-debug.log
 /coverage/
 /build/
 *.bs.js
+.graphql_ppx_cache

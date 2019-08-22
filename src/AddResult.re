@@ -1,4 +1,5 @@
 open Utils;
+open Queries;
 
 let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
 
@@ -12,6 +13,11 @@ let make =
       ~dateTo: option(Js.Date.t)=?,
       ~communityName: string,
     ) => {
+  let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
+
+  let (playersQuery, _) =
+    AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
+
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
@@ -52,68 +58,82 @@ let make =
       setIsAddingResult(_ => false);
     };
 
-  <>
-    <Paper
-      style={ReactDOMRe.Style.make(~width="550px", ~marginBottom="30px", ())}>
-      <div style={ReactDOMRe.Style.make(~display="flex", ())}>
-        <PlayerPicker
+  switch (playersQuery) {
+  | Loading => <span> {text("Loading...")} </span>
+  | NoData
+  | Error(_) => <span> {text("Error")} </span>
+  | Data(data) =>
+    <>
+      <Paper
+        style={ReactDOMRe.Style.make(
+          ~width="550px",
+          ~marginBottom="30px",
+          (),
+        )}>
+        <div style={ReactDOMRe.Style.make(~display="flex", ())}>
+          <PlayerPicker
+            disabled=isAddingResult
+            placeholderText="Player1"
+            playerNames={data##players->Belt.Array.map(p => p##name)}
+            selectedPlayerName=maybePlayer1Name
+            onChange={v => setMaybePlayer1Name(_ => Some(v))}
+          />
+          <GoalsPicker
+            disabled=isAddingResult
+            selectedGoals=goals1
+            onChange={v => setGoals1(_ => v)}
+          />
+          <GoalsPicker
+            disabled=isAddingResult
+            selectedGoals=goals2
+            onChange={v => setGoals2(_ => v)}
+          />
+          <PlayerPicker
+            disabled=isAddingResult
+            placeholderText="Player2"
+            playerNames={data##players->Belt.Array.map(p => p##name)}
+            selectedPlayerName=maybePlayer2Name
+            onChange={v => setMaybePlayer2Name(_ => Some(v))}
+          />
+        </div>
+      </Paper>
+      <div
+        style={ReactDOMRe.Style.make(
+          ~display="flex",
+          ~justifyContent="space-between",
+          (),
+        )}>
+        <Button
           disabled=isAddingResult
-          placeholderText="Player1"
-          playerNames=fakePlayerNames
-          selectedPlayerName=maybePlayer1Name
-          onChange={v => setMaybePlayer1Name(_ => Some(v))}
+          variant="contained"
+          color="primary"
+          onClick=addResult>
+          {text("Submit")}
+        </Button>
+        <FormControlLabel
+          control={
+            <Checkbox
+              disabled=isAddingResult
+              color="default"
+              checked=extraTime
+              onClick=toggleExtraTime
+            />
+          }
+          label="Extra Time"
         />
-        <GoalsPicker
+        <TextField
           disabled=isAddingResult
-          selectedGoals=goals1
-          onChange={v => setGoals1(_ => v)}
-        />
-        <GoalsPicker
-          disabled=isAddingResult
-          selectedGoals=goals2
-          onChange={v => setGoals2(_ => v)}
-        />
-        <PlayerPicker
-          disabled=isAddingResult
-          placeholderText="Player2"
-          playerNames=fakePlayerNames
-          selectedPlayerName=maybePlayer2Name
-          onChange={v => setMaybePlayer2Name(_ => Some(v))}
+          _type="date"
+          value={formatDate(date)}
+          onChange={e =>
+            /* TODO: Validate before setting */
+
+              setDate(_ =>
+                Js.Date.fromString(ReactEvent.Form.target(e)##value)
+              )
+            }
         />
       </div>
-    </Paper>
-    <div
-      style={ReactDOMRe.Style.make(
-        ~display="flex",
-        ~justifyContent="space-between",
-        (),
-      )}>
-      <Button
-        disabled=isAddingResult
-        variant="contained"
-        color="primary"
-        onClick=addResult>
-        {text("Submit")}
-      </Button>
-      <FormControlLabel
-        control={
-          <Checkbox
-            disabled=isAddingResult
-            color="default"
-            checked=extraTime
-            onClick=toggleExtraTime
-          />
-        }
-        label="Extra Time"
-      />
-      <TextField
-        disabled=isAddingResult
-        _type="date"
-        value={formatDate(date)}
-        onChange={e =>
-          /* TODO: Validate before setting */
-          setDate(_ => Js.Date.fromString(ReactEvent.Form.target(e)##value))}
-      />
-    </div>
-  </>;
+    </>
+  };
 };
