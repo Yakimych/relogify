@@ -17,9 +17,6 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
     HeadToHeadQuery.use(~variables=headToHeadQuery##variables, ());
 
   <>
-    <div>
-      <Link url={"/" ++ communityName}> {text("Start page")} </Link>
-    </div>
     {switch (headToHeadQuery) {
      | Loading => <CircularProgress />
      | NoData
@@ -41,7 +38,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
              <span className="stats-player-wins">
                {text(
                   string_of_int(stats.matchesWon)
-                  ++ "-"
+                  ++ " - "
                   ++ string_of_int(stats.matchesLost),
                 )}
              </span>
@@ -81,5 +78,6 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
          <ResultsTable results={data##results |> toRecord} communityName />
        </>;
      }}
+    <Link url={"/" ++ communityName}> {text("Start page")} </Link>
   </>;
 };

@@ -96,44 +96,44 @@ let make =
             onChange={v => setMaybePlayer2Name(_ => Some(v))}
           />
         </div>
-      </Paper>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~justifyContent="space-between",
-          (),
-        )}>
-        <Button
-          disabled=isAddingResult
-          variant="contained"
-          color="primary"
-          onClick=addResult>
-          {text("Submit")}
-        </Button>
-        <FormControlLabel
-          control={
-            <Checkbox
-              disabled=isAddingResult
-              color="default"
-              checked=extraTime
-              onClick=toggleExtraTime
-            />
-          }
-          label="Extra Time"
-        />
-        <TextField
-          disabled=isAddingResult
-          _type="date"
-          value={formatDate(date)}
-          onChange={e =>
-            /* TODO: Validate before setting */
-
-              setDate(_ =>
-                Js.Date.fromString(ReactEvent.Form.target(e)##value)
-              )
+        <div
+          style={ReactDOMRe.Style.make(
+            ~display="flex",
+            ~justifyContent="space-between",
+            (),
+          )}>
+          <Button
+            disabled=isAddingResult
+            variant="contained"
+            color="primary"
+            onClick=addResult>
+            {text("Submit")}
+          </Button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                disabled=isAddingResult
+                color="default"
+                checked=extraTime
+                onClick=toggleExtraTime
+              />
             }
-        />
-      </div>
+            label="Extra Time"
+          />
+          <TextField
+            disabled=isAddingResult
+            _type="date"
+            value={formatDate(date)}
+            onChange={e =>
+              /* TODO: Validate before setting */
+
+                setDate(_ =>
+                  Js.Date.fromString(ReactEvent.Form.target(e)##value)
+                )
+              }
+          />
+        </div>
+      </Paper>
     </>
   };
 };

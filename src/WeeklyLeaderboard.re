@@ -112,7 +112,7 @@ let make =
                    <TableCell align="right"> {text("Player")} </TableCell>
                    <TableCell style=numberCellStyle title="Win Percentage">
                      <TableSortLabel
-                       active={sortBy === MatchesWon}
+                       active={sortBy === WinsPerMatch}
                        direction={sortDirection === Asc ? "asc" : "desc"}
                        onClick={_ => requestSort(WinsPerMatch)}>
                        {text("W%")}

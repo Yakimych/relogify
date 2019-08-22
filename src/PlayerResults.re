@@ -13,7 +13,6 @@ let make = (~playerName: string, ~communityName: string) => {
     PlayerResultsQuery.use(~variables=playerResultsQuery##variables, ());
 
   <div>
-    <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
     {switch (playerResultsQuery) {
      | Loading => <CircularProgress />
      | NoData
@@ -74,5 +73,6 @@ let make = (~playerName: string, ~communityName: string) => {
          />
        </>;
      }}
+    <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
   </div>;
 };
