@@ -1,6 +1,5 @@
 open Queries;
 open Utils;
-open Types;
 
 [@react.component]
 let make =
@@ -11,7 +10,7 @@ let make =
       ~highlightNewResults: bool,
     ) => {
   // lastFetchedResultsRef
-  let newResults = [||];
+  let newResults = [];
 
   let allResultsQuery =
     AllResultsQueryConfig.make(
@@ -32,7 +31,7 @@ let make =
     <ResultsTable
       communityName
       results={data##results |> toRecord}
-      newResults={highlightNewResults ? newResults : [||]}
+      newResults={highlightNewResults ? newResults : []}
     />
   };
 };

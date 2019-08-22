@@ -8,7 +8,7 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
     <Typography>
       {text(streakName ++ ": ")}
       <span className="marked">
-        {text(string_of_int(streak |> numberOfMatches) ++ "match(es)")}
+        {text(string_of_int(streak |> numberOfMatches) ++ " match(es)")}
       </span>
     </Typography>
     <Typography>
