@@ -55,13 +55,15 @@ let getAllStreaks =
 let emptyStreak = {results: [], endingResult: None};
 
 let getLongestStreak = (streaks: list(streak)): option(streak) =>
-  streaks->Belt.List.reduce(None, (longestStreak, currentStreak) =>
-    Belt.List.length(currentStreak.results)
-    >= longestStreak->Belt.Option.mapWithDefault(0, s =>
-         s.results->Belt.List.length
-       )
-      ? Some(currentStreak) : longestStreak
-  );
+  streaks
+  ->Belt.List.keep(s => s.endingResult->Belt.Option.isSome)
+  ->Belt.List.reduce(None, (longestStreak, currentStreak) =>
+      Belt.List.length(currentStreak.results)
+      >= longestStreak->Belt.Option.mapWithDefault(0, s =>
+           s.results->Belt.List.length
+         )
+        ? Some(currentStreak) : longestStreak
+    );
 
 let getCurrentStreak = (streaks: list(streak)): option(streak) =>
   streaks

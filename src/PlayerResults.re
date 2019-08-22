@@ -52,7 +52,7 @@ let make = (~playerName: string, ~communityName: string) => {
             ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
                 <StreakView
                   streak
-                  streakName="Longest winning streak"
+                  streakName="Longest past winning streak"
                   playerName
                 />
               )}
