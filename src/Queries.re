@@ -43,3 +43,80 @@ module AllResultsQueryConfig = [%graphql
 ];
 
 module AllResultsQuery = ReasonApolloHooks.Query.Make(AllResultsQueryConfig);
+
+module HeadToHeadQueryConfig = [%graphql
+  {|
+  query($communityName: String!, $player1Name: String!, $player2Name: String!) {
+    results(
+      where: {
+        _and: [
+          { community: { name: { _eq: $communityName } } }
+          {
+            _or: [
+              { player1: { name: { _eq: $player1Name } } }
+              { player2: { name: { _eq: $player1Name } } }
+            ]
+          }
+          {
+            _or: [
+              { player1: { name: { _eq: $player2Name } } }
+              { player2: { name: { _eq: $player2Name } } }
+            ]
+          }
+        ]
+      }
+      order_by: { date: desc }
+    ) {
+      id
+      player1 {
+        name
+      }
+      player1goals
+      player2 {
+        name
+      }
+      player2goals
+      date @bsDecoder (fn: "dateToString")
+      extratime
+    }
+  }
+|}
+];
+
+module HeadToHeadQuery = ReasonApolloHooks.Query.Make(HeadToHeadQueryConfig);
+
+module PlayerResultsQueryConfig = [%graphql
+  {|
+  query playerResults($communityName: String!, $playerName: String!) {
+    results(
+      where: {
+        _and: [
+          { community: { name: { _eq: $communityName } } }
+          {
+            _or: [
+              { player1: { name: { _eq: $playerName } } }
+              { player2: { name: { _eq: $playerName } } }
+            ]
+          }
+        ]
+      }
+      order_by: { date: desc }
+    ) {
+      id
+      player1 {
+        name
+      }
+      player1goals
+      player2 {
+        name
+      }
+      player2goals
+      date @bsDecoder (fn: "dateToString")
+      extratime
+    }
+  }
+|}
+];
+
+module PlayerResultsQuery =
+  ReasonApolloHooks.Query.Make(PlayerResultsQueryConfig);
