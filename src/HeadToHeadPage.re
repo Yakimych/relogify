@@ -1,5 +1,6 @@
 open Utils;
 open Types;
+open Queries;
 
 type playerStats = {
   numberOfWins: int,
@@ -26,6 +27,17 @@ let fakeResults: array(result) = [|fakeResult|];
 
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
+  let headToHeadQuery =
+    HeadToHeadQueryConfig.make(
+      ~communityName,
+      ~player1Name,
+      ~player2Name,
+      (),
+    );
+
+  let (headToHeadQuery, _) =
+    HeadToHeadQuery.use(~variables=headToHeadQuery##variables, ());
+
   let stats = {
     numberOfWins: 10,
     numberOfLosses: 2,
@@ -37,52 +49,64 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
     <div>
       <Link url={"/" ++ communityName}> {text("Start page")} </Link>
     </div>
-    <Box textAlign="center">
-      <Typography variant="h5"> {text("Head to Head")} </Typography>
-      <Typography variant="h4">
-        {text(player1Name ++ " vs " ++ player2Name)}
-      </Typography>
-      <div>
-        <span className="stats-player-goals">
-          {text("(" ++ string_of_int(stats.goalsScored) ++ ")")}
-        </span>
-        {text(" ")}
-        <span className="stats-player-wins">
-          {text(
-             string_of_int(stats.numberOfWins)
-             ++ "-"
-             ++ string_of_int(stats.numberOfLosses),
+    {switch (headToHeadQuery) {
+     | Loading => <CircularProgress />
+     | NoData
+     | Error(_) => <span> {text("Error")} </span>
+     | Data(data) =>
+       <>
+         <Box textAlign="center">
+           <Typography variant="h5"> {text("Head to Head")} </Typography>
+           <Typography variant="h4">
+             {text(player1Name ++ " vs " ++ player2Name)}
+           </Typography>
+           <div>
+             <span className="stats-player-goals">
+               {text("(" ++ string_of_int(stats.goalsScored) ++ ")")}
+             </span>
+             {text(" ")}
+             <span className="stats-player-wins">
+               {text(
+                  string_of_int(stats.numberOfWins)
+                  ++ "-"
+                  ++ string_of_int(stats.numberOfLosses),
+                )}
+             </span>
+             {text(" ")}
+             <span className="stats-player-goals">
+               {text("(" ++ string_of_int(stats.goalsConceded) ++ ")")}
+             </span>
+           </div>
+         </Box>
+         <ReactMinimalPieChart
+           data=[|
+             {
+               "title": player1Name,
+               "value": stats.numberOfWins,
+               "color": "#00cc00",
+             },
+             {
+               "title": player2Name,
+               "value": stats.numberOfLosses,
+               "color": "#ff2200",
+             },
+           |]
+           style={ReactDOMRe.Style.make(
+             ~height="100px",
+             ~marginBottom="10px",
+             (),
            )}
-        </span>
-        {text(" ")}
-        <span className="stats-player-goals">
-          {text("(" ++ string_of_int(stats.goalsConceded) ++ ")")}
-        </span>
-      </div>
-    </Box>
-    <ReactMinimalPieChart
-      data=[|
-        {
-          "title": player1Name,
-          "value": stats.numberOfWins,
-          "color": "#00cc00",
-        },
-        {
-          "title": player2Name,
-          "value": stats.numberOfLosses,
-          "color": "#ff2200",
-        },
-      |]
-      style={ReactDOMRe.Style.make(~height="100px", ~marginBottom="10px", ())}
-      animate=true
-      lineWidth=80
-      label=true
-      labelStyle={ReactDOMRe.Style.make(
-        ~fontSize="20px",
-        ~fill="#ffffff",
-        (),
-      )}
-    />
-    <ResultsTable results=fakeResults communityName />
+           animate=true
+           lineWidth=80
+           label=true
+           labelStyle={ReactDOMRe.Style.make(
+             ~fontSize="20px",
+             ~fill="#ffffff",
+             (),
+           )}
+         />
+         <ResultsTable results={data##results |> toRecord} communityName />
+       </>
+     }}
   </>;
 };
