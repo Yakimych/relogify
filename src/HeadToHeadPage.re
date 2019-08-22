@@ -1,29 +1,7 @@
 open Utils;
+open PlayerStatsUtils;
 open Types;
 open Queries;
-
-type playerStats = {
-  numberOfWins: int,
-  numberOfLosses: int,
-  goalsScored: int,
-  goalsConceded: int,
-};
-
-let fakePlayer1: player = {name: "FakePlayer1"};
-
-let fakePlayer2: player = {name: "FakePlayer2"};
-
-let fakeResult: result = {
-  id: 1,
-  player1: fakePlayer1,
-  player2: fakePlayer2,
-  player1goals: 5,
-  player2goals: 0,
-  date: Js.Date.fromString("2019-02-03"),
-  extratime: false,
-};
-
-let fakeResults: array(result) = [|fakeResult|];
 
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
@@ -38,13 +16,6 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
   let (headToHeadQuery, _) =
     HeadToHeadQuery.use(~variables=headToHeadQuery##variables, ());
 
-  let stats = {
-    numberOfWins: 10,
-    numberOfLosses: 2,
-    goalsScored: 55,
-    goalsConceded: 12,
-  };
-
   <>
     <div>
       <Link url={"/" ++ communityName}> {text("Start page")} </Link>
@@ -54,6 +25,8 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
+       let stats = getPlayerStats(player1Name, data##results |> toRecord);
+
        <>
          <Box textAlign="center">
            <Typography variant="h5"> {text("Head to Head")} </Typography>
@@ -67,9 +40,9 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
              {text(" ")}
              <span className="stats-player-wins">
                {text(
-                  string_of_int(stats.numberOfWins)
+                  string_of_int(stats.matchesWon)
                   ++ "-"
-                  ++ string_of_int(stats.numberOfLosses),
+                  ++ string_of_int(stats.matchesLost),
                 )}
              </span>
              {text(" ")}
@@ -82,12 +55,12 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
            data=[|
              {
                "title": player1Name,
-               "value": stats.numberOfWins,
+               "value": stats.matchesWon,
                "color": "#00cc00",
              },
              {
                "title": player2Name,
-               "value": stats.numberOfLosses,
+               "value": stats.matchesLost,
                "color": "#ff2200",
              },
            |]
@@ -106,7 +79,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
            )}
          />
          <ResultsTable results={data##results |> toRecord} communityName />
-       </>
+       </>;
      }}
   </>;
 };
