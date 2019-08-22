@@ -19,7 +19,7 @@ module.exports = {
       template: "src/index.html",
       inject: false
     }),
-    new Dotenv()
+    new Dotenv({ systemvars: true })
   ],
   devServer: {
     compress: true,
