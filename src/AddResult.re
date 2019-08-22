@@ -2,8 +2,6 @@ open Utils;
 open Queries;
 open Mutations;
 
-let fakePlayerNames = [|"FakePlayer1", "FakePlayer2"|];
-
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
@@ -70,6 +68,19 @@ let make =
             ~extraTime,
             (),
           )##variables,
+        ~refetchQueries=
+          _ =>
+            [|
+              ReasonApolloHooks.Utils.toQueryObj(
+                AllResultsQueryConfig.make(
+                  ~communityName,
+                  ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
+                  ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+                  (),
+                ),
+              ),
+              ReasonApolloHooks.Utils.toQueryObj(allPlayersQuery),
+            |],
         (),
       )
       |> Js.Promise.then_(_ => {

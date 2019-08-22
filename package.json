@@ -25,7 +25,7 @@
     "react-dom": "^16.8.1",
     "react-minimal-pie-chart": "^5.0.0",
     "reason-apollo": "^0.17.0",
-    "reason-apollo-hooks": "^2.4.0",
+    "reason-apollo-hooks": "git+https://github.com/MargaretKrutikova/reason-apollo-hooks.git#refetch-queries-vars",
     "reason-react": ">=0.7.0"
   },
   "devDependencies": {
