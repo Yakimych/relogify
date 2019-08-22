@@ -9,8 +9,11 @@ let includedInStats = (stats: playerStats) =>
   stats.matchesWon + stats.matchesLost >= minMatchesForStats;
 
 let matchesWonPerPlayed = (row: playerStats) =>
-  float_of_int(row.matchesWon)
-  /. float_of_int(row.matchesWon + row.matchesLost);
+  Js.Math.round(
+    float_of_int(row.matchesWon)
+    /. float_of_int(row.matchesWon + row.matchesLost)
+    *. 100.0,
+  );
 
 let goalsScoredPerMatch = (row: playerStats) =>
   float_of_int(row.goalsScored)

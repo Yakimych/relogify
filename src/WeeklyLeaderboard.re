@@ -61,7 +61,7 @@ let formatGoalsPerMatch = (goals: float) =>
   text(Js.Float.toFixedWithPrecision(goals, ~digits=1));
 
 let formatPercentage = (value: float) =>
-  text(string_of_int(int_of_float(value *. 100.0)) ++ "%");
+  text(string_of_int(int_of_float(value)) ++ "%");
 
 [@react.component]
 let make =
