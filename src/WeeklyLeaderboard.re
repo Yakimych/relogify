@@ -97,10 +97,10 @@ let make =
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       Js.log(data);
        let leaderboardRows =
          getLeaderboard(data##results |> toRecord)
-         |> List.sort(getSortFunc(sortBy, sortDirection));
+         ->Belt.List.keep(includedInStats)
+         ->Belt.List.sort(getSortFunc(sortBy, sortDirection));
 
        leaderboardRows->Belt.List.length === 0
          ? ReasonReact.null

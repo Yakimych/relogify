@@ -4,6 +4,10 @@ let byName = (a, b) => String.compare(a.playerName, b.playerName);
 
 let goalDiff = (row: playerStats) => row.goalsScored - row.goalsConceded;
 
+let minMatchesForStats = 0;
+let includedInStats = (stats: playerStats) =>
+  stats.matchesWon + stats.matchesLost >= minMatchesForStats;
+
 let matchesWonPerPlayed = (row: playerStats) =>
   float_of_int(row.matchesWon)
   /. float_of_int(row.matchesWon + row.matchesLost);
