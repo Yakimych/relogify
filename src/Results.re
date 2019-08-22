@@ -31,24 +31,7 @@ let make =
   | Data(data) =>
     <ResultsTable
       communityName
-      results={
-        data##results
-        ->Belt.Array.map(r =>
-            {
-              id: r##id,
-              player1: {
-                name: r##player1##name,
-              },
-              player2: {
-                name: r##player2##name,
-              },
-              player1goals: r##player1goals,
-              player2goals: r##player2goals,
-              date: r##date,
-              extratime: r##extratime,
-            }
-          )
-      }
+      results={data##results |> toRecord}
       newResults={highlightNewResults ? newResults : [||]}
     />
   };
