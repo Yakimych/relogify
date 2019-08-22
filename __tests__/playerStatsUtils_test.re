@@ -162,78 +162,13 @@ let testResults: list(result) = [
   },
 ];
 
-let expectedLeaderboard: list(playerStats) = [
-  {
-    playerName: "NewP1",
-    matchesWon: 1,
-    matchesLost: 0,
-    goalsScored: 2,
-    goalsConceded: 1,
-  },
-  {
-    playerName: "New Player 5",
-    matchesWon: 1,
-    matchesLost: 0,
-    goalsScored: 2,
-    goalsConceded: 0,
-  },
-  {
-    playerName: "Abc",
-    matchesWon: 4,
-    matchesLost: 2,
-    goalsScored: 15,
-    goalsConceded: 19,
-  },
-  {
-    playerName: "Yet another one",
-    matchesWon: 2,
-    matchesLost: 1,
-    goalsScored: 19,
-    goalsConceded: 16,
-  },
-  {
-    playerName: "Qwe",
-    matchesWon: 2,
-    matchesLost: 2,
-    goalsScored: 6,
-    goalsConceded: 8,
-  },
-  {
-    playerName: "Another new player",
-    matchesWon: 1,
-    matchesLost: 1,
-    goalsScored: 4,
-    goalsConceded: 2,
-  },
-  {
-    playerName: "Player4",
-    matchesWon: 1,
-    matchesLost: 2,
-    goalsScored: 24,
-    goalsConceded: 18,
-  },
-  {
-    playerName: "Def",
-    matchesWon: 0,
-    matchesLost: 2,
-    goalsScored: 4,
-    goalsConceded: 9,
-  },
-  {
-    playerName: "NewP2",
-    matchesWon: 0,
-    matchesLost: 1,
-    goalsScored: 1,
-    goalsConceded: 2,
-  },
-  {
-    playerName: "Cde",
-    matchesWon: 0,
-    matchesLost: 1,
-    goalsScored: 0,
-    goalsConceded: 2,
-  },
-];
+let expectedPlayerStatsForAbc: playerStats = {
+  playerName: "Abc",
+  matchesWon: 4,
+  matchesLost: 2,
+  goalsScored: 15,
+  goalsConceded: 19,
+};
 
 let emptyPlayerStats = (playerName: string) => {
   playerName,
@@ -287,8 +222,9 @@ describe("getLeaderboard", () => {
     let playerStats = getPlayerStats("Bob", [singleResult]);
     expect(playerStats) |> toEqual(expectedPlayerStats);
   });
-  // test("should return expected leaderboard for result list", () => {
-  //   let leaderboard = getLeaderboard(testResults) |> List.sort(byName);
-  //   expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
-  // });
+
+  test("should return expected leaderboard for result list", () => {
+    let playerStats = getPlayerStats("Abc", testResults);
+    expect(playerStats) |> toEqual(expectedPlayerStatsForAbc);
+  });
 });
