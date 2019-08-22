@@ -10,6 +10,14 @@ type result = {
   extratime: bool,
 };
 
+type playerStats = {
+  playerName: string,
+  matchesWon: int,
+  matchesLost: int,
+  goalsScored: int,
+  goalsConceded: int,
+};
+
 type streak = {
   results: list(result),
   endingResult: option(result),

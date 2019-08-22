@@ -1,26 +1,18 @@
 open Types;
 
-type leaderboardRow = {
-  playerName: string,
-  matchesWon: int,
-  matchesLost: int,
-  goalsScored: int,
-  goalsConceded: int,
-};
-
 let byName = (a, b) => String.compare(a.playerName, b.playerName);
 
-let goalDiff = (row: leaderboardRow) => row.goalsScored - row.goalsConceded;
+let goalDiff = (row: playerStats) => row.goalsScored - row.goalsConceded;
 
-let matchesWonPerPlayed = (row: leaderboardRow) =>
+let matchesWonPerPlayed = (row: playerStats) =>
   float_of_int(row.matchesWon)
   /. float_of_int(row.matchesWon + row.matchesLost);
 
-let goalsScoredPerMatch = (row: leaderboardRow) =>
+let goalsScoredPerMatch = (row: playerStats) =>
   float_of_int(row.goalsScored)
   /. float_of_int(row.matchesWon + row.matchesLost);
 
-let goalsConcededPerMatch = (row: leaderboardRow) =>
+let goalsConcededPerMatch = (row: playerStats) =>
   float_of_int(row.goalsConceded)
   /. float_of_int(row.matchesWon + row.matchesLost);
 
@@ -32,7 +24,7 @@ let emptyRow = (playerName: string) => {
   goalsConceded: 0,
 };
 
-let updateRow = (row: leaderboardRow, goalsScored: int, goalsConceded: int) => {
+let updateRow = (row: playerStats, goalsScored: int, goalsConceded: int) => {
   let isWin = goalsScored > goalsConceded;
 
   {
@@ -45,8 +37,8 @@ let updateRow = (row: leaderboardRow, goalsScored: int, goalsConceded: int) => {
 };
 
 let leaderboardReducer =
-    (leaderboardMap: Belt_MapString.t(leaderboardRow), result: result)
-    : Belt_MapString.t(leaderboardRow) => {
+    (leaderboardMap: Belt_MapString.t(playerStats), result: result)
+    : Belt_MapString.t(playerStats) => {
   let player1Row =
     leaderboardMap->Belt_MapString.getWithDefault(
       result.player1.name,
@@ -70,7 +62,7 @@ let leaderboardReducer =
     );
 };
 
-let getLeaderboard = (results: list(result)): list(leaderboardRow) =>
+let getLeaderboard = (results: list(result)): list(playerStats) =>
   results->Belt.List.reduce(Belt_MapString.empty, leaderboardReducer)
   |> Belt_MapString.toList
   |> List.map(((_, v)) => v);
