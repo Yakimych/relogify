@@ -1,7 +1,7 @@
 open Jest;
 open Expect;
 open Types;
-open LeaderboardUtils;
+open PlayerStatsUtils;
 
 let testResults: list(result) = [
   {
@@ -235,49 +235,60 @@ let expectedLeaderboard: list(playerStats) = [
   },
 ];
 
+let emptyPlayerStats = (playerName: string) => {
+  playerName,
+  goalsScored: 0,
+  goalsConceded: 0,
+  matchesWon: 0,
+  matchesLost: 0,
+};
+
+let singleResult = {
+  id: 0,
+  player1: {
+    name: "Bob",
+  },
+  player2: {
+    name: "Alice",
+  },
+  player1goals: 2,
+  player2goals: 3,
+  extratime: false,
+  date: Js.Date.fromString("2019-07-27T07:26:31.667+00:00"),
+};
+
 describe("getLeaderboard", () => {
-  test("should return empty leaderboard for empty result list", () => {
-    let leaderboard = getLeaderboard([]);
-    expect(leaderboard) |> toBe([]);
-  });
+  test("should return empty leaderboard for empty result list", () =>
+    expect(getPlayerStats("", [])) |> toEqual(emptyPlayerStats(""))
+  );
 
-  test("should return leaderboard with two entrues for single result", () => {
-    let singleResult = {
-      id: 0,
-      player1: {
-        name: "Bob",
-      },
-      player2: {
-        name: "Alice",
-      },
-      player1goals: 2,
-      player2goals: 3,
-      extratime: false,
-      date: Js.Date.fromString("2019-07-27T07:26:31.667+00:00"),
+  test("should return expected stats for first player", () => {
+    let expectedPlayerStats = {
+      playerName: "Alice",
+      matchesWon: 1,
+      matchesLost: 0,
+      goalsScored: 3,
+      goalsConceded: 2,
     };
-    let expectedLeaderboard = [
-      {
-        playerName: "Alice",
-        matchesWon: 1,
-        matchesLost: 0,
-        goalsScored: 3,
-        goalsConceded: 2,
-      },
-      {
-        playerName: "Bob",
-        matchesWon: 0,
-        matchesLost: 1,
-        goalsScored: 2,
-        goalsConceded: 3,
-      },
-    ];
 
-    let leaderboard = getLeaderboard([singleResult]) |> List.sort(byName);
-    expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
+    let playerStats = getPlayerStats("Alice", [singleResult]);
+    expect(playerStats) |> toEqual(expectedPlayerStats);
   });
 
-  test("should return expected leaderboard for result list", () => {
-    let leaderboard = getLeaderboard(testResults) |> List.sort(byName);
-    expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
+  test("should return expected stats for second player", () => {
+    let expectedPlayerStats = {
+      playerName: "Bob",
+      matchesWon: 0,
+      matchesLost: 1,
+      goalsScored: 2,
+      goalsConceded: 3,
+    };
+
+    let playerStats = getPlayerStats("Bob", [singleResult]);
+    expect(playerStats) |> toEqual(expectedPlayerStats);
   });
+  // test("should return expected leaderboard for result list", () => {
+  //   let leaderboard = getLeaderboard(testResults) |> List.sort(byName);
+  //   expect(leaderboard) |> toEqual(expectedLeaderboard |> List.sort(byName));
+  // });
 });
