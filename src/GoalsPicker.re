@@ -24,8 +24,9 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
            style={ReactDOMRe.Style.make(~width="80px", ())}
            variant="outlined"
            value={string_of_int(selectedGoals)}
-           // TODO: validNumberOfGoals
-           onChange={e => onChange(ReactEvent.Form.target(e)##value)}
+           onChange={e =>
+             onChange(ReactEvent.Form.target(e)##value |> validNumberOfGoals)
+           }
          />
        : <span>
            <NativeSelect

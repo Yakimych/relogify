@@ -18,9 +18,12 @@ let make = (~communityName: string) => {
       <TextField
         _type="date"
         value={formatDate(date)}
-        onChange={e =>
-          // TODO: Validate
-          setDate(_ => Js.Date.fromString(ReactEvent.Form.target(e)##value))}
+        onChange={e => {
+          let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
+          if (DateFns.isValid(date)) {
+            setDate(_ => date);
+          };
+        }}
       />
       <Button variant="contained" onClick=incrementWeek>
         {text("NEXT")}

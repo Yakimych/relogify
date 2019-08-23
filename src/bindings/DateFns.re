@@ -27,3 +27,5 @@ external startOfWeek: (Js.Date.t, {. "weekStartsOn": int}) => Js.Date.t =
 external compareAsc: (Js.Date.t, Js.Date.t) => int = "date-fns/compare_asc";
 [@bs.module]
 external compareDesc: (Js.Date.t, Js.Date.t) => int = "date-fns/compare_desc";
+
+[@bs.module] external isValid: Js.Date.t => bool = "date-fns/is_valid";

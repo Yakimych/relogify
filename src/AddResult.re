@@ -160,13 +160,13 @@ let make =
             disabled=isAddingResult
             _type="date"
             value={formatDate(date)}
-            onChange={e =>
-              /* TODO: Validate before setting */
-
-                setDate(_ =>
-                  Js.Date.fromString(ReactEvent.Form.target(e)##value)
-                )
-              }
+            onChange={e => {
+              let date =
+                Js.Date.fromString(ReactEvent.Form.target(e)##value);
+              if (DateFns.isValid(date)) {
+                setDate(_ => date);
+              };
+            }}
           />
         </div>
       </Paper>

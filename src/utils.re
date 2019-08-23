@@ -14,3 +14,8 @@ let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
 
 let toJsonDate = (date: Js.Date.t): Js.Json.t =>
   date |> Js.Date.toISOString |> Js.Json.string;
+
+let validNumberOfGoals = (goalsString: string): int =>
+  try (int_of_string(goalsString) |> Js.Math.max_int(0)) {
+  | Failure(_) => 0
+  };
