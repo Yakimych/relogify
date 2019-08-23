@@ -66,3 +66,7 @@ code {
 .stats-player-goals {
   font-size: smaller;
 }
+
+input[type="date"]::-webkit-clear-button {
+  display: none;
+}
