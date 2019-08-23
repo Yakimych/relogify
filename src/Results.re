@@ -28,25 +28,24 @@ let make =
       let lastFetchedResults =
         React.Ref.current(lastFetchedResultsRef) |> Js.Nullable.toOption;
 
-      switch (resultsQuery) {
-      | Data(data) =>
-        let freshResults = data##results |> toRecord;
-        switch (lastFetchedResults) {
-        | Some(actualLastFetchedResults) =>
-          setNewResults(_ =>
-            freshResults->Belt.List.keep(r =>
-              !actualLastFetchedResults->Belt.List.has(r, (==))
+      fullResultsQuery.data
+      ->Belt.Option.map(data => {
+          let newlyFetchedResults = data##results |> toRecord;
+          lastFetchedResults->Belt.Option.map(ar =>
+            setNewResults(_ =>
+              newlyFetchedResults->Belt.List.keep(r =>
+                !ar->Belt.List.has(r, (==))
+              )
             )
           )
-        | None => ()
-        };
+          |> ignore;
 
-        React.Ref.setCurrent(
-          lastFetchedResultsRef,
-          Js.Nullable.fromOption(Some(freshResults)),
-        );
-      | _ => ()
-      };
+          React.Ref.setCurrent(
+            lastFetchedResultsRef,
+            Js.Nullable.fromOption(Some(newlyFetchedResults)),
+          );
+        })
+      |> ignore;
       None;
     },
     [|
