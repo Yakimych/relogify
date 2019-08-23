@@ -20,37 +20,39 @@ let make =
       (),
     );
 
-  let (resultsQuery, _) =
+  let (resultsQuery, fullResultsQuery) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());
 
   React.useEffect1(
     () => {
-      Js.log("useEffect");
       let lastFetchedResults =
         React.Ref.current(lastFetchedResultsRef) |> Js.Nullable.toOption;
+
       switch (resultsQuery) {
       | Data(data) =>
         let freshResults = data##results |> toRecord;
         switch (lastFetchedResults) {
-        | Some(actualResults) =>
-          let resultsToSet =
+        | Some(actualLastFetchedResults) =>
+          setNewResults(_ =>
             freshResults->Belt.List.keep(r =>
-              actualResults->Belt.List.has(r, (==))
-            );
-          Js.log2("Set new results: ", resultsToSet);
-          setNewResults(_ => resultsToSet);
-          ();
-        | None => Js.log("Do nothing")
+              !actualLastFetchedResults->Belt.List.has(r, (==))
+            )
+          )
+        | None => ()
         };
+
         React.Ref.setCurrent(
           lastFetchedResultsRef,
           Js.Nullable.fromOption(Some(freshResults)),
         );
-      | _ => Js.log("Do nothing")
+      | _ => ()
       };
       None;
     },
-    [|resultsQuery|] // TODO: This reruns forever
+    [|
+      fullResultsQuery.data
+      ->Belt.Option.map(d => d##results->Belt.Array.length),
+    |],
   );
 
   switch (resultsQuery) {
