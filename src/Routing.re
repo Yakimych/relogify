@@ -9,25 +9,14 @@ let make = () => {
   <div className="App">
     <header className="App-header"> {text("Result log")} </header>
     <>
-      {switch (url.path) {
+      {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
        | [] => <Home />
-       | [communityName] =>
-         <CommunityStartPage
-           communityName={Js.Global.decodeURI(communityName)}
-         />
-       | [communityName, "history"] =>
-         <ResultHistory communityName={Js.Global.decodeURI(communityName)} />
+       | [communityName] => <CommunityStartPage communityName />
+       | [communityName, "history"] => <ResultHistory communityName />
        | [communityName, playerName] =>
-         <PlayerResults
-           communityName={Js.Global.decodeURI(communityName)}
-           playerName={Js.Global.decodeURI(playerName)}
-         />
+         <PlayerResults communityName playerName />
        | [communityName, player1Name, player2Name] =>
-         <HeadToHeadPage
-           communityName={Js.Global.decodeURI(communityName)}
-           player1Name={Js.Global.decodeURI(player1Name)}
-           player2Name={Js.Global.decodeURI(player2Name)}
-         />
+         <HeadToHeadPage communityName player1Name player2Name />
        | _ => <div> {text("Invalid route")} </div>
        }}
     </>
