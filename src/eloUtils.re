@@ -75,5 +75,11 @@ let eloRatingReducer =
     );
 };
 
-let getEloRankings = (results: list(result)): Belt_MapString.t(float) =>
-  results->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer);
+let byRating = ((_, rating1), (_, rating2)) =>
+  int_of_float(rating2 -. rating1);
+
+let getEloRankings = (results: list(result)): list((string, float)) =>
+  results
+  ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer)
+  ->Belt_MapString.toList
+  ->Belt.List.sort(byRating);
