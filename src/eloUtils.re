@@ -1,3 +1,7 @@
+/*
+ See https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/
+ for details about the used formula. K-factor of 32 has been chosen for the current implementation.
+ */
 open Types;
 
 type resultType =
@@ -5,8 +9,8 @@ type resultType =
   | Loss
   | Draw;
 
-let initialRanking = 1200.0;
-let initialRankings: Belt_MapString.t(float) = Belt_MapString.empty;
+let initialRating = 1200.0;
+let initialRatings: Belt_MapString.t(float) = Belt_MapString.empty;
 
 let kFactor = 32.0;
 
@@ -27,28 +31,20 @@ let getResultType = (result: result, playerName: string): resultType =>
       ? Win : Loss;
   };
 
-let getS1 = (resultType: resultType) =>
-  switch (resultType) {
+let getS =
+  fun
   | Win => 1.0
   | Draw => 0.5
-  | Loss => 0.0
-  };
-
-let getS2 = (resultType: resultType) =>
-  switch (resultType) {
-  | Win => 0.0
-  | Draw => 0.5
-  | Loss => 1.0
-  };
+  | Loss => 0.0;
 
 let getNewRating =
-    (oldRating: float, opponentRating: float, resultType: resultType): float => {
-  let r1 = getR(oldRating);
+    (playerRating: float, opponentRating: float, resultType: resultType)
+    : float => {
+  let r1 = getR(playerRating);
   let r2 = getR(opponentRating);
   let e1 = getE1(r1, r2);
-  let e2 = getE1(r2, r1);
-  let s = getS1(resultType);
-  oldRating +. kFactor *. (s -. e1);
+  let s = getS(resultType);
+  playerRating +. kFactor *. (s -. e1);
 };
 
 let eloRatingReducer =
@@ -57,23 +53,26 @@ let eloRatingReducer =
   let player1Rating =
     ratings->Belt_MapString.getWithDefault(
       result.player1.name,
-      initialRanking,
+      initialRating,
     );
   let player2Rating =
     ratings->Belt_MapString.getWithDefault(
       result.player2.name,
-      initialRanking,
+      initialRating,
     );
+
   let resultTypePlayer1 = getResultType(result, result.player1.name);
   let resultTypePlayer2 = getResultType(result, result.player2.name);
-  let newPlayer1Rating =
-    getNewRating(player1Rating, player2Rating, resultTypePlayer1);
-  let newPlayer2Rating =
-    getNewRating(player2Rating, player1Rating, resultTypePlayer2);
 
   ratings
-  ->Belt_MapString.set(result.player1.name, newPlayer1Rating)
-  ->Belt_MapString.set(result.player2.name, newPlayer2Rating);
+  ->Belt_MapString.set(
+      result.player1.name,
+      getNewRating(player1Rating, player2Rating, resultTypePlayer1),
+    )
+  ->Belt_MapString.set(
+      result.player2.name,
+      getNewRating(player2Rating, player1Rating, resultTypePlayer2),
+    );
 };
 
 let getEloRankings = (results: list(result)): Belt_MapString.t(float) =>

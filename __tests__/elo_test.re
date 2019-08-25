@@ -9,7 +9,7 @@ type getStreaksTestCase = {
 };
 
 let getStreaksTestCases: list(getStreaksTestCase) = [
-  {results: [], expectedRankings: initialRankings},
+  {results: [], expectedRankings: initialRatings},
   {
     results: [{name1: "a", name2: "b", goals1: 0, goals2: 0}],
     expectedRankings:
