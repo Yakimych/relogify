@@ -11,12 +11,23 @@ let make = () => {
     <>
       {switch (url.path) {
        | [] => <Home />
-       | [communityName] => <CommunityStartPage communityName />
-       | [communityName, "history"] => <ResultHistory communityName />
+       | [communityName] =>
+         <CommunityStartPage
+           communityName={Js.Global.decodeURI(communityName)}
+         />
+       | [communityName, "history"] =>
+         <ResultHistory communityName={Js.Global.decodeURI(communityName)} />
        | [communityName, playerName] =>
-         <PlayerResults communityName playerName />
+         <PlayerResults
+           communityName={Js.Global.decodeURI(communityName)}
+           playerName={Js.Global.decodeURI(playerName)}
+         />
        | [communityName, player1Name, player2Name] =>
-         <HeadToHeadPage communityName player1Name player2Name />
+         <HeadToHeadPage
+           communityName={Js.Global.decodeURI(communityName)}
+           player1Name={Js.Global.decodeURI(player1Name)}
+           player2Name={Js.Global.decodeURI(player2Name)}
+         />
        | _ => <div> {text("Invalid route")} </div>
        }}
     </>
