@@ -19,8 +19,6 @@ let make = (~communityName: string) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       let eloRatings = getEloRankings(data##results |> toRecord);
-
        <Table size="small">
          <TableHead>
            <TableRow>
@@ -29,24 +27,25 @@ let make = (~communityName: string) => {
            </TableRow>
          </TableHead>
          <TableBody>
-           {eloRatings->Belt.List.map(((playerName, rating)) =>
-              <TableRow key=playerName>
-                <TableCell align="right">
-                  <Link
-                    url={"/" ++ communityName ++ "/" ++ playerName}
-                    style=playerLinkStyle>
-                    {text(playerName)}
-                  </Link>
-                </TableCell>
-                <TableCell align="right">
-                  {text(Js.Float.toString(Js.Math.round(rating)))}
-                </TableCell>
-              </TableRow>
-            )
+           {getEloRankings(data##results |> toRecord)
+            ->Belt.List.map(((playerName, rating)) =>
+                <TableRow key=playerName>
+                  <TableCell align="right">
+                    <Link
+                      url={"/" ++ communityName ++ "/" ++ playerName}
+                      style=playerLinkStyle>
+                      {text(playerName)}
+                    </Link>
+                  </TableCell>
+                  <TableCell align="right">
+                    {text(Js.Float.toString(Js.Math.round(rating)))}
+                  </TableCell>
+                </TableRow>
+              )
             |> Array.of_list
             |> ReasonReact.array}
          </TableBody>
-       </Table>;
+       </Table>
      }}
     <Link url={"/" ++ communityName}> {text("Back to Start Page")} </Link>
   </Paper>;
