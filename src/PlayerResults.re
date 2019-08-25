@@ -1,4 +1,5 @@
 open Utils;
+open LeaderboardUtils;
 open PlayerStatsUtils;
 open Streaks;
 open Types;
@@ -37,6 +38,12 @@ let make = (~playerName: string, ~communityName: string) => {
            </Typography>
            <Typography>
              {text(
+                "Win/Loss ratio: "
+                ++ formatPercentage(playerStats |> matchesWonPerPlayed),
+              )}
+           </Typography>
+           <Typography>
+             {text(
                 "Total goals scored: "
                 ++ string_of_int(playerStats.goalsScored),
               )}
@@ -45,6 +52,24 @@ let make = (~playerName: string, ~communityName: string) => {
              {text(
                 "Total goals conceded: "
                 ++ string_of_int(playerStats.goalsConceded),
+              )}
+           </Typography>
+           <Typography>
+             {text(
+                "All-time goal difference: "
+                ++ formatGoalDiff(playerStats |> goalDiff),
+              )}
+           </Typography>
+           <Typography>
+             {text(
+                "Total goals scored per match: "
+                ++ formatGoalsPerMatch(playerStats |> goalsScoredPerMatch),
+              )}
+           </Typography>
+           <Typography>
+             {text(
+                "Total goals conceded per match: "
+                ++ formatGoalsPerMatch(playerStats |> goalsConcededPerMatch),
               )}
            </Typography>
            {streaks

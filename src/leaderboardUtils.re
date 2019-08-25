@@ -8,6 +8,15 @@ let minMatchesForStats = 0;
 let includedInStats = (stats: playerStats) =>
   stats.matchesWon + stats.matchesLost >= minMatchesForStats;
 
+let formatPercentage = (value: float) =>
+  string_of_int(int_of_float(value)) ++ "%";
+
+let formatGoalDiff = (diff: int) =>
+  (diff > 0 ? "+" : "") ++ string_of_int(diff);
+
+let formatGoalsPerMatch = (goals: float) =>
+  Js.Float.toFixedWithPrecision(goals, ~digits=1);
+
 let matchesWonPerPlayed = (row: playerStats) =>
   Js.Math.round(
     float_of_int(row.matchesWon)

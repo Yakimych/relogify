@@ -54,15 +54,6 @@ let getSortFunc =
   };
 };
 
-let formatGoalDiff = (diff: int) =>
-  text((diff > 0 ? "+" : "") ++ string_of_int(diff));
-
-let formatGoalsPerMatch = (goals: float) =>
-  text(Js.Float.toFixedWithPrecision(goals, ~digits=1));
-
-let formatPercentage = (value: float) =>
-  text(string_of_int(int_of_float(value)) ++ "%");
-
 [@react.component]
 let make =
     (
@@ -190,7 +181,7 @@ let make =
                           </Link>
                         </TableCell>
                         <TableCell style=numberCellStyle>
-                          {formatPercentage(r |> matchesWonPerPlayed)}
+                          {text(formatPercentage(r |> matchesWonPerPlayed))}
                         </TableCell>
                         <TableCell style=numberCellStyle>
                           {text(string_of_int(r.matchesWon))}
@@ -205,13 +196,17 @@ let make =
                           {text(string_of_int(r.goalsConceded))}
                         </TableCell>
                         <TableCell style=numberCellStyle>
-                          {formatGoalDiff(r |> goalDiff)}
+                          {text(formatGoalDiff(r |> goalDiff))}
                         </TableCell>
                         <TableCell style=numberCellStyle>
-                          {formatGoalsPerMatch(r |> goalsScoredPerMatch)}
+                          {text(
+                             formatGoalsPerMatch(r |> goalsScoredPerMatch),
+                           )}
                         </TableCell>
                         <TableCell style=numberCellStyle>
-                          {formatGoalsPerMatch(r |> goalsConcededPerMatch)}
+                          {text(
+                             formatGoalsPerMatch(r |> goalsConcededPerMatch),
+                           )}
                         </TableCell>
                       </TableRow>
                     )
