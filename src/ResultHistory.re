@@ -3,47 +3,72 @@ open DateFns;
 
 [@react.component]
 let make = (~communityName: string) => {
-  let (date, setDate) = React.useState(_ => Js.Date.make());
-  let incrementWeek = _ => setDate(d => d->addWeeks(1.0));
-  let decrementWeek = _ => setDate(d => d->addWeeks(-1.0));
-  let startDate = date->startOfWeek({"weekStartsOn": 1});
-  let endDate = startDate->addWeeks(1.0);
+  let weekStartDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
+
+  let (dateFrom, setDateFrom) = React.useState(_ => Some(weekStartDate));
+  let (dateTo, setDateTo) =
+    React.useState(_ => Some(weekStartDate->addWeeks(1.0)));
+
+  let setToday = _ => {
+    setDateFrom(_ => Some(weekStartDate));
+    setDateTo(_ => Some(weekStartDate->addWeeks(1.0)));
+  };
+
+  let setAllTime = _ => {
+    setDateFrom(_ => None);
+    setDateTo(_ => None);
+  };
+
+  let incrementWeek = _ => {
+    setDateFrom(df => df->Belt.Option.map(d => d->addWeeks(1.0)));
+    setDateTo(dt => dt->Belt.Option.map(d => d->addWeeks(1.0)));
+  };
+
+  let decrementWeek = _ => {
+    setDateFrom(df => df->Belt.Option.map(d => d->addWeeks(-1.0)));
+    setDateTo(dt => dt->Belt.Option.map(d => d->addWeeks(-1.0)));
+  };
 
   <>
-    <Link url={"/" ++ communityName}> {text("Back to Start Page")} </Link>
+    <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
     <Box margin="10px" textAlign="center">
+      <Box margin="10px" textAlign="center">
+        <Button variant="contained" onClick=setAllTime>
+          {text("All time")}
+        </Button>
+        <Button variant="contained" onClick=setToday>
+          {text("This week")}
+        </Button>
+      </Box>
       <Button variant="contained" onClick=decrementWeek>
-        {text("PREV")}
+        {text("<<")}
       </Button>
       <TextField
         _type="date"
-        value={formatDate(date)}
+        value={dateFrom->Belt.Option.mapWithDefault("", formatDate)}
         onChange={e => {
           let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
           if (DateFns.isValid(date)) {
-            setDate(_ => date);
+            setDateFrom(_ => Some(date));
+          };
+        }}
+      />
+      <TextField
+        _type="date"
+        value={dateTo->Belt.Option.mapWithDefault("", formatDate)}
+        onChange={e => {
+          let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
+          if (DateFns.isValid(date)) {
+            setDateTo(_ => Some(date));
           };
         }}
       />
       <Button variant="contained" onClick=incrementWeek>
-        {text("NEXT")}
+        {text(">>")}
       </Button>
     </Box>
-    <Box textAlign="center">
-      {text(
-         "Results from "
-         ++ formatDate(startDate)
-         ++ " to "
-         ++ formatDate(endDate),
-       )}
-    </Box>
-    <WeeklyLeaderboard communityName dateFrom=startDate dateTo=endDate />
+    <WeeklyLeaderboard communityName ?dateFrom ?dateTo />
     <Typography variant="h6"> {text("Results")} </Typography>
-    <Results
-      communityName
-      dateFrom=startDate
-      dateTo=endDate
-      highlightNewResults=false
-    />
+    <Results communityName ?dateFrom ?dateTo highlightNewResults=false />
   </>;
 };
