@@ -20,6 +20,30 @@ type getStreaksTestCase = {
   expectedStreaks: list(testStreak),
 };
 
+let toResult = (testScore: testResult) => {
+  id: 0,
+  player1: {
+    name: testScore.name1,
+  },
+  player2: {
+    name: testScore.name2,
+  },
+  player1goals: testScore.goals1,
+  player2goals: testScore.goals2,
+  date: Js.Date.fromString("2019-01-01"),
+  extratime: false,
+};
+
+let toTestResults: list(testResult) => list(result) = List.map(toResult);
+
+let toTempStreaks: list(testStreak) => list(streak) =
+  List.map(s =>
+    {
+      results: s.scores |> List.map(toResult) |> Belt.List.reverse,
+      endingResult: s.endingScore->Belt.Option.map(toResult),
+    }
+  );
+
 let getStreaksTestCases: list(getStreaksTestCase) = [
   {results: [], expectedStreaks: []},
   {
@@ -146,29 +170,6 @@ let getStreaksTestCases: list(getStreaksTestCase) = [
     ],
   },
 ];
-
-let toResult = (testScore: testResult) => {
-  id: 0,
-  player1: {
-    name: testScore.name1,
-  },
-  player2: {
-    name: testScore.name2,
-  },
-  player1goals: testScore.goals1,
-  player2goals: testScore.goals2,
-  date: Js.Date.fromString("2019-01-01"),
-  extratime: false,
-};
-
-let toTestResults: list(testResult) => list(result) = List.map(toResult);
-let toTempStreaks: list(testStreak) => list(streak) =
-  List.map(s =>
-    {
-      results: s.scores |> List.map(toResult) |> Belt.List.reverse,
-      endingResult: s.endingScore->Belt.Option.map(toResult),
-    }
-  );
 
 getStreaksTestCases->Belt.List.forEach(testData =>
   describe("getStreaks", () =>
