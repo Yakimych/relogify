@@ -102,7 +102,7 @@ let make =
     <>
       <Paper
         style={ReactDOMRe.Style.make(
-          ~width="550px",
+          ~width="600px",
           ~marginBottom="30px",
           (),
         )}>

@@ -88,6 +88,9 @@ let make =
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
+       let showEloRatings =
+         dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
+
        let leaderboardRows =
          getLeaderboard(data##results |> toRecord)
          ->Belt.List.keep(includedInStats)
@@ -96,11 +99,28 @@ let make =
        leaderboardRows->Belt.List.length === 0
          ? ReasonReact.null
          : <Paper style=containerStyle>
-             <Typography variant="h6"> {text("Weekly stats")} </Typography>
+             <Typography variant="h6"> {text("Stats")} </Typography>
              <Table style=containerStyle size="small">
                <TableHead>
                  <TableRow>
                    <TableCell align="right"> {text("Player")} </TableCell>
+                   {showEloRatings
+                      ? <>
+                          <Badge badgeContent="BETA" color="primary">
+                            <TableCell
+                              style=numberCellStyle title="Elo Rating">
+                              <TableSortLabel
+                                active={sortBy === WinsPerMatch}
+                                direction={
+                                  sortDirection === Asc ? "asc" : "desc"
+                                }
+                                onClick={_ => requestSort(WinsPerMatch)}>
+                                {text("Elo")}
+                              </TableSortLabel>
+                            </TableCell>
+                          </Badge>
+                        </>
+                      : ReasonReact.null}
                    <TableCell style=numberCellStyle title="Win Percentage">
                      <TableSortLabel
                        active={sortBy === WinsPerMatch}
@@ -180,6 +200,13 @@ let make =
                             {text(r.playerName)}
                           </Link>
                         </TableCell>
+                        {showEloRatings
+                           ? <TableCell style=numberCellStyle>
+                               {text(
+                                  formatPercentage(r |> matchesWonPerPlayed),
+                                )}
+                             </TableCell>
+                           : ReasonReact.null}
                         <TableCell style=numberCellStyle>
                           {text(formatPercentage(r |> matchesWonPerPlayed))}
                         </TableCell>

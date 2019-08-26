@@ -67,7 +67,7 @@ let make = (~communityName: string) => {
         {text(">>")}
       </Button>
     </Box>
-    <WeeklyLeaderboard communityName ?dateFrom ?dateTo />
+    <Stats communityName ?dateFrom ?dateTo />
     <Typography variant="h6"> {text("Results")} </Typography>
     <Results communityName ?dateFrom ?dateTo highlightNewResults=false />
   </>;
