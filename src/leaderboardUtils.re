@@ -1,5 +1,7 @@
 open Types;
 
+type playerStatsMap = Belt_MapString.t(playerStats);
+
 let byName = (a, b) => String.compare(a.playerName, b.playerName);
 
 let goalDiff = (row: playerStats) => row.goalsScored - row.goalsConceded;
@@ -53,8 +55,7 @@ let updateRow = (row: playerStats, goalsScored: int, goalsConceded: int) => {
 };
 
 let leaderboardReducer =
-    (leaderboardMap: Belt_MapString.t(playerStats), result: result)
-    : Belt_MapString.t(playerStats) => {
+    (leaderboardMap: playerStatsMap, result: result): playerStatsMap => {
   let player1Row =
     leaderboardMap->Belt_MapString.getWithDefault(
       result.player1.name,

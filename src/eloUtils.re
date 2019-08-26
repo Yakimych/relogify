@@ -4,13 +4,15 @@
  */
 open Types;
 
+type eloMap = Belt_MapString.t(float);
+
 type resultType =
   | Win
   | Loss
   | Draw;
 
 let initialRating = 1200.0;
-let initialRatings: Belt_MapString.t(float) = Belt_MapString.empty;
+let initialRatings: eloMap = Belt_MapString.empty;
 
 let kFactor = 32.0;
 
@@ -47,9 +49,7 @@ let getNewRating =
   playerRating +. kFactor *. (s -. e1);
 };
 
-let eloRatingReducer =
-    (ratings: Belt_MapString.t(float), result: result)
-    : Belt_MapString.t(float) => {
+let eloRatingReducer = (ratings: eloMap, result: result): eloMap => {
   let player1Rating =
     ratings->Belt_MapString.getWithDefault(
       result.player1.name,
