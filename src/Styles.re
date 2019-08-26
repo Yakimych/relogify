@@ -1,4 +1,4 @@
-let containerStyle = ReactDOMRe.Style.make(~width="550px", ());
+let containerStyle = ReactDOMRe.Style.make(~width="600px", ());
 
 let numberCellStyle =
   ReactDOMRe.Style.make(
@@ -10,7 +10,7 @@ let numberCellStyle =
 
 let playerLinkStyle =
   ReactDOMRe.Style.make(
-    ~width="550px",
+    ~width="600px",
     ~textDecoration="none",
     ~color="rgba(0, 0, 0, 0.87)",
     (),

@@ -7,7 +7,7 @@ let make = (~communityName) => {
   let endDate = now->addWeeks(1.0);
 
   <>
-    <WeeklyLeaderboard communityName dateFrom=startDate dateTo=endDate />
+    <Stats communityName dateFrom=startDate dateTo=endDate />
     <ExpansionPanel>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Fab size="small" color="primary"> <AddIcon /> </Fab>
