@@ -11,7 +11,7 @@ let includedInStats = (stats: playerStats) =>
   stats.matchesWon + stats.matchesLost >= minMatchesForStats;
 
 let formatPercentage = (value: float) =>
-  string_of_int(int_of_float(value)) ++ "%";
+  (value |> int_of_float |> string_of_int) ++ "%";
 
 let formatGoalDiff = (diff: int) =>
   (diff > 0 ? "+" : "") ++ string_of_int(diff);

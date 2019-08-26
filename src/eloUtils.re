@@ -79,10 +79,7 @@ let eloRatingReducer = (ratings: eloMap, result: result): eloMap => {
 let byRating = ((_, rating1), (_, rating2)) =>
   int_of_float(rating2 -. rating1);
 
-let getEloRankings = (results: list(result)): list((string, float)) => {
+let getEloRatingMap = (results: list(result)): eloMap =>
   results
   ->Belt.List.sort(resultsByDate)
-  ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer)
-  ->Belt_MapString.toList
-  ->Belt.List.sort(byRating);
-};
+  ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer);
