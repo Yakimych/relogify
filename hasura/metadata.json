@@ -1,0 +1,103 @@
+{
+  "functions": [],
+  "remote_schemas": [],
+  "query_collections": [],
+  "allowlist": [],
+  "tables": [
+    {
+      "table": "communities",
+      "object_relationships": [],
+      "array_relationships": [
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "communityId",
+              "table": "results"
+            }
+          },
+          "name": "results",
+          "comment": null
+        },
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "communityId",
+              "table": "players"
+            }
+          },
+          "name": "players",
+          "comment": null
+        }
+      ],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "results",
+      "object_relationships": [
+        {
+          "using": { "foreign_key_constraint_on": "communityId" },
+          "name": "community",
+          "comment": null
+        },
+        {
+          "using": { "foreign_key_constraint_on": "player1Id" },
+          "name": "player1",
+          "comment": null
+        },
+        {
+          "using": { "foreign_key_constraint_on": "player2Id" },
+          "name": "player2",
+          "comment": null
+        }
+      ],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "players",
+      "object_relationships": [
+        {
+          "using": { "foreign_key_constraint_on": "communityId" },
+          "name": "community",
+          "comment": null
+        }
+      ],
+      "array_relationships": [
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "player1Id",
+              "table": "results"
+            }
+          },
+          "name": "resultsAsPlayer1",
+          "comment": null
+        },
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "player2Id",
+              "table": "results"
+            }
+          },
+          "name": "resultsAsPlayer2",
+          "comment": null
+        }
+      ],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    }
+  ],
+  "query_templates": []
+}
