@@ -1,4 +1,5 @@
 open Types;
+open Utils;
 
 let startNewStreakWithResult = (result: result, streaks: list(streak)) => [
   {results: [result], endingResult: None},
@@ -42,9 +43,6 @@ let resultStreakReducer =
       }
     );
 };
-
-let resultsByDate = (first: result, second: result) =>
-  DateFns.compareAsc(first.date, second.date);
 
 let getAllStreaks =
     (playerName: string, results: list(result)): list(streak) =>

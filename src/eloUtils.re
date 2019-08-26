@@ -3,6 +3,7 @@
  for details about the used formula. K-factor of 32 has been chosen for the current implementation.
  */
 open Types;
+open Utils;
 
 type eloMap = Belt_MapString.t(float);
 
@@ -78,8 +79,10 @@ let eloRatingReducer = (ratings: eloMap, result: result): eloMap => {
 let byRating = ((_, rating1), (_, rating2)) =>
   int_of_float(rating2 -. rating1);
 
-let getEloRankings = (results: list(result)): list((string, float)) =>
+let getEloRankings = (results: list(result)): list((string, float)) => {
   results
+  ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer)
   ->Belt_MapString.toList
   ->Belt.List.sort(byRating);
+};

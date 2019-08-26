@@ -1,4 +1,9 @@
+open Types;
+
 let text = ReasonReact.string;
+
+let resultsByDate = (first: result, second: result) =>
+  DateFns.compareAsc(first.date, second.date);
 
 let formatDate = (date: Js.Date.t) => date->DateFns.format("YYYY-MM-DD");
 let formatDateTime = (date: Js.Date.t) =>
