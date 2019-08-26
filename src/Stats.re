@@ -123,7 +123,7 @@ let make =
                             <TableCell
                               style=numberCellStyle title="Elo Rating">
                               <TableSortLabel
-                                active={sortBy === WinsPerMatch}
+                                active={sortBy == EloRating(ratingsMap)}
                                 direction={
                                   sortDirection === Asc ? "asc" : "desc"
                                 }
