@@ -13,7 +13,6 @@ let make = () => {
        | [] => <Home />
        | [communityName] => <CommunityStartPage communityName />
        | [communityName, "history"] => <ResultHistory communityName />
-       | [communityName, "elo"] => <EloRanking communityName />
        | [communityName, playerName] =>
          <PlayerResults communityName playerName />
        | [communityName, player1Name, player2Name] =>

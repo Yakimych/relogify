@@ -3,8 +3,10 @@ open LeaderboardUtils;
 open Types;
 open Queries;
 open Styles;
+open EloUtils;
 
 type columnType =
+  | EloRating(eloMap)
   | WinsPerMatch
   | MatchesWon
   | MatchesLost
@@ -20,6 +22,13 @@ type sortDirection =
 
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
+  | EloRating(ratingsMap) => (
+      (row: playerStats) => {
+        ratingsMap
+        ->Belt_MapString.get(row.playerName)
+        ->Belt.Option.getWithDefault(0.0);
+      }
+    )
   | WinsPerMatch => ((row: playerStats) => row |> matchesWonPerPlayed)
   | MatchesWon => ((row: playerStats) => float_of_int(row.matchesWon))
   | MatchesLost => ((row: playerStats) => float_of_int(row.matchesLost))
@@ -88,11 +97,15 @@ let make =
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
+       let results = data##results |> toRecord;
        let showEloRatings =
          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 
+       let ratingsMap =
+         showEloRatings ? getEloRatingMap(results) : Belt_MapString.empty;
+
        let leaderboardRows =
-         getLeaderboard(data##results |> toRecord)
+         getLeaderboard(results)
          ->Belt.List.keep(includedInStats)
          ->Belt.List.sort(getSortFunc(sortBy, sortDirection));
 
@@ -114,7 +127,9 @@ let make =
                                 direction={
                                   sortDirection === Asc ? "asc" : "desc"
                                 }
-                                onClick={_ => requestSort(WinsPerMatch)}>
+                                onClick={_ =>
+                                  requestSort(EloRating(ratingsMap))
+                                }>
                                 {text("Elo")}
                               </TableSortLabel>
                             </TableCell>
@@ -203,7 +218,13 @@ let make =
                         {showEloRatings
                            ? <TableCell style=numberCellStyle>
                                {text(
-                                  formatPercentage(r |> matchesWonPerPlayed),
+                                  ratingsMap->Belt_MapString.getWithDefault(
+                                    r.playerName,
+                                    initialRating,
+                                  )
+                                  |> Js.Math.round
+                                  |> int_of_float
+                                  |> string_of_int,
                                 )}
                              </TableCell>
                            : ReasonReact.null}
