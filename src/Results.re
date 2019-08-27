@@ -50,12 +50,7 @@ let make =
       |> ignore;
       None;
     },
-    [|
-      fullResultsQuery.data
-      // TODO: remove this line when
-      // https://github.com/Yakimych/reason-apollo-hooks/tree/memoize-result-in-query is merged
-      ->Belt.Option.map(d => d##results->Belt.Array.length),
-    |],
+    [|fullResultsQuery.data|],
   );
 
   switch (resultsQuery) {
