@@ -6,6 +6,7 @@ open EloUtils;
 let make =
     (
       ~communityName: string,
+      ~temp_showRatings: bool=false,
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
       ~highlightNewResults: bool,
@@ -69,6 +70,7 @@ let make =
       communityName
       results={state.resultsWithRatings}
       newResults={highlightNewResults ? newResults : []}
+      temp_showRatings
     />;
   };
 };

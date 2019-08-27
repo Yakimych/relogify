@@ -69,6 +69,14 @@ let make = (~communityName: string) => {
     </Box>
     <Stats communityName ?dateFrom ?dateTo />
     <Typography variant="h6"> {text("Results")} </Typography>
-    <Results communityName ?dateFrom ?dateTo highlightNewResults=false />
+    <Results
+      communityName
+      ?dateFrom
+      ?dateTo
+      highlightNewResults=false
+      temp_showRatings={
+        dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
+      }
+    />
   </>;
 };

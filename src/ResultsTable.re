@@ -43,6 +43,7 @@ let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
 let make =
     (
       ~results: list(resultWithRatings),
+      ~temp_showRatings: bool=false,
       ~newResults: option(list(result))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
@@ -103,10 +104,12 @@ let make =
                      style=playerLinkStyle>
                      {text(r.player1.name)}
                    </Link>
-                   <Rating
-                     ratingBefore={resultWithRatings.player1RatingBefore}
-                     ratingAfter={resultWithRatings.player1RatingAfter}
-                   />
+                   {temp_showRatings
+                      ? <Rating
+                          ratingBefore={resultWithRatings.player1RatingBefore}
+                          ratingAfter={resultWithRatings.player1RatingAfter}
+                        />
+                      : ReasonReact.null}
                  </TableCell>
                  <TableCell style=numberCellStyle>
                    {text(string_of_int(r.player1goals))}
@@ -121,10 +124,12 @@ let make =
                      style=playerLinkStyle>
                      {text(r.player2.name)}
                    </Link>
-                   <Rating
-                     ratingBefore={resultWithRatings.player2RatingBefore}
-                     ratingAfter={resultWithRatings.player2RatingAfter}
-                   />
+                   {temp_showRatings
+                      ? <Rating
+                          ratingBefore={resultWithRatings.player2RatingBefore}
+                          ratingAfter={resultWithRatings.player2RatingAfter}
+                        />
+                      : ReasonReact.null}
                  </TableCell>
                  <TableCell align="right">
                    {text(r.extratime ? "X" : "")}
