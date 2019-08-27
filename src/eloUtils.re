@@ -7,6 +7,19 @@ open Utils;
 
 type eloMap = Belt_MapString.t(float);
 
+type resultWithRatings = {
+  result,
+  player1RatingBefore: float,
+  player1RatingAfter: float,
+  player2RatingBefore: float,
+  player2RatingAfter: float,
+};
+
+type state = {
+  ratings: eloMap,
+  resultsWithRatings: list(resultWithRatings),
+};
+
 type resultType =
   | Win
   | Loss
@@ -50,36 +63,55 @@ let getNewRating =
   playerRating +. kFactor *. (s -. e1);
 };
 
-let eloRatingReducer = (ratings: eloMap, result: result): eloMap => {
+let eloRatingReducer = (state: state, result: result): state => {
   let player1Rating =
-    ratings->Belt_MapString.getWithDefault(
-      result.player1.name,
-      initialRating,
-    );
+    state.ratings
+    ->Belt_MapString.getWithDefault(result.player1.name, initialRating);
   let player2Rating =
-    ratings->Belt_MapString.getWithDefault(
-      result.player2.name,
-      initialRating,
-    );
+    state.ratings
+    ->Belt_MapString.getWithDefault(result.player2.name, initialRating);
 
   let resultTypePlayer1 = getResultType(result, result.player1.name);
   let resultTypePlayer2 = getResultType(result, result.player2.name);
 
-  ratings
-  ->Belt_MapString.set(
-      result.player1.name,
-      getNewRating(player1Rating, player2Rating, resultTypePlayer1),
-    )
-  ->Belt_MapString.set(
-      result.player2.name,
-      getNewRating(player2Rating, player1Rating, resultTypePlayer2),
-    );
+  let newPlayer1Rating =
+    getNewRating(player1Rating, player2Rating, resultTypePlayer1);
+  let newPlayer2Rating =
+    getNewRating(player2Rating, player1Rating, resultTypePlayer2);
+
+  let newRatingMap =
+    state.ratings
+    ->Belt_MapString.set(result.player1.name, newPlayer1Rating)
+    ->Belt_MapString.set(result.player2.name, newPlayer2Rating);
+  {
+    ratings: newRatingMap,
+    resultsWithRatings: [
+      {
+        result,
+        player1RatingBefore: player1Rating,
+        player1RatingAfter: newPlayer1Rating,
+        player2RatingBefore: player2Rating,
+        player2RatingAfter: newPlayer2Rating,
+      },
+      ...state.resultsWithRatings,
+    ],
+  };
 };
 
-let byRating = ((_, rating1), (_, rating2)) =>
-  int_of_float(rating2 -. rating1);
+// let byRating = ((_, rating1), (_, rating2)) =>
+//   int_of_float(rating2 -. rating1);
 
-let getEloRatingMap = (results: list(result)): eloMap =>
+// let getEloRatingMap = (results: list(result)): eloMap =>
+//   results
+//   ->Belt.List.sort(resultsByDate)
+//   ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer);
+
+let attachRatings = (results: list(result)): state =>
   results
   ->Belt.List.sort(resultsByDate)
-  ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer);
+  ->Belt.List.reduce(
+      {ratings: Belt_MapString.empty, resultsWithRatings: []},
+      eloRatingReducer,
+    );
+// |> Belt_MapString.toList
+// |> List.map(((_, v)) => v);

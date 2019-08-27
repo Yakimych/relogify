@@ -4,6 +4,7 @@ open PlayerStatsUtils;
 open Streaks;
 open Types;
 open Queries;
+open EloUtils;
 
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
@@ -23,6 +24,7 @@ let make = (~playerName: string, ~communityName: string) => {
        let playerStats: playerStats = getPlayerStats(playerName, results);
 
        let streaks = getAllStreaks(playerName, results);
+       let state = results |> attachRatings;
 
        <>
          <Box textAlign="center">
@@ -57,7 +59,7 @@ let make = (~playerName: string, ~communityName: string) => {
            <Typography>
              {text(
                 "All-time goal difference: "
-                ++ formatGoalDiff(playerStats |> goalDiff),
+                ++ (playerStats |> goalDiff |> formatDiff),
               )}
            </Typography>
            <Typography>
@@ -92,7 +94,7 @@ let make = (~playerName: string, ~communityName: string) => {
               )}
          </Box>
          <ResultsTable
-           results={data##results |> toRecord}
+           results={state.resultsWithRatings}
            mainPlayerName=playerName
            communityName
          />
