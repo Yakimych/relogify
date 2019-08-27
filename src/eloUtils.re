@@ -15,8 +15,10 @@ type resultWithRatings = {
   player2RatingAfter: float,
 };
 
-type state = {
-  ratings: eloMap,
+// This is only necessary temporarily while ratings are recalculated on the frontend
+type temp_resultsWithRatingMap = {
+  ratingMap: eloMap,
+  // Ratings are going to be part of the result type as soon as this information is persisted
   resultsWithRatings: list(resultWithRatings),
 };
 
@@ -63,12 +65,14 @@ let getNewRating =
   playerRating +. kFactor *. (s -. e1);
 };
 
-let eloRatingReducer = (state: state, result: result): state => {
+let eloRatingReducer =
+    (state: temp_resultsWithRatingMap, result: result)
+    : temp_resultsWithRatingMap => {
   let player1Rating =
-    state.ratings
+    state.ratingMap
     ->Belt_MapString.getWithDefault(result.player1.name, initialRating);
   let player2Rating =
-    state.ratings
+    state.ratingMap
     ->Belt_MapString.getWithDefault(result.player2.name, initialRating);
 
   let resultTypePlayer1 = getResultType(result, result.player1.name);
@@ -80,11 +84,11 @@ let eloRatingReducer = (state: state, result: result): state => {
     getNewRating(player2Rating, player1Rating, resultTypePlayer2);
 
   let newRatingMap =
-    state.ratings
+    state.ratingMap
     ->Belt_MapString.set(result.player1.name, newPlayer1Rating)
     ->Belt_MapString.set(result.player2.name, newPlayer2Rating);
   {
-    ratings: newRatingMap,
+    ratingMap: newRatingMap,
     resultsWithRatings: [
       {
         result,
@@ -98,20 +102,10 @@ let eloRatingReducer = (state: state, result: result): state => {
   };
 };
 
-// let byRating = ((_, rating1), (_, rating2)) =>
-//   int_of_float(rating2 -. rating1);
-
-// let getEloRatingMap = (results: list(result)): eloMap =>
-//   results
-//   ->Belt.List.sort(resultsByDate)
-//   ->Belt.List.reduce(Belt_MapString.empty, eloRatingReducer);
-
-let attachRatings = (results: list(result)): state =>
+let attachRatings = (results: list(result)): temp_resultsWithRatingMap =>
   results
   ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce(
-      {ratings: Belt_MapString.empty, resultsWithRatings: []},
+      {ratingMap: Belt_MapString.empty, resultsWithRatings: []},
       eloRatingReducer,
     );
-// |> Belt_MapString.toList
-// |> List.map(((_, v)) => v);

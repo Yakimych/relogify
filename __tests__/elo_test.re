@@ -79,7 +79,7 @@ getStreaksTestCases->Belt.List.forEach(testData =>
     test("should return expected rankings", () => {
       let resultsWithRatings = testData.results->toTestResults->attachRatings;
       let ratings =
-        resultsWithRatings.ratings->Belt_MapString.map(Js.Math.round);
+        resultsWithRatings.ratingMap->Belt_MapString.map(Js.Math.round);
 
       expect(ratings) |> toEqual(testData.expectedRankings);
     })

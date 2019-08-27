@@ -43,6 +43,7 @@ let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
 let make =
     (
       ~results: list(resultWithRatings),
+      // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
       ~newResults: option(list(result))=?,
       ~communityName: string,
