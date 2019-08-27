@@ -124,14 +124,14 @@ let make =
                               <TableSortLabel
                                 active={
                                   sortBy
-                                  == EloRating(resultsWithRatings.ratings)
+                                  == EloRating(resultsWithRatings.ratingMap)
                                 }
                                 direction={
                                   sortDirection === Asc ? "asc" : "desc"
                                 }
                                 onClick={_ =>
                                   requestSort(
-                                    EloRating(resultsWithRatings.ratings),
+                                    EloRating(resultsWithRatings.ratingMap),
                                   )
                                 }>
                                 {text("Elo")}
@@ -222,7 +222,7 @@ let make =
                         {showEloRatings
                            ? <TableCell style=numberCellStyle>
                                {text(
-                                  resultsWithRatings.ratings
+                                  resultsWithRatings.ratingMap
                                   ->Belt_MapString.getWithDefault(
                                       r.playerName,
                                       initialRating,
