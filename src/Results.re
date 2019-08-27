@@ -1,5 +1,6 @@
 open Queries;
 open Utils;
+open EloUtils;
 
 [@react.component]
 let make =
@@ -61,10 +62,13 @@ let make =
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
+    let results = data##results |> toRecord;
+    let state = results |> attachRatings;
+
     <ResultsTable
       communityName
-      results={data##results |> toRecord}
+      results={state.resultsWithRatings}
       newResults={highlightNewResults ? newResults : []}
-    />
+    />;
   };
 };

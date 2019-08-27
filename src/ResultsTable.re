@@ -1,6 +1,7 @@
 open Styles;
 open Utils;
 open Types;
+open EloUtils;
 
 let getPlayerStyle = (isWinningPlayer: bool) =>
   ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());
@@ -41,7 +42,7 @@ let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
 [@react.component]
 let make =
     (
-      ~results: list(result),
+      ~results: list(resultWithRatings),
       ~newResults: option(list(result))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
@@ -65,7 +66,8 @@ let make =
         </TableHead>
         <TableBody>
           {results
-           ->Belt.List.map(r => {
+           ->Belt.List.map(resultWithRatings => {
+               let r = resultWithRatings.result;
                let player1Won = r.player1goals > r.player2goals;
                let player2Won = !player1Won;
                let mainPlayerWon =
@@ -101,6 +103,10 @@ let make =
                      style=playerLinkStyle>
                      {text(r.player1.name)}
                    </Link>
+                   <Rating
+                     ratingBefore={resultWithRatings.player1RatingBefore}
+                     ratingAfter={resultWithRatings.player1RatingAfter}
+                   />
                  </TableCell>
                  <TableCell style=numberCellStyle>
                    {text(string_of_int(r.player1goals))}
@@ -115,6 +121,10 @@ let make =
                      style=playerLinkStyle>
                      {text(r.player2.name)}
                    </Link>
+                   <Rating
+                     ratingBefore={resultWithRatings.player2RatingBefore}
+                     ratingAfter={resultWithRatings.player2RatingAfter}
+                   />
                  </TableCell>
                  <TableCell align="right">
                    {text(r.extratime ? "X" : "")}

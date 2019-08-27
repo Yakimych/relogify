@@ -2,6 +2,7 @@ open Utils;
 open PlayerStatsUtils;
 open Types;
 open Queries;
+open EloUtils;
 
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
@@ -22,7 +23,9 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       let stats = getPlayerStats(player1Name, data##results |> toRecord);
+       let results = data##results |> toRecord;
+       let stats = getPlayerStats(player1Name, results);
+       let resultsWithRatings = results |> attachRatings;
 
        <>
          <Box textAlign="center">
@@ -75,7 +78,10 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
              (),
            )}
          />
-         <ResultsTable results={data##results |> toRecord} communityName />
+         <ResultsTable
+           results={resultsWithRatings.resultsWithRatings}
+           communityName
+         />
        </>;
      }}
     <Link url={"/" ++ communityName}> {text("Start page")} </Link>

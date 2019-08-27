@@ -101,8 +101,7 @@ let make =
        let showEloRatings =
          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 
-       let ratingsMap =
-         showEloRatings ? getEloRatingMap(results) : Belt_MapString.empty;
+       let resultsWithRatings = results |> attachRatings;
 
        let leaderboardRows =
          getLeaderboard(results)
@@ -123,12 +122,17 @@ let make =
                             <TableCell
                               style=numberCellStyle title="Elo Rating">
                               <TableSortLabel
-                                active={sortBy == EloRating(ratingsMap)}
+                                active={
+                                  sortBy
+                                  == EloRating(resultsWithRatings.ratings)
+                                }
                                 direction={
                                   sortDirection === Asc ? "asc" : "desc"
                                 }
                                 onClick={_ =>
-                                  requestSort(EloRating(ratingsMap))
+                                  requestSort(
+                                    EloRating(resultsWithRatings.ratings),
+                                  )
                                 }>
                                 {text("Elo")}
                               </TableSortLabel>
@@ -218,10 +222,11 @@ let make =
                         {showEloRatings
                            ? <TableCell style=numberCellStyle>
                                {text(
-                                  ratingsMap->Belt_MapString.getWithDefault(
-                                    r.playerName,
-                                    initialRating,
-                                  )
+                                  resultsWithRatings.ratings
+                                  ->Belt_MapString.getWithDefault(
+                                      r.playerName,
+                                      initialRating,
+                                    )
                                   |> Js.Math.round
                                   |> int_of_float
                                   |> string_of_int,
@@ -244,7 +249,7 @@ let make =
                           {text(string_of_int(r.goalsConceded))}
                         </TableCell>
                         <TableCell style=numberCellStyle>
-                          {text(formatGoalDiff(r |> goalDiff))}
+                          {text(r |> goalDiff |> formatDiff)}
                         </TableCell>
                         <TableCell style=numberCellStyle>
                           {text(

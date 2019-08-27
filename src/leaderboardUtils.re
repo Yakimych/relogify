@@ -13,8 +13,7 @@ let includedInStats = (stats: playerStats) =>
 let formatPercentage = (value: float) =>
   (value |> int_of_float |> string_of_int) ++ "%";
 
-let formatGoalDiff = (diff: int) =>
-  (diff > 0 ? "+" : "") ++ string_of_int(diff);
+let formatDiff = (diff: int) => (diff > 0 ? "+" : "") ++ string_of_int(diff);
 
 let formatGoalsPerMatch = (goals: float) =>
   Js.Float.toFixedWithPrecision(goals, ~digits=1);

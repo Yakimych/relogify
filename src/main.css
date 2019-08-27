@@ -70,3 +70,8 @@ code {
 input[type="date"]::-webkit-clear-button {
   display: none;
 }
+
+.rating {
+  font-weight: normal;
+  margin-left: 5px;
+}
