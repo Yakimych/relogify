@@ -1,4 +1,5 @@
 open EloUtils;
+open Utils;
 open BsRecharts;
 
 [@react.component]
@@ -12,7 +13,7 @@ let make =
       )
     ->Belt.List.map(r =>
         {
-          "date": r.result.date,
+          "date": formatDate(r.result.date),
           "rating":
             Js.Math.round(
               r.result.player1.name === playerName
@@ -28,7 +29,7 @@ let make =
       <LineChart data>
         <CartesianGrid />
         <XAxis dataKey="date" />
-        <YAxis />
+        <YAxis domain=[|"auto", "auto"|] />
         <Tooltip />
         <Line _type=`monotone dataKey="rating" stroke="#8884d8" />
       </LineChart>
