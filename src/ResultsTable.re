@@ -48,7 +48,15 @@ let make =
       ~newResults: option(list(result))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
-    ) =>
+    ) => {
+  let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
+    React.useState(_ => None);
+
+  let showGraphForPlayer = (playerName: string) =>
+    setGraphIsShownForPlayer(_ => Some(playerName));
+
+  let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
+
   <>
     <Paper style=containerStyle>
       <Table style=containerStyle size="small">
@@ -107,6 +115,9 @@ let make =
                    </Link>
                    {temp_showRatings
                       ? <Rating
+                          onClick={_ =>
+                            showGraphForPlayer(result.player1.name)
+                          }
                           ratingBefore={resultWithRatings.player1RatingBefore}
                           ratingAfter={resultWithRatings.player1RatingAfter}
                         />
@@ -127,6 +138,9 @@ let make =
                    </Link>
                    {temp_showRatings
                       ? <Rating
+                          onClick={_ =>
+                            showGraphForPlayer(result.player2.name)
+                          }
                           ratingBefore={resultWithRatings.player2RatingBefore}
                           ratingAfter={resultWithRatings.player2RatingAfter}
                         />
@@ -142,5 +156,15 @@ let make =
            ->ReasonReact.array}
         </TableBody>
       </Table>
+      {graphIsShownForPlayer->Belt.Option.mapWithDefault(
+         ReasonReact.null, playerName =>
+         <EloGraphDialog
+           isOpen=true
+           onClose=hideGraphForPlayer
+           playerName
+           resultsWithRatings=results
+         />
+       )}
     </Paper>
   </>;
+};

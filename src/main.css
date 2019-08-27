@@ -74,4 +74,5 @@ input[type="date"]::-webkit-clear-button {
 .rating {
   font-weight: normal;
   margin-left: 5px;
+  cursor: pointer;
 }
