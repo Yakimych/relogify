@@ -59,11 +59,11 @@ let make =
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
     let results = data##results |> toRecord;
-    let state = results |> attachRatings;
+    let resultsWithRatingMap = results |> attachRatings;
 
     <ResultsTable
       communityName
-      results={state.resultsWithRatings}
+      results={resultsWithRatingMap.resultsWithRatings}
       newResults={highlightNewResults ? newResults : []}
       temp_showRatings
     />;

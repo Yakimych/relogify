@@ -69,20 +69,20 @@ let make =
         <TableBody>
           {results
            ->Belt.List.map(resultWithRatings => {
-               let r = resultWithRatings.result;
-               let player1Won = r.player1goals > r.player2goals;
+               let result = resultWithRatings.result;
+               let player1Won = result.player1goals > result.player2goals;
                let player2Won = !player1Won;
                let mainPlayerWon =
                  player1Won
-                 && mainPlayerName === Some(r.player1.name)
+                 && mainPlayerName === Some(result.player1.name)
                  || player2Won
-                 && mainPlayerName === Some(r.player2.name);
-               let formattedDate = formatDate(r.date);
+                 && mainPlayerName === Some(result.player2.name);
+               let formattedDate = formatDate(result.date);
 
                <TableRow
-                 key={string_of_int(r.id)}
+                 key={string_of_int(result.id)}
                  className={
-                   getHighlightedClassName(newResults, r)
+                   getHighlightedClassName(newResults, result)
                    ++ " "
                    ++ getWinningLosingRowClassName(mainPlayerWon)
                  }>
@@ -92,18 +92,18 @@ let make =
                        "/"
                        ++ communityName
                        ++ "/"
-                       ++ r.player1.name
+                       ++ result.player1.name
                        ++ "/"
-                       ++ r.player2.name
+                       ++ result.player2.name
                      }>
                      {text("H2H")}
                    </Link>
                  </TableCell>
                  <TableCell style={getPlayerStyle(player1Won)} align="right">
                    <Link
-                     url={"/" ++ communityName ++ "/" ++ r.player1.name}
+                     url={"/" ++ communityName ++ "/" ++ result.player1.name}
                      style=playerLinkStyle>
-                     {text(r.player1.name)}
+                     {text(result.player1.name)}
                    </Link>
                    {temp_showRatings
                       ? <Rating
@@ -113,17 +113,17 @@ let make =
                       : ReasonReact.null}
                  </TableCell>
                  <TableCell style=numberCellStyle>
-                   {text(string_of_int(r.player1goals))}
+                   {text(string_of_int(result.player1goals))}
                  </TableCell>
                  <TableCell style=colonStyle> {text(":")} </TableCell>
                  <TableCell style=numberCellStyle>
-                   {text(string_of_int(r.player2goals))}
+                   {text(string_of_int(result.player2goals))}
                  </TableCell>
                  <TableCell style={getPlayerStyle(player2Won)}>
                    <Link
-                     url={"/" ++ communityName ++ "/" ++ r.player2.name}
+                     url={"/" ++ communityName ++ "/" ++ result.player2.name}
                      style=playerLinkStyle>
-                     {text(r.player2.name)}
+                     {text(result.player2.name)}
                    </Link>
                    {temp_showRatings
                       ? <Rating
@@ -133,7 +133,7 @@ let make =
                       : ReasonReact.null}
                  </TableCell>
                  <TableCell align="right">
-                   {text(r.extratime ? "X" : "")}
+                   {text(result.extratime ? "X" : "")}
                  </TableCell>
                  <TableCell> {text(formattedDate)} </TableCell>
                </TableRow>;
