@@ -18,6 +18,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
     HeadToHeadQuery.use(~variables=headToHeadQuery##variables, ());
 
   <>
+    <Header page={HeadToHead(communityName, player1Name, player2Name)} />
     {switch (headToHeadQuery) {
      | Loading => <CircularProgress />
      | NoData
