@@ -7,6 +7,7 @@ let make = (~communityName) => {
   let endDate = now->addWeeks(1.0);
 
   <>
+    <Header page={CommunityStart(communityName)} />
     <Stats communityName dateFrom=startDate dateTo=endDate />
     <ExpansionPanel>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -20,8 +21,5 @@ let make = (~communityName) => {
       dateTo=endDate
       highlightNewResults=true
     />
-    <Link url={"/" ++ communityName ++ "/history"}>
-      {ReasonReact.string("All Results")}
-    </Link>
   </>;
 };

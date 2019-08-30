@@ -7,7 +7,6 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   <div className="App">
-    <header className="App-header"> {text("Result log")} </header>
     <>
       {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
        | [] => <Home />

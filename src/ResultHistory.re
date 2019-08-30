@@ -30,7 +30,7 @@ let make = (~communityName: string) => {
   };
 
   <>
-    <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
+    <Header page={History(communityName)} />
     <Box margin="10px" textAlign="center">
       <Box margin="10px" textAlign="center">
         <Button variant="contained" onClick=setAllTime>
