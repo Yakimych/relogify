@@ -25,7 +25,7 @@ let make = (~page: page) =>
          <RouteLink toPage={CommunityStart(communityName)}>
            <HomeIcon />
          </RouteLink>
-         <div> {text("Player Results")} </div>
+         <div className="App-header-title"> {text("Player Results")} </div>
          <RouteLink toPage={History(communityName)}>
            {text("History")}
          </RouteLink>
@@ -35,7 +35,7 @@ let make = (~page: page) =>
          <RouteLink toPage={CommunityStart(communityName)}>
            <HomeIcon />
          </RouteLink>
-         <div> {text("Head to Head")} </div>
+         <div className="App-header-title"> {text("Head to Head")} </div>
          <RouteLink toPage={History(communityName)}>
            {text("History")}
          </RouteLink>

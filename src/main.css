@@ -29,6 +29,17 @@ code {
   color: white;
   padding-left: 10px;
   padding-right: 10px;
+  position: relative;
+}
+
+.App-header a {
+  color: white;
+}
+
+.App-header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .winning-row {
