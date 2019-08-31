@@ -1,53 +1,44 @@
 open Utils;
-
-type page =
-  | Home
-  | CommunityStart(string)
-  | History(string)
-  | PlayerHome(string, string)
-  | HeadToHead(string, string, string);
+open Types;
 
 [@react.component]
 let make = (~page: page) =>
   <header className="App-header">
-    <Link url="/"> <HomeIcon /> </Link>
     {switch (page) {
      | Home => <div> {text("Result log")} </div>
      | CommunityStart(communityName) =>
        <>
-         <span> {text("Start: " ++ communityName)} </span>
-         <Link url={"/" ++ communityName ++ "/history"}>
+         <HomeIcon />
+         <RouteLink toPage={History(communityName)}>
            {text("History")}
-         </Link>
+         </RouteLink>
        </>
      | History(communityName) =>
        <>
-         <Link url={"/" ++ communityName}> {text("Start")} </Link>
-         <span> {text("History for " ++ communityName)} </span>
+         <RouteLink toPage={CommunityStart(communityName)}>
+           <HomeIcon />
+         </RouteLink>
+         <span> {text("History")} </span>
        </>
-     | PlayerHome(communityName, playerName) =>
+     | PlayerHome(communityName, _) =>
        <>
-         <Link url={"/" ++ communityName}> {text("Start")} </Link>
-         <Link url={"/" ++ communityName ++ "/history"}>
+         <RouteLink toPage={CommunityStart(communityName)}>
+           <HomeIcon />
+         </RouteLink>
+         <div> {text("Player Results")} </div>
+         <RouteLink toPage={History(communityName)}>
            {text("History")}
-         </Link>
-         <div> {text(communityName ++ " / Stats for " ++ playerName)} </div>
+         </RouteLink>
        </>
-     | HeadToHead(communityName, player1Name, player2Name) =>
+     | HeadToHead(communityName, _, _) =>
        <>
-         <Link url={"/" ++ communityName}> {text("Start")} </Link>
-         <Link url={"/" ++ communityName ++ "/history"}>
+         <RouteLink toPage={CommunityStart(communityName)}>
+           <HomeIcon />
+         </RouteLink>
+         <div> {text("Head to Head")} </div>
+         <RouteLink toPage={History(communityName)}>
            {text("History")}
-         </Link>
-         <div>
-           {text(
-              communityName
-              ++ " / Head to Head between "
-              ++ player1Name
-              ++ " and "
-              ++ player2Name,
-            )}
-         </div>
+         </RouteLink>
        </>
      }}
   </header>;

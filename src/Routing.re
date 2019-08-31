@@ -9,7 +9,7 @@ let make = () => {
   <div className="App">
     <>
       {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
-       | [] => <Home />
+       | [] => <IntroPage />
        | [communityName] => <CommunityStartPage communityName />
        | [communityName, "history"] => <ResultHistory communityName />
        | [communityName, playerName] =>

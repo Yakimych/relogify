@@ -29,7 +29,6 @@ let make = (~playerName: string, ~communityName: string) => {
 
        <>
          <Box textAlign="center">
-           <Typography variant="h5"> {text("Player results")} </Typography>
            <Typography variant="h4"> {text(playerName)} </Typography>
            <Typography>
              {text("Total wins: " ++ string_of_int(playerStats.matchesWon))}
@@ -101,6 +100,5 @@ let make = (~playerName: string, ~communityName: string) => {
          />
        </>;
      }}
-    <Link url={"/" ++ communityName}> {text("Start Page")} </Link>
   </>;
 };
