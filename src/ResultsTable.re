@@ -95,24 +95,23 @@ let make =
                    ++ getWinningLosingRowClassName(mainPlayerWon)
                  }>
                  <TableCell style=headToHeadStyle>
-                   <Link
-                     url={
-                       "/"
-                       ++ communityName
-                       ++ "/"
-                       ++ result.player1.name
-                       ++ "/"
-                       ++ result.player2.name
+                   <RouteLink
+                     toPage={
+                       HeadToHead(
+                         communityName,
+                         result.player1.name,
+                         result.player2.name,
+                       )
                      }>
                      {text("H2H")}
-                   </Link>
+                   </RouteLink>
                  </TableCell>
                  <TableCell style={getPlayerStyle(player1Won)} align="right">
-                   <Link
-                     url={"/" ++ communityName ++ "/" ++ result.player1.name}
+                   <RouteLink
+                     toPage={PlayerHome(communityName, result.player1.name)}
                      style=playerLinkStyle>
                      {text(result.player1.name)}
-                   </Link>
+                   </RouteLink>
                    {temp_showRatings
                       ? <Rating
                           onClick={_ =>
@@ -131,11 +130,11 @@ let make =
                    {text(string_of_int(result.player2goals))}
                  </TableCell>
                  <TableCell style={getPlayerStyle(player2Won)}>
-                   <Link
-                     url={"/" ++ communityName ++ "/" ++ result.player2.name}
+                   <RouteLink
+                     toPage={PlayerHome(communityName, result.player2.name)}
                      style=playerLinkStyle>
                      {text(result.player2.name)}
-                   </Link>
+                   </RouteLink>
                    {temp_showRatings
                       ? <Rating
                           onClick={_ =>

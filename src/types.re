@@ -1,3 +1,10 @@
+type page =
+  | Home
+  | CommunityStart(string)
+  | History(string)
+  | PlayerHome(string, string)
+  | HeadToHead(string, string, string);
+
 type player = {name: string};
 
 type result = {

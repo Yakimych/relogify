@@ -213,11 +213,11 @@ let make =
                   ->Belt.List.map(r =>
                       <TableRow key={r.playerName}>
                         <TableCell align="right">
-                          <Link
-                            url={"/" ++ communityName ++ "/" ++ r.playerName}
+                          <RouteLink
+                            toPage={PlayerHome(communityName, r.playerName)}
                             style=playerLinkStyle>
                             {text(r.playerName)}
-                          </Link>
+                          </RouteLink>
                         </TableCell>
                         {showEloRatings
                            ? <TableCell style=numberCellStyle>

@@ -30,7 +30,6 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
 
        <>
          <Box textAlign="center">
-           <Typography variant="h5"> {text("Head to Head")} </Typography>
            <Typography variant="h4">
              {text(player1Name ++ " vs " ++ player2Name)}
            </Typography>
@@ -85,6 +84,5 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
          />
        </>;
      }}
-    <Link url={"/" ++ communityName}> {text("Start page")} </Link>
   </>;
 };
