@@ -1,6 +1,7 @@
 open Utils;
 open Queries;
 open Mutations;
+open StorageUtils;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
@@ -18,10 +19,12 @@ let make =
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let mostUsedPlayer =
-    StorageUtils.getMostOftenSavedPlayerName(communityName);
+  let (mostUsedPlayer, updateUsedPlayers) = useMostUsedPlayer(communityName);
+
   let (maybePlayer1Name, setMaybePlayer1Name) =
-    React.useState(_ => mostUsedPlayer);
+    React.useState(_ =>
+      React.Ref.current(mostUsedPlayer) |> Js.Nullable.toOption
+    );
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
@@ -33,8 +36,10 @@ let make =
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
-  let resetState = (mostUserPlayerAfterAdding: option(string)) => {
-    setMaybePlayer1Name(_ => mostUserPlayerAfterAdding);
+  let resetState = () => {
+    setMaybePlayer1Name(_ =>
+      mostUsedPlayer |> React.Ref.current |> Js.Nullable.toOption
+    );
     setMaybePlayer2Name(_ => None);
     setGoals1(_ => 0);
     setGoals2(_ => 0);
@@ -96,12 +101,8 @@ let make =
       //    })
       // |> ignore;
 
-      StorageUtils.updatePlayersAfterAddingResult(
-        communityName,
-        player1Name,
-        player2Name,
-      );
-      resetState(StorageUtils.getMostOftenSavedPlayerName(communityName));
+      updateUsedPlayers(player1Name, player2Name);
+      resetState();
     };
 
   switch (playersQuery) {
