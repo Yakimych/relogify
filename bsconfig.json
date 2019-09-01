@@ -25,7 +25,8 @@
     "reason-react",
     "reason-apollo-hooks",
     "reason-apollo",
-    "@ahrefs/bs-recharts"
+    "@ahrefs/bs-recharts",
+    "@glennsl/bs-json"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
