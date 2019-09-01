@@ -39,6 +39,7 @@ let updatePlayersAfterAddingResult = (communityName, player1Name, player2Name) =
 };
 
 let useMostUsedPlayer = (communityName: string) => {
+  // TODO: useContext instead
   let mostUsedPlayerRef =
     React.useRef(
       communityName |> getMostOftenSavedPlayerName |> Js.Nullable.fromOption,

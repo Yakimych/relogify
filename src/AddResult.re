@@ -19,11 +19,12 @@ let make =
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let (mostUsedPlayer, updateUsedPlayers) = useMostUsedPlayer(communityName);
+  let (mostUsedPlayerRef, updateUsedPlayers) =
+    useMostUsedPlayer(communityName);
 
   let (maybePlayer1Name, setMaybePlayer1Name) =
     React.useState(_ =>
-      React.Ref.current(mostUsedPlayer) |> Js.Nullable.toOption
+      React.Ref.current(mostUsedPlayerRef) |> Js.Nullable.toOption
     );
   let (goals1, setGoals1) = React.useState(_ => 0);
 
@@ -38,7 +39,7 @@ let make =
 
   let resetState = () => {
     setMaybePlayer1Name(_ =>
-      mostUsedPlayer |> React.Ref.current |> Js.Nullable.toOption
+      mostUsedPlayerRef |> React.Ref.current |> Js.Nullable.toOption
     );
     setMaybePlayer2Name(_ => None);
     setGoals1(_ => 0);
@@ -62,47 +63,45 @@ let make =
         when player1Name === player2Name =>
       alert("You must select two DIFFERENT players!")
     | (Some(player1Name), Some(player2Name), goals1, goals2, extraTime) =>
-      // setIsAddingResult(_ => true);
-
-      // addResultMutation(
-      //   ~variables=
-      //     AddResultMutationConfig.make(
-      //       ~communityName,
-      //       ~player1Name,
-      //       ~player2Name,
-      //       ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
-      //       ~player1Goals=goals1,
-      //       ~player2Goals=goals2,
-      //       ~extraTime,
-      //       (),
-      //     )##variables,
-      //   ~refetchQueries=
-      //     _ =>
-      //       [|
-      //         ReasonApolloHooks.Utils.toQueryObj(
-      //           AllResultsQueryConfig.make(
-      //             ~communityName,
-      //             ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-      //             ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
-      //             (),
-      //           ),
-      //         ),
-      //         ReasonApolloHooks.Utils.toQueryObj(allPlayersQuery),
-      //       |],
-      //   (),
-      // )
-      // |> Js.Promise.then_(_ => {
-      //      resetState();
-      //      setIsAddingResult(_ => false) |> Js.Promise.resolve;
-      //    })
-      // |> Js.Promise.catch(e => {
-      //      Js.Console.error2("Error: ", e);
-      //      setIsAddingResult(_ => false) |> Js.Promise.resolve;
-      //    })
-      // |> ignore;
-
+      setIsAddingResult(_ => true);
       updateUsedPlayers(player1Name, player2Name);
-      resetState();
+
+      addResultMutation(
+        ~variables=
+          AddResultMutationConfig.make(
+            ~communityName,
+            ~player1Name,
+            ~player2Name,
+            ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
+            ~player1Goals=goals1,
+            ~player2Goals=goals2,
+            ~extraTime,
+            (),
+          )##variables,
+        ~refetchQueries=
+          _ =>
+            [|
+              ReasonApolloHooks.Utils.toQueryObj(
+                AllResultsQueryConfig.make(
+                  ~communityName,
+                  ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
+                  ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+                  (),
+                ),
+              ),
+              ReasonApolloHooks.Utils.toQueryObj(allPlayersQuery),
+            |],
+        (),
+      )
+      |> Js.Promise.then_(_ => {
+           resetState();
+           setIsAddingResult(_ => false) |> Js.Promise.resolve;
+         })
+      |> Js.Promise.catch(e => {
+           Js.Console.error2("Error: ", e);
+           setIsAddingResult(_ => false) |> Js.Promise.resolve;
+         })
+      |> ignore;
     };
 
   switch (playersQuery) {
