@@ -27,15 +27,18 @@ code {
   justify-content: space-between;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding-left: 8px;
-  padding-right: 2px;
+  padding-left: 4px;
+  padding-right: 8px;
   position: relative;
 }
 
 .app-header a {
   color: white;
-  margin-right: 8px;
+}
+
+.app-header-item {
   margin-left: 8px;
+  margin-right: 8px;
 }
 
 .app-header-title {

@@ -1,8 +1,14 @@
 [@react.component]
 let make =
-    (~url: string, ~style: ReactDOMRe.Style.t=?, ~children: React.element) =>
+    (
+      ~url: string,
+      ~className: string=?,
+      ~style: ReactDOMRe.Style.t=?,
+      ~children: React.element,
+    ) =>
   <a
     href="#"
+    className
     style
     onClick={e => {
       ReactEvent.Mouse.preventDefault(e);

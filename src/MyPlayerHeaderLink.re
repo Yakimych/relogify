@@ -6,7 +6,9 @@ let make = (~communityName: string) => {
   ->React.Ref.current
   ->Js.Nullable.toOption
   ->Belt.Option.mapWithDefault(ReasonReact.null, playerName =>
-      <RouteLink toPage={PlayerHome(communityName, playerName)}>
+      <RouteLink
+        className="app-header-item"
+        toPage={PlayerHome(communityName, playerName)}>
         {ReasonReact.string("My Stats")}
       </RouteLink>
     );
