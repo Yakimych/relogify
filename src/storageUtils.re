@@ -1,19 +1,19 @@
 open Dom.Storage2;
 
-let addedPlayersKey = "added_players";
+let addedPlayersKey = communityName => "added_players_" ++ communityName;
 
 let byValue = ((_, v1), (_, v2)) => v2 - v1;
 
-let getPlayerDict = () => {
+let getPlayerDict = communityName => {
   localStorage
-  ->getItem(addedPlayersKey)
+  ->getItem(communityName |> addedPlayersKey)
   ->Belt.Option.mapWithDefault(Js.Dict.empty(), d =>
       d |> Js.Json.parseExn |> Json.Decode.dict(Json.Decode.int)
     );
 };
 
-let getMostOftenSavedPlayerName = (): option(string) =>
-  getPlayerDict()
+let getMostOftenSavedPlayerName = (communityName): option(string) =>
+  getPlayerDict(communityName)
   ->Js.Dict.entries
   ->Belt.List.fromArray
   ->Belt.List.keep(((_, v)) => v > 1)
@@ -21,9 +21,8 @@ let getMostOftenSavedPlayerName = (): option(string) =>
   ->Belt.List.map(((k, _)) => k)
   ->Belt.List.head;
 
-let updatePlayersAfterAddingResult =
-    (player1Name: string, player2Name: string) => {
-  let savedDict = getPlayerDict();
+let updatePlayersAfterAddingResult = (communityName, player1Name, player2Name) => {
+  let savedDict = getPlayerDict(communityName);
 
   let player1TimesSaved =
     savedDict->Js.Dict.get(player1Name)->Belt.Option.getWithDefault(0);
@@ -34,7 +33,7 @@ let updatePlayersAfterAddingResult =
   savedDict->Js.Dict.set(player2Name, player2TimesSaved + 1);
 
   localStorage->setItem(
-    addedPlayersKey,
+    addedPlayersKey(communityName),
     Js.Json.stringifyAny(savedDict)->Belt.Option.getWithDefault(""),
   );
 };
