@@ -19,13 +19,11 @@ let make =
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let (mostUsedPlayerRef, updateUsedPlayers) =
+  let (getMostUsedPlayer, updateUsedPlayers) =
     useMostUsedPlayer(communityName);
 
   let (maybePlayer1Name, setMaybePlayer1Name) =
-    React.useState(_ =>
-      React.Ref.current(mostUsedPlayerRef) |> Js.Nullable.toOption
-    );
+    React.useState(_ => getMostUsedPlayer());
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
@@ -38,9 +36,7 @@ let make =
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
   let resetState = () => {
-    setMaybePlayer1Name(_ =>
-      mostUsedPlayerRef |> React.Ref.current |> Js.Nullable.toOption
-    );
+    setMaybePlayer1Name(_ => getMostUsedPlayer());
     setMaybePlayer2Name(_ => None);
     setGoals1(_ => 0);
     setGoals2(_ => 0);

@@ -1,10 +1,8 @@
 [@react.component]
 let make = (~communityName: string) => {
-  let (mostUsedPlayerRef, _) = StorageUtils.useMostUsedPlayer(communityName);
+  let (getMostUsedPlayer, _) = StorageUtils.useMostUsedPlayer(communityName);
 
-  mostUsedPlayerRef
-  ->React.Ref.current
-  ->Js.Nullable.toOption
+  getMostUsedPlayer()
   ->Belt.Option.mapWithDefault(ReasonReact.null, playerName =>
       <RouteLink
         className="app-header-item"
