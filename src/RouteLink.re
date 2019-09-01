@@ -13,5 +13,10 @@ let getUrl = (page: page): string =>
 
 [@react.component]
 let make =
-    (~toPage: page, ~style: ReactDOMRe.Style.t=?, ~children: React.element) =>
-  <Link url={getUrl(toPage)} style> children </Link>;
+    (
+      ~toPage: page,
+      ~className: string=?,
+      ~style: ReactDOMRe.Style.t=?,
+      ~children: React.element,
+    ) =>
+  <Link className url={getUrl(toPage)} style> children </Link>;
