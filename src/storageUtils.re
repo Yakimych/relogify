@@ -37,3 +37,21 @@ let updatePlayersAfterAddingResult = (communityName, player1Name, player2Name) =
     Js.Json.stringifyAny(savedDict)->Belt.Option.getWithDefault(""),
   );
 };
+
+let useMostUsedPlayer = (communityName: string) => {
+  let mostUsedPlayerRef =
+    React.useRef(
+      communityName |> getMostOftenSavedPlayerName |> Js.Nullable.fromOption,
+    );
+
+  let updateMostUsedPlayer = (player1Name, player2Name) => {
+    updatePlayersAfterAddingResult(communityName, player1Name, player2Name);
+
+    React.Ref.setCurrent(
+      mostUsedPlayerRef,
+      communityName |> getMostOftenSavedPlayerName |> Js.Nullable.fromOption,
+    );
+  };
+
+  (mostUsedPlayerRef, updateMostUsedPlayer);
+};
