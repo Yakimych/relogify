@@ -12,12 +12,12 @@ code {
     monospace;
 }
 
-.App {
+.app {
   background-color: white;
   width: 600px;
 }
 
-.App-header {
+.app-header {
   background-color: #282c34;
   min-height: 50px;
   max-width: 600px;
@@ -27,19 +27,25 @@ code {
   justify-content: space-between;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 8px;
+  padding-right: 2px;
   position: relative;
 }
 
-.App-header a {
+.app-header a {
   color: white;
+  margin-right: 8px;
+  margin-left: 8px;
 }
 
-.App-header-title {
+.app-header-title {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.app-header-grouping {
+  display: flex;
 }
 
 .winning-row {

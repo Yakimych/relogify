@@ -6,7 +6,7 @@ open Utils;
 let make = () => {
   let url = ReasonReactRouter.useUrl();
 
-  <div className="App">
+  <div className="app">
     <>
       {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
        | [] => <IntroPage />

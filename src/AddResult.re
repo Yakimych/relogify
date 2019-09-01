@@ -18,7 +18,10 @@ let make =
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
+  let mostUserPlayer =
+    StorageUtils.getMostOftenSavedPlayerName(communityName);
+  let (maybePlayer1Name, setMaybePlayer1Name) =
+    React.useState(_ => mostUserPlayer);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
@@ -30,10 +33,8 @@ let make =
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
-  let resetState = () => {
-    let player1ToSet = StorageUtils.getMostOftenSavedPlayerName();
-    Js.log(player1ToSet);
-    setMaybePlayer1Name(_ => None);
+  let resetState = (mostUserPlayerAfterAdding: option(string)) => {
+    setMaybePlayer1Name(_ => mostUserPlayerAfterAdding);
     setMaybePlayer2Name(_ => None);
     setGoals1(_ => 0);
     setGoals2(_ => 0);
@@ -95,8 +96,12 @@ let make =
       //    })
       // |> ignore;
 
-      StorageUtils.updatePlayersAfterAddingResult(player1Name, player2Name);
-      resetState();
+      StorageUtils.updatePlayersAfterAddingResult(
+        communityName,
+        player1Name,
+        player2Name,
+      );
+      resetState(StorageUtils.getMostOftenSavedPlayerName(communityName));
     };
 
   switch (playersQuery) {
