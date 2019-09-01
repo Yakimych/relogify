@@ -18,10 +18,10 @@ let make =
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let mostUserPlayer =
+  let mostUsedPlayer =
     StorageUtils.getMostOftenSavedPlayerName(communityName);
   let (maybePlayer1Name, setMaybePlayer1Name) =
-    React.useState(_ => mostUserPlayer);
+    React.useState(_ => mostUsedPlayer);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
