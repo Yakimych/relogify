@@ -110,9 +110,9 @@ let make =
 
        leaderboardRows->Belt.List.length === 0
          ? ReasonReact.null
-         : <Paper style=containerStyle>
+         : <Paper>
              <Typography variant="h6"> {text("Stats")} </Typography>
-             <Table style=containerStyle size="small">
+             <Table size="small">
                <TableHead>
                  <TableRow>
                    <TableCell align="right"> {text("Player")} </TableCell>

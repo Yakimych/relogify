@@ -58,8 +58,8 @@ let make =
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
   <>
-    <Paper style=containerStyle>
-      <Table style=containerStyle size="small">
+    <Paper>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell style=headToHeadStyle> {text("H2H")} </TableCell>
