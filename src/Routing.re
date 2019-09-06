@@ -6,7 +6,7 @@ open Utils;
 let make = () => {
   let url = ReasonReactRouter.useUrl();
 
-  <Container maxWidth="md">
+  <Container maxWidth="sm">
     {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
      | [] => <IntroPage />
      | [communityName] => <CommunityStartPage communityName />
