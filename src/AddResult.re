@@ -106,12 +106,7 @@ let make =
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
     <>
-      <Paper
-        style={ReactDOMRe.Style.make(
-          ~width="600px",
-          ~marginBottom="30px",
-          (),
-        )}>
+      <Paper style={ReactDOMRe.Style.make(~marginBottom="30px", ())}>
         <div style={ReactDOMRe.Style.make(~display="flex", ())}>
           <PlayerPicker
             disabled=isAddingResult

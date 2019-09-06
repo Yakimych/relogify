@@ -12,15 +12,9 @@ code {
     monospace;
 }
 
-.app {
-  background-color: white;
-  width: 600px;
-}
-
 .app-header {
   background-color: #282c34;
   min-height: 50px;
-  max-width: 600px;
   display: flex;
   flex-direction: row;
   align-items: center;
