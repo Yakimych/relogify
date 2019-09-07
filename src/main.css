@@ -12,20 +12,6 @@ code {
     monospace;
 }
 
-.app-header {
-  background-color: #282c34;
-  min-height: 50px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  padding-left: 4px;
-  padding-right: 8px;
-  position: relative;
-}
-
 .app-header a {
   color: white;
 }
@@ -39,6 +25,10 @@ code {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.app-header-grow {
+  flex-grow: 1;
 }
 
 .app-header-grouping {
