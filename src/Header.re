@@ -3,6 +3,8 @@ open Types;
 
 [@react.component]
 let make = (~page: page) => {
+  let (addingResult, setAddingResult) = React.useState(_ => false);
+
   <>
     <AppBar position="fixed" className="app-header">
       <Toolbar>
@@ -15,9 +17,23 @@ let make = (~page: page) => {
                <MyPlayerHeaderLink communityName />
              </div>
              <div className="app-header-grow" />
-             <Fab color="secondary" className="add-result-button">
-               <AddIcon />
-             </Fab>
+             <button
+               onClick={_ =>
+                 setAddingResult(oldAddingResult => !oldAddingResult)
+               }>
+               <Fab color="secondary" className="add-result-button">
+                 <AddIcon />
+               </Fab>
+             </button>
+             <div className="add-result">
+               <ExpansionPanel expanded=addingResult>
+                 <span> {text("")} </span>
+                 <AddResult
+                   communityName
+                   onResultAdded={_ => setAddingResult(_ => false)}
+                 />
+               </ExpansionPanel>
+             </div>
              <RouteLink
                className="app-header-item" toPage={History(communityName)}>
                {text("History")}
