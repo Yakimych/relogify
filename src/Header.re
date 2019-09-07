@@ -4,7 +4,7 @@ open Types;
 [@react.component]
 let make = (~page: page) => {
   <>
-    <AppBar className="app-header">
+    <AppBar position="fixed" className="app-header">
       <Toolbar>
         {switch (page) {
          | Home => <div> {text("Result log")} </div>
@@ -15,6 +15,9 @@ let make = (~page: page) => {
                <MyPlayerHeaderLink communityName />
              </div>
              <div className="app-header-grow" />
+             <Fab color="secondary" className="add-result-button">
+               <AddIcon />
+             </Fab>
              <RouteLink
                className="app-header-item" toPage={History(communityName)}>
                {text("History")}
