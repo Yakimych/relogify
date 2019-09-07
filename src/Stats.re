@@ -91,6 +91,7 @@ let make =
     );
   };
 
+  let (pageWidth, _) = getDimensions();
   <>
     {switch (resultsQuery) {
      | Loading => <CircularProgress />
@@ -180,7 +181,9 @@ let make =
                        {text("GC")}
                      </TableSortLabel>
                    </TableCell>
-                   <TableCell style=numberCellStyle title="Goal difference">
+                   <TableCell
+                     style={hidableNumberCellStyle(pageWidth)}
+                     title="Goal difference">
                      <TableSortLabel
                        active={sortBy === GoalDiff}
                        direction={sortDirection === Asc ? "asc" : "desc"}
@@ -189,7 +192,8 @@ let make =
                      </TableSortLabel>
                    </TableCell>
                    <TableCell
-                     style=numberCellStyle title="Goals scored per match">
+                     style={hidableNumberCellStyle(pageWidth)}
+                     title="Goals scored per match">
                      <TableSortLabel
                        active={sortBy === GoalsScoredPerMatch}
                        direction={sortDirection === Asc ? "asc" : "desc"}
@@ -198,7 +202,8 @@ let make =
                      </TableSortLabel>
                    </TableCell>
                    <TableCell
-                     style=numberCellStyle title="Goals conceded per match">
+                     style={hidableNumberCellStyle(pageWidth)}
+                     title="Goals conceded per match">
                      <TableSortLabel
                        active={sortBy === GoalsConcededPerMatch}
                        direction={sortDirection === Asc ? "asc" : "desc"}
@@ -248,15 +253,15 @@ let make =
                         <TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsConceded))}
                         </TableCell>
-                        <TableCell style=numberCellStyle>
+                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
                           {text(r |> goalDiff |> formatDiff)}
                         </TableCell>
-                        <TableCell style=numberCellStyle>
+                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
                           {text(
                              formatGoalsPerMatch(r |> goalsScoredPerMatch),
                            )}
                         </TableCell>
-                        <TableCell style=numberCellStyle>
+                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
                           {text(
                              formatGoalsPerMatch(r |> goalsConcededPerMatch),
                            )}
