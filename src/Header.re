@@ -27,7 +27,7 @@ let make = (~page: page) => {
              </button>
              <div className="add-result">
                <ExpansionPanel expanded=addingResult>
-                 <span> {text("")} </span>
+                 <span />
                  <AddResult
                    communityName
                    onResultAdded={_ => setAddingResult(_ => false)}
