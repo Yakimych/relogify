@@ -1,6 +1,12 @@
 open Types;
+open DateFns;
 
 let text = ReasonReact.string;
+
+let getCurrentWeek = () => {
+  let startDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
+  (startDate, startDate->addWeeks(1.0));
+};
 
 let resultsByDate = (first: result, second: result) =>
   DateFns.compareAsc(first.date, second.date);

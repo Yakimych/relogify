@@ -7,12 +7,7 @@ open StorageUtils;
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
-let make =
-    (
-      ~dateFrom: option(Js.Date.t)=?,
-      ~dateTo: option(Js.Date.t)=?,
-      ~communityName: string,
-    ) => {
+let make = (~communityName: string, ~onResultAdded) => {
   let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
   let (playersQuery, _) =
     AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
@@ -62,6 +57,8 @@ let make =
       setIsAddingResult(_ => true);
       updateUsedPlayers(player1Name, player2Name);
 
+      // Will refetch query for current week after adding result
+      let (startDate, endDate) = getCurrentWeek();
       addResultMutation(
         ~variables=
           AddResultMutationConfig.make(
@@ -80,8 +77,8 @@ let make =
               ReasonApolloHooks.Utils.toQueryObj(
                 AllResultsQueryConfig.make(
                   ~communityName,
-                  ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-                  ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+                  ~dateFrom=startDate |> toJsonDate,
+                  ~dateTo=endDate |> toJsonDate,
                   (),
                 ),
               ),
@@ -91,7 +88,8 @@ let make =
       )
       |> Js.Promise.then_(_ => {
            resetState();
-           setIsAddingResult(_ => false) |> Js.Promise.resolve;
+           setIsAddingResult(_ => false);
+           onResultAdded() |> Js.Promise.resolve;
          })
       |> Js.Promise.catch(e => {
            Js.Console.error2("Error: ", e);

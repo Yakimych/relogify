@@ -18,11 +18,21 @@ code {
 
 .app-header .add-result-button {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 30px;
   left: 0;
   right: 0;
   margin: 0 auto;
+}
+
+.app-header .add-result {
+  position: absolute;
+  z-index: 1;
+  top: 60px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 600px;
 }
 
 .app-header a {
