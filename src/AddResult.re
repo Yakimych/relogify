@@ -103,7 +103,7 @@ let make = (~communityName: string, ~onResultAdded) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    <Paper style={ReactDOMRe.Style.make(~padding="20px 10px 10px 10px", ())}>
+    <Paper style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
       <div
         style={ReactDOMRe.Style.make(
           ~display="flex",

@@ -28,11 +28,11 @@ code {
 .app-header .add-result {
   position: absolute;
   z-index: 1;
-  top: 65px;
+  top: 60px;
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 600px;
+  max-width: 400px;
 }
 
 .app-header a {

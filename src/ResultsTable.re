@@ -24,7 +24,8 @@ let colonStyle =
 
 let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
-let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
+let extraTimeStyle = pageWidth =>
+  ReactDOMRe.Style.make(~width="20px", ~display=cellDisplay(pageWidth), ());
 
 let getHighlightedClassName =
     (newResults: option(list(result)), currentResult: result) => {
@@ -57,6 +58,8 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
+  // TODO: onWindowResize/useEffect?
+  let (pageWidth, _) = getDimensions();
   <>
     <Paper>
       <Table size="small">
@@ -68,7 +71,10 @@ let make =
             <TableCell style=colonStyle />
             <TableCell style=numberCellStyle> {text("G2")} </TableCell>
             <TableCell> {text("Player2")} </TableCell>
-            <TableCell style=extraTimeStyle align="right" title="Extra time">
+            <TableCell
+              style={extraTimeStyle(pageWidth)}
+              align="right"
+              title="Extra time">
               {text("E")}
             </TableCell>
             <TableCell style=dateStyle> {text("Date")} </TableCell>
@@ -145,7 +151,7 @@ let make =
                         />
                       : ReasonReact.null}
                  </TableCell>
-                 <TableCell align="right">
+                 <TableCell style={extraTimeStyle(pageWidth)} align="right">
                    {text(result.extratime ? "X" : "")}
                  </TableCell>
                  <TableCell> {text(formattedDate)} </TableCell>
