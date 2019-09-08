@@ -17,14 +17,14 @@ let make = (~page: page) => {
                <MyPlayerHeaderLink communityName />
              </div>
              <div className="app-header-grow" />
-             <button
+             <Fab
                onClick={_ =>
                  setAddingResult(oldAddingResult => !oldAddingResult)
-               }>
-               <Fab color="secondary" className="add-result-button">
-                 <AddIcon />
-               </Fab>
-             </button>
+               }
+               color="secondary"
+               className="add-result-button">
+               <AddIcon />
+             </Fab>
              <div className="add-result">
                <ExpansionPanel expanded=addingResult>
                  <span />
