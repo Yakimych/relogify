@@ -3,7 +3,7 @@ open Types;
 
 [@react.component]
 let make = (~page: page) => {
-  let (addingResult, setAddingResult) = React.useState(_ => false);
+  let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
 
   <>
     <AppBar position="fixed" className="app-header">
@@ -18,19 +18,17 @@ let make = (~page: page) => {
              </div>
              <div className="app-header-grow" />
              <Fab
-               onClick={_ =>
-                 setAddingResult(oldAddingResult => !oldAddingResult)
-               }
+               onClick={_ => setAddResultIsOpen(oldIsOpen => !oldIsOpen)}
                color="secondary"
                className="add-result-button">
-               <AddIcon />
+               {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
              </Fab>
              <div className="add-result">
-               <ExpansionPanel expanded=addingResult>
+               <ExpansionPanel expanded=addResultIsOpen>
                  <span />
                  <AddResult
                    communityName
-                   onResultAdded={_ => setAddingResult(_ => false)}
+                   onResultAdded={_ => setAddResultIsOpen(_ => false)}
                  />
                </ExpansionPanel>
              </div>
