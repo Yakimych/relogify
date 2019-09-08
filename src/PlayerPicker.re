@@ -63,7 +63,7 @@ let make =
             ->Belt.Array.map(p =>
                 <option value=p key={"players_" ++ p}> {text(p)} </option>
               )
-            ->ReasonReact.array}
+            ->React.array}
            <option key="new_player" value=newPlayerValue>
              {text("+ Add new player")}
            </option>

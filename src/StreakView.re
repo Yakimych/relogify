@@ -19,13 +19,13 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
     </Typography>
     {streak
      ->endedAt
-     ->Belt.Option.mapWithDefault(ReasonReact.null, date =>
+     ->Belt.Option.mapWithDefault(React.null, date =>
          <Typography>
            {text("Ended ")}
            <span className="date-time"> {text(formatDateTime(date))} </span>
            {streak
             ->endedBy(playerName)
-            ->Belt.Option.mapWithDefault(ReasonReact.null, player =>
+            ->Belt.Option.mapWithDefault(React.null, player =>
                 <>
                   {text(" by ")}
                   <span className="marked"> {text(player.name)} </span>

@@ -76,7 +76,7 @@ let make = (~playerName: string, ~communityName: string) => {
            </Typography>
            {streaks
             ->getLongestStreak
-            ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
+            ->Belt.Option.mapWithDefault(React.null, streak =>
                 <StreakView
                   streak
                   streakName="Longest past winning streak"
@@ -85,7 +85,7 @@ let make = (~playerName: string, ~communityName: string) => {
               )}
            {streaks
             ->getCurrentStreak
-            ->Belt.Option.mapWithDefault(ReasonReact.null, streak =>
+            ->Belt.Option.mapWithDefault(React.null, streak =>
                 <StreakView
                   streak
                   streakName="Ongoing winning streak"

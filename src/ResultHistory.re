@@ -1,6 +1,14 @@
 open Utils;
 open DateFns;
 
+let nextPrevWeekButtonStyle =
+  ReactDOMRe.Style.make(
+    ~width="50px",
+    ~minWidth="50px",
+    ~marginRight="4px",
+    (),
+  );
+
 [@react.component]
 let make = (~communityName: string) => {
   let weekStartDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
@@ -40,7 +48,10 @@ let make = (~communityName: string) => {
           {text("This week")}
         </Button>
       </Box>
-      <Button variant="contained" onClick=decrementWeek>
+      <Button
+        style=nextPrevWeekButtonStyle
+        variant="contained"
+        onClick=decrementWeek>
         {text("<<")}
       </Button>
       <TextField
@@ -63,12 +74,14 @@ let make = (~communityName: string) => {
           };
         }}
       />
-      <Button variant="contained" onClick=incrementWeek>
+      <Button
+        style=nextPrevWeekButtonStyle
+        variant="contained"
+        onClick=incrementWeek>
         {text(">>")}
       </Button>
     </Box>
     <Stats communityName ?dateFrom ?dateTo />
-    <Typography variant="h6"> {text("Results")} </Typography>
     <Results
       communityName
       ?dateFrom

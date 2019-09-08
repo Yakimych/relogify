@@ -96,6 +96,9 @@ code {
   font-size: smaller;
 }
 
+input[type="date"] {
+  max-width: 110px;
+}
 input[type="date"]::-webkit-clear-button {
   display: none;
 }
@@ -104,4 +107,8 @@ input[type="date"]::-webkit-clear-button {
   font-weight: normal;
   margin-left: 5px;
   cursor: pointer;
+}
+
+.title {
+  margin: 10px 0 0 10px;
 }

@@ -91,7 +91,7 @@ let make =
     );
   };
 
-  let (pageWidth, _) = getDimensions();
+  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
   <>
     {switch (resultsQuery) {
      | Loading => <CircularProgress />
@@ -110,14 +110,16 @@ let make =
          ->Belt.List.sort(getSortFunc(sortBy, sortDirection));
 
        leaderboardRows->Belt.List.length === 0
-         ? ReasonReact.null
+         ? React.null
          : <Paper>
-             <Typography variant="h6"> {text("Stats")} </Typography>
+             <div className="title">
+               <Typography variant="h6"> {text("Stats")} </Typography>
+             </div>
              <Table size="small">
                <TableHead>
                  <TableRow>
                    <TableCell align="right"> {text("Player")} </TableCell>
-                   {showEloRatings
+                   {showEloRatings && isWide
                       ? <>
                           <Badge badgeContent="BETA" color="primary">
                             <TableCell
@@ -140,7 +142,7 @@ let make =
                             </TableCell>
                           </Badge>
                         </>
-                      : ReasonReact.null}
+                      : React.null}
                    <TableCell style=numberCellStyle title="Win Percentage">
                      <TableSortLabel
                        active={sortBy === WinsPerMatch}
@@ -181,36 +183,47 @@ let make =
                        {text("GC")}
                      </TableSortLabel>
                    </TableCell>
-                   <TableCell
-                     style={hidableNumberCellStyle(pageWidth)}
-                     title="Goal difference">
-                     <TableSortLabel
-                       active={sortBy === GoalDiff}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(GoalDiff)}>
-                       {text("+/-")}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell
-                     style={hidableNumberCellStyle(pageWidth)}
-                     title="Goals scored per match">
-                     <TableSortLabel
-                       active={sortBy === GoalsScoredPerMatch}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(GoalsScoredPerMatch)}>
-                       {text("G/M")}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell
-                     style={hidableNumberCellStyle(pageWidth)}
-                     title="Goals conceded per match">
-                     <TableSortLabel
-                       active={sortBy === GoalsConcededPerMatch}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(GoalsConcededPerMatch)}>
-                       {text("C/M")}
-                     </TableSortLabel>
-                   </TableCell>
+                   {isWide
+                      ? <>
+                          <TableCell
+                            style=numberCellStyle title="Goal difference">
+                            <TableSortLabel
+                              active={sortBy === GoalDiff}
+                              direction={
+                                sortDirection === Asc ? "asc" : "desc"
+                              }
+                              onClick={_ => requestSort(GoalDiff)}>
+                              {text("+/-")}
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell
+                            style=numberCellStyle
+                            title="Goals scored per match">
+                            <TableSortLabel
+                              active={sortBy === GoalsScoredPerMatch}
+                              direction={
+                                sortDirection === Asc ? "asc" : "desc"
+                              }
+                              onClick={_ => requestSort(GoalsScoredPerMatch)}>
+                              {text("G/M")}
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell
+                            style=numberCellStyle
+                            title="Goals conceded per match">
+                            <TableSortLabel
+                              active={sortBy === GoalsConcededPerMatch}
+                              direction={
+                                sortDirection === Asc ? "asc" : "desc"
+                              }
+                              onClick={_ =>
+                                requestSort(GoalsConcededPerMatch)
+                              }>
+                              {text("C/M")}
+                            </TableSortLabel>
+                          </TableCell>
+                        </>
+                      : React.null}
                  </TableRow>
                </TableHead>
                <TableBody>
@@ -224,7 +237,7 @@ let make =
                             {text(r.playerName)}
                           </RouteLink>
                         </TableCell>
-                        {showEloRatings
+                        {showEloRatings && isWide
                            ? <TableCell style=numberCellStyle>
                                {text(
                                   resultsWithRatings.ratingMap
@@ -237,7 +250,7 @@ let make =
                                   |> string_of_int,
                                 )}
                              </TableCell>
-                           : ReasonReact.null}
+                           : React.null}
                         <TableCell style=numberCellStyle>
                           {text(formatPercentage(r |> matchesWonPerPlayed))}
                         </TableCell>
@@ -253,23 +266,31 @@ let make =
                         <TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsConceded))}
                         </TableCell>
-                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
-                          {text(r |> goalDiff |> formatDiff)}
-                        </TableCell>
-                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
-                          {text(
-                             formatGoalsPerMatch(r |> goalsScoredPerMatch),
-                           )}
-                        </TableCell>
-                        <TableCell style={hidableNumberCellStyle(pageWidth)}>
-                          {text(
-                             formatGoalsPerMatch(r |> goalsConcededPerMatch),
-                           )}
-                        </TableCell>
+                        {isWide
+                           ? <>
+                               <TableCell style=numberCellStyle>
+                                 {text(r |> goalDiff |> formatDiff)}
+                               </TableCell>
+                               <TableCell style=numberCellStyle>
+                                 {text(
+                                    formatGoalsPerMatch(
+                                      r |> goalsScoredPerMatch,
+                                    ),
+                                  )}
+                               </TableCell>
+                               <TableCell style=numberCellStyle>
+                                 {text(
+                                    formatGoalsPerMatch(
+                                      r |> goalsConcededPerMatch,
+                                    ),
+                                  )}
+                               </TableCell>
+                             </>
+                           : React.null}
                       </TableRow>
                     )
                   ->Array.of_list
-                  ->ReasonReact.array}
+                  ->React.array}
                </TableBody>
              </Table>
            </Paper>;
