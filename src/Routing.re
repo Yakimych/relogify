@@ -9,6 +9,7 @@ let make = () => {
   <Container maxWidth="sm">
     {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
      | [] => <IntroPage />
+     | ["new"] => <CreateCommunityPage />
      | [communityName] => <CommunityStartPage communityName />
      | [communityName, "history"] => <ResultHistory communityName />
      | [communityName, playerName] =>

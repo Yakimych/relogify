@@ -11,6 +11,13 @@ let make = () => {
          "Save all match results in order to analyze, view head-to-head records, stats and more.",
        )}
     </Typography>
+    // TODO: Style this
+    <Typography variant="h4">
+      {text("Getting started: ")}
+      <RouteLink className="app-header-item" toPage=CreateCommunityPage>
+        {ReasonReact.string("Create Community")}
+      </RouteLink>
+    </Typography>
     <Typography component="p">
       <span>
         {text("Found a bug or missing a feature? File an issue in the ")}

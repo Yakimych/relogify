@@ -1,5 +1,6 @@
 type page =
   | Home
+  | CreateCommunityPage
   | CommunityStart(string)
   | History(string)
   | PlayerHome(string, string)
