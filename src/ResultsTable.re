@@ -24,8 +24,7 @@ let colonStyle =
 
 let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
-let extraTimeStyle = pageWidth =>
-  ReactDOMRe.Style.make(~width="20px", ~display=cellDisplay(pageWidth), ());
+let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let getHighlightedClassName =
     (newResults: option(list(result)), currentResult: result) => {
@@ -58,118 +57,119 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  // TODO: onWindowResize/useEffect?
-  let (pageWidth, _) = getDimensions();
-  <>
-    <Paper>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell style=headToHeadStyle> {text("H2H")} </TableCell>
-            <TableCell align="right"> {text("Player1")} </TableCell>
-            <TableCell style=numberCellStyle> {text("G1")} </TableCell>
-            <TableCell style=colonStyle />
-            <TableCell style=numberCellStyle> {text("G2")} </TableCell>
-            <TableCell> {text("Player2")} </TableCell>
-            <TableCell
-              style={extraTimeStyle(pageWidth)}
-              align="right"
-              title="Extra time">
-              {text("E")}
-            </TableCell>
-            <TableCell style=dateStyle> {text("Date")} </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {results
-           ->Belt.List.map(resultWithRatings => {
-               let result = resultWithRatings.result;
-               let player1Won = result.player1goals > result.player2goals;
-               let player2Won = !player1Won;
-               let mainPlayerWon =
-                 player1Won
-                 && mainPlayerName === Some(result.player1.name)
-                 || player2Won
-                 && mainPlayerName === Some(result.player2.name);
-               let formattedDate = formatDate(result.date);
+  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
+  <Paper>
+    <div className="title">
+      <Typography variant="h6"> {text("Results")} </Typography>
+    </div>
+    <Table size="small">
+      <TableHead>
+        <TableRow>
+          <TableCell style=headToHeadStyle> {text("H2H")} </TableCell>
+          <TableCell align="right"> {text("Player1")} </TableCell>
+          <TableCell style=numberCellStyle> {text("G1")} </TableCell>
+          <TableCell style=colonStyle />
+          <TableCell style=numberCellStyle> {text("G2")} </TableCell>
+          <TableCell> {text("Player2")} </TableCell>
+          {isWide
+             ? <>
+                 <TableCell
+                   style=extraTimeStyle align="right" title="Extra time">
+                   {text("E")}
+                 </TableCell>
+                 <TableCell style=dateStyle> {text("Date")} </TableCell>
+               </>
+             : React.null}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {results
+         ->Belt.List.map(resultWithRatings => {
+             let result = resultWithRatings.result;
+             let player1Won = result.player1goals > result.player2goals;
+             let player2Won = !player1Won;
+             let mainPlayerWon =
+               player1Won
+               && mainPlayerName === Some(result.player1.name)
+               || player2Won
+               && mainPlayerName === Some(result.player2.name);
+             let formattedDate = formatDate(result.date);
 
-               <TableRow
-                 key={string_of_int(result.id)}
-                 className={
-                   getHighlightedClassName(newResults, result)
-                   ++ " "
-                   ++ getWinningLosingRowClassName(mainPlayerWon)
-                 }>
-                 <TableCell style=headToHeadStyle>
-                   <RouteLink
-                     toPage={
-                       HeadToHead(
-                         communityName,
-                         result.player1.name,
-                         result.player2.name,
-                       )
-                     }>
-                     {text("H2H")}
-                   </RouteLink>
-                 </TableCell>
-                 <TableCell style={getPlayerStyle(player1Won)} align="right">
-                   <RouteLink
-                     toPage={PlayerHome(communityName, result.player1.name)}
-                     style=playerLinkStyle>
-                     {text(result.player1.name)}
-                   </RouteLink>
-                   {temp_showRatings
-                      ? <Rating
-                          onClick={_ =>
-                            showGraphForPlayer(result.player1.name)
-                          }
-                          ratingBefore={resultWithRatings.player1RatingBefore}
-                          ratingAfter={resultWithRatings.player1RatingAfter}
-                        />
-                      : ReasonReact.null}
-                 </TableCell>
-                 <TableCell style=numberCellStyle>
-                   {text(string_of_int(result.player1goals))}
-                 </TableCell>
-                 <TableCell style=colonStyle> {text(":")} </TableCell>
-                 <TableCell style=numberCellStyle>
-                   {text(string_of_int(result.player2goals))}
-                 </TableCell>
-                 <TableCell style={getPlayerStyle(player2Won)}>
-                   <RouteLink
-                     toPage={PlayerHome(communityName, result.player2.name)}
-                     style=playerLinkStyle>
-                     {text(result.player2.name)}
-                   </RouteLink>
-                   {temp_showRatings
-                      ? <Rating
-                          onClick={_ =>
-                            showGraphForPlayer(result.player2.name)
-                          }
-                          ratingBefore={resultWithRatings.player2RatingBefore}
-                          ratingAfter={resultWithRatings.player2RatingAfter}
-                        />
-                      : ReasonReact.null}
-                 </TableCell>
-                 <TableCell style={extraTimeStyle(pageWidth)} align="right">
-                   {text(result.extratime ? "X" : "")}
-                 </TableCell>
-                 <TableCell> {text(formattedDate)} </TableCell>
-               </TableRow>;
-             })
-           ->Array.of_list
-           ->ReasonReact.array}
-        </TableBody>
-      </Table>
-      {graphIsShownForPlayer->Belt.Option.mapWithDefault(
-         ReasonReact.null, playerName =>
-         <EloGraphDialog
-           isOpen=true
-           onClose=hideGraphForPlayer
-           playerName
-           resultsWithRatings=results
-         />
-       )}
-    </Paper>
-  </>;
+             <TableRow
+               key={string_of_int(result.id)}
+               className={
+                 getHighlightedClassName(newResults, result)
+                 ++ " "
+                 ++ getWinningLosingRowClassName(mainPlayerWon)
+               }>
+               <TableCell style=headToHeadStyle>
+                 <RouteLink
+                   toPage={
+                     HeadToHead(
+                       communityName,
+                       result.player1.name,
+                       result.player2.name,
+                     )
+                   }>
+                   {text("H2H")}
+                 </RouteLink>
+               </TableCell>
+               <TableCell style={getPlayerStyle(player1Won)} align="right">
+                 <RouteLink
+                   toPage={PlayerHome(communityName, result.player1.name)}
+                   style=playerLinkStyle>
+                   {text(result.player1.name)}
+                 </RouteLink>
+                 {temp_showRatings && isWide
+                    ? <Rating
+                        onClick={_ => showGraphForPlayer(result.player1.name)}
+                        ratingBefore={resultWithRatings.player1RatingBefore}
+                        ratingAfter={resultWithRatings.player1RatingAfter}
+                      />
+                    : React.null}
+               </TableCell>
+               <TableCell style=numberCellStyle>
+                 {text(string_of_int(result.player1goals))}
+               </TableCell>
+               <TableCell style=colonStyle> {text(":")} </TableCell>
+               <TableCell style=numberCellStyle>
+                 {text(string_of_int(result.player2goals))}
+               </TableCell>
+               <TableCell style={getPlayerStyle(player2Won)}>
+                 <RouteLink
+                   toPage={PlayerHome(communityName, result.player2.name)}
+                   style=playerLinkStyle>
+                   {text(result.player2.name)}
+                 </RouteLink>
+                 {temp_showRatings && isWide
+                    ? <Rating
+                        onClick={_ => showGraphForPlayer(result.player2.name)}
+                        ratingBefore={resultWithRatings.player2RatingBefore}
+                        ratingAfter={resultWithRatings.player2RatingAfter}
+                      />
+                    : React.null}
+               </TableCell>
+               {isWide
+                  ? <>
+                      <TableCell style=extraTimeStyle align="right">
+                        {text(result.extratime ? "X" : "")}
+                      </TableCell>
+                      <TableCell> {text(formattedDate)} </TableCell>
+                    </>
+                  : React.null}
+             </TableRow>;
+           })
+         ->Array.of_list
+         ->React.array}
+      </TableBody>
+    </Table>
+    {graphIsShownForPlayer->Belt.Option.mapWithDefault(React.null, playerName =>
+       <EloGraphDialog
+         isOpen=true
+         onClose=hideGraphForPlayer
+         playerName
+         resultsWithRatings=results
+       />
+     )}
+  </Paper>;
 };

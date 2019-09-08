@@ -49,7 +49,7 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
                     {text(string_of_int(g))}
                   </option>
                 )
-              ->ReasonReact.array}
+              ->React.array}
              <option key="more_goals" value=moreGoalsValue>
                {text("More goals!")}
              </option>

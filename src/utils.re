@@ -1,7 +1,7 @@
 open Types;
 open DateFns;
 
-let text = ReasonReact.string;
+let text = React.string;
 
 let getCurrentWeek = () => {
   let startDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
@@ -30,17 +30,3 @@ let validNumberOfGoals = (goalsString: string): int =>
   try (int_of_string(goalsString) |> Js.Math.max_int(0)) {
   | Failure(_) => 0
   };
-
-let widthLimit = 600;
-let cellDisplay = pageWidth => pageWidth <= widthLimit ? "none" : "table-cell";
-
-let getDimensions: unit => (int, int) = [%bs.raw
-  {|
-function getWindowDimensions() {
-  return [
-    window.innerWidth,
-    window.innerHeight
-  ];
-}
-|}
-];
