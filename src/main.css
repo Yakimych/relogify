@@ -112,3 +112,16 @@ input[type="date"]::-webkit-clear-button {
 .title {
   margin: 10px 0 0 10px;
 }
+
+.panel-content {
+  padding: 10px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.availability-indicator {
+  position: absolute;
+}

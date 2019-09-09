@@ -24,17 +24,20 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
            style={ReactDOMRe.Style.make(~width="80px", ())}
            variant="outlined"
            value={string_of_int(selectedGoals)}
-           onChange={e =>
-             onChange(ReactEvent.Form.target(e)##value |> validNumberOfGoals)
-           }
+           onChange={e => {
+             let newGoalsValue =
+               ReactEvent.Form.target(e)##value |> validNumberOfGoals;
+             onChange(newGoalsValue);
+           }}
          />
        : <span>
            <NativeSelect
              disabled
              value={string_of_int(selectedGoals)}
-             onChange={e =>
-               handleSelectChange(ReactEvent.Form.target(e)##value)
-             }
+             onChange={e => {
+               let newGoalsValue = ReactEvent.Form.target(e)##value;
+               handleSelectChange(newGoalsValue);
+             }}
              input={
                <OutlinedInput
                  labelWidth=0

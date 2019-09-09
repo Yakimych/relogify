@@ -41,14 +41,18 @@ let make =
            variant="outlined"
            inputProps={"maxLength": 20}
            value={selectedPlayerName->Belt.Option.getWithDefault("")}
-           onChange={e => onChange(ReactEvent.Form.target(e)##value)}
+           onChange={e => {
+             let newName = ReactEvent.Form.target(e)##value;
+             onChange(newName);
+           }}
          />
        : <NativeSelect
            disabled
            style={ReactDOMRe.Style.make(~width="200px", ())}
-           onChange={e =>
-             handleSelectChange(ReactEvent.Form.target(e)##value)
-           }
+           onChange={e => {
+             let newName = ReactEvent.Form.target(e)##value;
+             handleSelectChange(newName);
+           }}
            value={selectedPlayerName->Belt.Option.getWithDefault("")}
            input={
              <OutlinedInput
