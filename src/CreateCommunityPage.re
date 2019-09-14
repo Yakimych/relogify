@@ -3,13 +3,10 @@ open Utils;
 [@react.component]
 let make = () => {
   let (communityName, setCommunityName) = React.useState(_ => "");
-  let (maybeIsAvailable, setMaybeIsAvailable) = React.useState(_ => None);
+  let (showAvailabilityIndicator, setShowAvailabilityIndicator) =
+    React.useState(_ => false);
 
-  let testAvailability = () => {
-    // TODO: Implement API call
-    let isAvailable = communityName !== "test";
-    setMaybeIsAvailable(_ => Some(isAvailable));
-  };
+  let testAvailability = () => setShowAvailabilityIndicator(_ => true);
 
   <>
     <Header page=CreateCommunityPage />
@@ -26,33 +23,21 @@ let make = () => {
             value=communityName
             placeholder="Choose a name"
             onChange={e => {
-              setMaybeIsAvailable(_ => None);
+              setShowAvailabilityIndicator(_ => false);
               let newName = ReactEvent.Form.target(e)##value;
               setCommunityName(_ => newName);
             }}
           />
-          <div>
-            <div className="availability-indicator">
-              <Zoom
-                _in={
-                  maybeIsAvailable->Belt.Option.mapWithDefault(false, a => a)
-                }>
-                <CheckCircle fontSize="large" htmlColor="green" />
-              </Zoom>
-            </div>
-            <div className="availability-indicator">
-              <Zoom
-                _in={
-                  maybeIsAvailable->Belt.Option.mapWithDefault(false, a => !a)
-                }>
-                <NotAvailable fontSize="large" htmlColor="red" />
-              </Zoom>
-            </div>
-          </div>
+          {showAvailabilityIndicator
+             ? <div>
+                 <CommunityAvailabilityIndicator name=communityName />
+               </div>
+             : React.null}
         </div>
         <Button
           variant="contained"
           color="primary"
+          disabled={communityName === ""}
           onClick=testAvailability
           style={ReactDOMRe.Style.make(~marginTop="10px", ())}>
           {text("Check Availability")}

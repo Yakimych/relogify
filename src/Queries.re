@@ -5,20 +5,20 @@ let dateToString = (dateString: Js.Json.t) =>
 
 module AllPlayersQueryConfig = [%graphql
   {|
-  query AllPlayersQuery($communityName: String!) {
-    players(where: { community: { name: { _eq: $communityName } } }) {
-      id
-      name
+    query AllPlayersQuery($communityName: String!) {
+      players(where: { community: { name: { _eq: $communityName } } }) {
+        id
+        name
+      }
     }
-  }
-|}
+  |}
 ];
 
 module AllPlayersQuery = ReasonApolloHooks.Query.Make(AllPlayersQueryConfig);
 
 module AllResultsQueryConfig = [%graphql
   {|
-  query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
+    query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
       results(
         where: {
           community: { name: { _eq: $communityName } }
@@ -46,76 +46,91 @@ module AllResultsQuery = ReasonApolloHooks.Query.Make(AllResultsQueryConfig);
 
 module HeadToHeadQueryConfig = [%graphql
   {|
-  query($communityName: String!, $player1Name: String!, $player2Name: String!) {
-    results(
-      where: {
-        _and: [
-          { community: { name: { _eq: $communityName } } }
-          {
-            _or: [
-              { player1: { name: { _eq: $player1Name } } }
-              { player2: { name: { _eq: $player1Name } } }
-            ]
-          }
-          {
-            _or: [
-              { player1: { name: { _eq: $player2Name } } }
-              { player2: { name: { _eq: $player2Name } } }
-            ]
-          }
-        ]
+    query($communityName: String!, $player1Name: String!, $player2Name: String!) {
+      results(
+        where: {
+          _and: [
+            { community: { name: { _eq: $communityName } } }
+            {
+              _or: [
+                { player1: { name: { _eq: $player1Name } } }
+                { player2: { name: { _eq: $player1Name } } }
+              ]
+            }
+            {
+              _or: [
+                { player1: { name: { _eq: $player2Name } } }
+                { player2: { name: { _eq: $player2Name } } }
+              ]
+            }
+          ]
+        }
+        order_by: { date: desc }
+      ) {
+        id
+        player1 {
+          name
+        }
+        player1goals
+        player2 {
+          name
+        }
+        player2goals
+        date @bsDecoder (fn: "dateToString")
+        extratime
       }
-      order_by: { date: desc }
-    ) {
-      id
-      player1 {
-        name
-      }
-      player1goals
-      player2 {
-        name
-      }
-      player2goals
-      date @bsDecoder (fn: "dateToString")
-      extratime
     }
-  }
-|}
+  |}
 ];
 
 module HeadToHeadQuery = ReasonApolloHooks.Query.Make(HeadToHeadQueryConfig);
 
+module CommunityCountByNameQueryConfig = [%graphql
+  {|
+    query communityCount($name: String!) {
+      communities_aggregate(where: {name: {_eq: $name}}) {
+        aggregate {
+          count
+        }
+      }
+    }
+  |}
+];
+
+module CommunityCountByNameQuery =
+  ReasonApolloHooks.Query.Make(CommunityCountByNameQueryConfig);
+
 module PlayerResultsQueryConfig = [%graphql
   {|
-  query playerResults($communityName: String!, $playerName: String!) {
-    results(
-      where: {
-        _and: [
-          { community: { name: { _eq: $communityName } } }
-          {
-            _or: [
-              { player1: { name: { _eq: $playerName } } }
-              { player2: { name: { _eq: $playerName } } }
-            ]
-          }
-        ]
+    query playerResults($communityName: String!, $playerName: String!) {
+      results(
+        where: {
+          _and: [
+            { community: { name: { _eq: $communityName } } }
+            {
+              _or: [
+                { player1: { name: { _eq: $playerName } } }
+                { player2: { name: { _eq: $playerName } } }
+              ]
+            }
+          ]
+        }
+        order_by: { date: desc }
+      ) {
+        id
+        player1 {
+          name
+        }
+        player1goals
+        player2 {
+          name
+        }
+        player2goals
+        date @bsDecoder (fn: "dateToString")
+        extratime
       }
-      order_by: { date: desc }
-    ) {
-      id
-      player1 {
-        name
-      }
-      player1goals
-      player2 {
-        name
-      }
-      player2goals
-      date @bsDecoder (fn: "dateToString")
-      extratime
     }
-  }
-|}
+  |}
 ];
 
 module PlayerResultsQuery =
