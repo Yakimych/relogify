@@ -4,6 +4,7 @@ open Utils;
 let make = () => {
   <Paper
     style={ReactDOMRe.Style.make(
+      ~margin="24px 16px",
       ~padding="24px 16px",
       ~textAlign="center",
       (),
@@ -27,7 +28,7 @@ let make = () => {
     </div>
     <Card className="intro-card">
       <CardContent>
-        <Typography variant="h6"> {text("Available features")} </Typography>
+        <Typography variant="h6"> {text("Feature list")} </Typography>
         <Typography>
           <span> {text("Weekly Results and Leaderboards")} </span>
         </Typography>
@@ -36,7 +37,7 @@ let make = () => {
         </Typography>
         <Typography>
           <span>
-            {text("Individual player results, stats and Winning Streaks")}
+            {text("Individual player results, stats and winning streaks")}
           </span>
         </Typography>
         <Typography>

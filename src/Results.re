@@ -61,11 +61,19 @@ let make =
     let results = data##results |> toRecord;
     let resultsWithRatingMap = results |> attachRatings;
 
-    <ResultsTable
-      communityName
-      results={resultsWithRatingMap.resultsWithRatings}
-      newResults={highlightNewResults ? newResults : []}
-      temp_showRatings
-    />;
+    results->Belt.List.length === 0
+      ? <Card className="no-result-info">
+          <CardContent>
+            <Typography variant="h6">
+              {React.string("No results reported this week")}
+            </Typography>
+          </CardContent>
+        </Card>
+      : <ResultsTable
+          communityName
+          results={resultsWithRatingMap.resultsWithRatings}
+          newResults={highlightNewResults ? newResults : []}
+          temp_showRatings
+        />;
   };
 };

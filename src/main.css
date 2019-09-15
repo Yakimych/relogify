@@ -142,8 +142,11 @@ input[type="date"]::-webkit-clear-button {
 .intro-getting-started-container {
   display: flex;
   flex-direction: column;
-  align-content: center;
-  text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.no-result-info {
+  margin-top: 10px;
+  text-align: center;
 }
