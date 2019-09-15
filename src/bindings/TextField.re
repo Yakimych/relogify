@@ -8,6 +8,8 @@ external make:
     ~style: ReactDOMRe.Style.t=?,
     ~variant: string=?,
     ~value: string=?,
+    ~placeholder: string=?,
+    ~label: string=?,
     ~onChange: 'a=?,
     ~inputProps: Js.t({..})=?,
     ~children: React.element=?,

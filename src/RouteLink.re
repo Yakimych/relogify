@@ -3,6 +3,7 @@ open Types;
 let getUrl = (page: page): string =>
   switch (page) {
   | Home => "/"
+  | CreateCommunityPage => "/new"
   | CommunityStart(communityName) => "/" ++ communityName
   | History(communityName) => "/" ++ communityName ++ "/history"
   | PlayerHome(communityName, playerName) =>

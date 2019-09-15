@@ -112,3 +112,41 @@ input[type="date"]::-webkit-clear-button {
 .title {
   margin: 10px 0 0 10px;
 }
+
+.panel-content {
+  padding: 10px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.availability-indicator {
+  position: absolute;
+}
+
+.button-link {
+  text-decoration: none;
+}
+
+.intro-card {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.create-community-button {
+  margin-top: 15px;
+}
+
+.intro-getting-started-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.no-result-info {
+  margin-top: 10px;
+  text-align: center;
+}
