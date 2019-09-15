@@ -85,20 +85,18 @@ module HeadToHeadQueryConfig = [%graphql
 
 module HeadToHeadQuery = ReasonApolloHooks.Query.Make(HeadToHeadQueryConfig);
 
-module CommunityCountByNameQueryConfig = [%graphql
+module AllCommunitiesQueryConfig = [%graphql
   {|
-    query communityCount($name: String!) {
-      communities_aggregate(where: {name: {_eq: $name}}) {
-        aggregate {
-          count
-        }
+    query communities {
+      communities {
+        name
       }
     }
   |}
 ];
 
-module CommunityCountByNameQuery =
-  ReasonApolloHooks.Query.Make(CommunityCountByNameQueryConfig);
+module AllCommunitiesQuery =
+  ReasonApolloHooks.Query.Make(AllCommunitiesQueryConfig);
 
 module PlayerResultsQueryConfig = [%graphql
   {|
