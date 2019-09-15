@@ -21,14 +21,16 @@ let make =
       onChange(value);
     };
 
-  React.useEffect1(
+  React.useEffect2(
     _ => {
-      if (selectedPlayerName->Belt.Option.isNone) {
+      if (Belt.Array.length(playerNames) === 0) {
+        setIsInCustomMode(_ => true);
+      } else if (selectedPlayerName->Belt.Option.isNone) {
         setIsInCustomMode(_ => false);
       };
       None;
     },
-    [|selectedPlayerName|],
+    (selectedPlayerName, playerNames),
   );
 
   <>

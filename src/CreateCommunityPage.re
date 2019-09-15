@@ -37,6 +37,7 @@ let make = () => {
             style={ReactDOMRe.Style.make(~width="250px", ())}
             value=communityName
             placeholder="Choose a name"
+            inputProps={"maxLength": 20}
             onChange={e => {
               let newName = ReactEvent.Form.target(e)##value;
               setCommunityName(_ => newName);
