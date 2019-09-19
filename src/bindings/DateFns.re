@@ -21,6 +21,15 @@ external addWeeks: (Js.Date.t, float) => Js.Date.t = "date-fns/add_weeks";
 external startOfWeek: (Js.Date.t, {. "weekStartsOn": int}) => Js.Date.t =
   "date-fns/start_of_week";
 
+[@bs.module]
+external startOfMonth: Js.Date.t => Js.Date.t = "date-fns/start_of_month";
+
+[@bs.module]
+external startOfYear: Js.Date.t => Js.Date.t = "date-fns/start_of_year";
+
+[@bs.module]
+external startOfDay: Js.Date.t => Js.Date.t = "date-fns/start_of_day";
+
 [@bs.module] external isMonday: Js.Date.t => bool = "date-fns/is_monday";
 
 [@bs.module]

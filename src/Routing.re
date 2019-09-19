@@ -11,6 +11,7 @@ let make = () => {
      | [] => <IntroPage />
      | ["new"] => <CreateCommunityPage />
      | [communityName] => <CommunityStartPage communityName />
+     | [communityName, "top"] => <TopBoard communityName />
      | [communityName, "history"] => <ResultHistory communityName />
      | [communityName, playerName] =>
        <PlayerResults communityName playerName />

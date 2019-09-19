@@ -38,6 +38,23 @@ let make = (~page: page) => {
                {text("History")}
              </RouteLink>
            </>
+         | TopX(communityName) =>
+           <>
+             <div className="app-header-grouping">
+               <RouteLink
+                 className="app-header-item"
+                 toPage={CommunityStart(communityName)}>
+                 <HomeIcon />
+               </RouteLink>
+               <MyPlayerHeaderLink communityName />
+             </div>
+             <div className="app-header-grow" />
+             <div className="app-header-title"> {text("Top 5")} </div>
+             <RouteLink
+               className="app-header-item" toPage={History(communityName)}>
+               {text("History")}
+             </RouteLink>
+           </>
          | History(communityName) =>
            <>
              <div className="app-header-grouping">

@@ -69,6 +69,8 @@ let make =
       ~communityName: string,
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
+      ~playerLimit: option(int)=?,
+      ~title: option(string)=?,
     ) => {
   let allResultsQuery =
     AllResultsQueryConfig.make(
@@ -109,11 +111,18 @@ let make =
          ->Belt.List.keep(includedInStats)
          ->Belt.List.sort(getSortFunc(sortBy, sortDirection));
 
+       let maxNumberOfRowsToShow =
+         playerLimit->Belt.Option.getWithDefault(
+           leaderboardRows->Belt.List.length,
+         );
+
        leaderboardRows->Belt.List.length === 0
          ? React.null
          : <Paper>
              <div className="title">
-               <Typography variant="h6"> {text("Stats")} </Typography>
+               <Typography variant="h6">
+                 {text(title->Belt.Option.getWithDefault("Stats"))}
+               </Typography>
              </div>
              <Table size="small">
                <TableHead>
@@ -228,6 +237,8 @@ let make =
                </TableHead>
                <TableBody>
                  {leaderboardRows
+                  ->Belt.List.take(maxNumberOfRowsToShow)
+                  ->Belt.Option.getWithDefault(leaderboardRows)
                   ->Belt.List.map(r =>
                       <TableRow key={r.playerName}>
                         <TableCell align="right">
