@@ -39,6 +39,7 @@ let make = (~communityName: string) => {
         dateFrom=startOfDay
         dateTo=now
         highlightNewResults=false
+        noResultsText="No results reported today"
       />
     </Box>
   </>;

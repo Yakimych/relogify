@@ -10,6 +10,7 @@ let make =
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
       ~highlightNewResults: bool,
+      ~noResultsText: option(string)=?,
     ) => {
   let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
   let (newResults, setNewResults) = React.useState(_ => []);
@@ -65,7 +66,11 @@ let make =
       ? <Card className="no-result-info">
           <CardContent>
             <Typography variant="h6">
-              {React.string("No results reported this week")}
+              {React.string(
+                 noResultsText->Belt.Option.getWithDefault(
+                   "No results reported this week",
+                 ),
+               )}
             </Typography>
           </CardContent>
         </Card>
