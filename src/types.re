@@ -3,6 +3,7 @@ type page =
   | CreateCommunityPage
   | CommunityStart(string)
   | History(string)
+  | TopX(string)
   | PlayerHome(string, string)
   | HeadToHead(string, string, string);
 
