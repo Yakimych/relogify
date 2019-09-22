@@ -27,7 +27,7 @@
     "react-dom": "^16.8.1",
     "react-minimal-pie-chart": "^5.0.0",
     "reason-apollo": "^0.17.0",
-    "reason-apollo-hooks": "^2.5.1",
+    "reason-apollo-hooks": "github:yakimych/reason-apollo-hooks#subscribe-to-more",
     "reason-react": ">=0.7.0",
     "recharts": "^1.7.1"
   },

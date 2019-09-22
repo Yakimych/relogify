@@ -84,3 +84,7 @@ ALTER TABLE ONLY results
 
 ALTER TABLE ONLY results
     ADD CONSTRAINT "results_player2Id_fkey" FOREIGN KEY ("player2Id") REFERENCES players(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+CREATE OR REPLACE VIEW newest_result AS 
+  SELECT * FROM results
+  WHERE id = (SELECT max(id) FROM results);
