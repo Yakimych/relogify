@@ -13,7 +13,7 @@ let make =
       ~noResultsText: option(string)=?,
     ) => {
   let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
-  let (newResults, setNewResults) = React.useState(_ => []);
+  let (newResultIds, setNewResultIds) = React.useState(_ => []);
 
   let allResultsQuery =
     AllResultsQueryConfig.make(
@@ -35,10 +35,10 @@ let make =
       ->Belt.Option.map(data => {
           let newlyFetchedResults = data##results |> toRecord;
           lastFetchedResults->Belt.Option.map(ar =>
-            setNewResults(_ =>
-              newlyFetchedResults->Belt.List.keep(r =>
-                !ar->Belt.List.has(r, (==))
-              )
+            setNewResultIds(_ =>
+              newlyFetchedResults
+              ->Belt.List.keep(r => !ar->Belt.List.has(r, (==)))
+              ->Belt.List.map(r => r.id)
             )
           )
           |> ignore;
@@ -77,7 +77,7 @@ let make =
       : <ResultsTable
           communityName
           results={resultsWithRatingMap.resultsWithRatings}
-          newResults={highlightNewResults ? newResults : []}
+          newResultIds={highlightNewResults ? newResultIds : []}
           temp_showRatings
         />;
   };
