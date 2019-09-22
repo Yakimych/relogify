@@ -27,10 +27,10 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let getHighlightedClassName =
-    (newResults: option(list(result)), currentResult: result) => {
+    (newResults: option(list(int)), currentResult: result) => {
   let resultIsFresh =
     newResults
-    ->Belt.Option.map(n => n->Belt.List.some(nr => nr == currentResult))
+    ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResult.id))
     ->Belt.Option.getWithDefault(false);
 
   resultIsFresh ? "highlighted" : "";
@@ -45,10 +45,12 @@ let make =
       ~results: list(resultWithRatings),
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
-      ~newResults: option(list(result))=?,
+      ~newResultIds: option(list(int))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) => {
+  Js.log2("ResultsTable - results: ", results |> Belt.List.toArray);
+  Js.log2("ResultsTable - newResults: ", newResultIds);
   let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
     React.useState(_ => None);
 
@@ -98,7 +100,7 @@ let make =
              <TableRow
                key={string_of_int(result.id)}
                className={
-                 getHighlightedClassName(newResults, result)
+                 getHighlightedClassName(newResultIds, result)
                  ++ " "
                  ++ getWinningLosingRowClassName(mainPlayerWon)
                }>

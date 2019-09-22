@@ -22,6 +22,7 @@ let make = (~communityName: string) => {
   let newResultSubscription =
     NewResultSubscriptionConfig.make(~communityName, ());
   let newResultDocument = ApolloClient.gql(. newResultSubscription##query);
+  let newResultsRef = React.useRef([]);
 
   React.useEffect1(
     () => {
@@ -34,8 +35,10 @@ let make = (~communityName: string) => {
               const newestResult = subscriptionData.data.newest_result[0];
               const alreadyInList =
                 newestResult && prev.results.filter(r => r.id === newestResult.id)[0];
+              const resultsToAdd = alreadyInList ? [] : [newestResult];
+              newResultsRef.current = resultsToAdd.map(r => r.id);
               return {
-                results: [...(alreadyInList ? [] : [newestResult]), ...prev.results]
+                results: [...resultsToAdd, ...prev.results]
               };
             }
           |}
@@ -47,6 +50,8 @@ let make = (~communityName: string) => {
     },
     [|communityName|],
   );
+
+  Js.log2("Ref: ", React.Ref.current(newResultsRef));
 
   switch (resultsQuery) {
   | Loading => <CircularProgress />
@@ -72,7 +77,7 @@ let make = (~communityName: string) => {
             results={resultsWithRatingMap.resultsWithRatings}
             // TODO
             // newResults={highlightNewResults ? newResults : []}
-            newResults=[]
+            newResultIds={React.Ref.current(newResultsRef)}
             temp_showRatings=true
           />
         </Box>
