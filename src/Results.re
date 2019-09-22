@@ -77,7 +77,7 @@ let make =
       : <ResultsTable
           communityName
           results={resultsWithRatingMap.resultsWithRatings}
-          newResultIds={highlightNewResults ? newResultIds : []}
+          resultIdsToHighlight={highlightNewResults ? newResultIds : []}
           temp_showRatings
         />;
   };

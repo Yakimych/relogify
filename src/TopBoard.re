@@ -22,7 +22,7 @@ let make = (~communityName: string) => {
   let newResultSubscription =
     NewResultSubscriptionConfig.make(~communityName, ());
   let newResultDocument = ApolloClient.gql(. newResultSubscription##query);
-  let newResultsRef = React.useRef([]);
+  let newResultRef = React.useRef(None);
 
   React.useEffect1(
     () => {
@@ -35,10 +35,9 @@ let make = (~communityName: string) => {
               const newestResult = subscriptionData.data.newest_result[0];
               const alreadyInList =
                 newestResult && prev.results.filter(r => r.id === newestResult.id)[0];
-              const resultsToAdd = alreadyInList ? [] : [newestResult];
-              newResultsRef.current = resultsToAdd.map(r => r.id);
+              newResultRef.current = alreadyInList ? undefined : newestResult.id;
               return {
-                results: [...resultsToAdd, ...prev.results]
+                results: [...(alreadyInList ? [] : [newestResult]), ...prev.results]
               };
             }
           |}
@@ -51,8 +50,6 @@ let make = (~communityName: string) => {
     [|communityName|],
   );
 
-  Js.log2("Ref: ", React.Ref.current(newResultsRef));
-
   switch (resultsQuery) {
   | Loading => <CircularProgress />
   | NoData
@@ -60,6 +57,10 @@ let make = (~communityName: string) => {
   | Data(data) =>
     let results = data##results |> toRecord;
     let resultsWithRatingMap = results |> attachRatings;
+
+    let resultIdsToHighlight =
+      React.Ref.current(newResultRef)
+      ->Belt.Option.mapWithDefault([], v => [v]);
 
     <>
       <Header page={TopX(communityName)} />
@@ -75,9 +76,7 @@ let make = (~communityName: string) => {
           <ResultsTable
             communityName
             results={resultsWithRatingMap.resultsWithRatings}
-            // TODO
-            // newResults={highlightNewResults ? newResults : []}
-            newResultIds={React.Ref.current(newResultsRef)}
+            resultIdsToHighlight
             temp_showRatings=true
           />
         </Box>
