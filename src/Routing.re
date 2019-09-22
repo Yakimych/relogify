@@ -6,18 +6,26 @@ open Utils;
 let make = () => {
   let url = ReasonReactRouter.useUrl();
 
-  <Container maxWidth="sm">
-    {switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
-     | [] => <IntroPage />
-     | ["new"] => <CreateCommunityPage />
-     | [communityName] => <CommunityStartPage communityName />
-     | [communityName, "top"] => <TopBoard communityName />
-     | [communityName, "history"] => <ResultHistory communityName />
-     | [communityName, playerName] =>
-       <PlayerResults communityName playerName />
-     | [communityName, player1Name, player2Name] =>
-       <HeadToHeadPage communityName player1Name player2Name />
-     | _ => <div> {text("Invalid route")} </div>
-     }}
-  </Container>;
+  switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
+  | [] => <Container maxWidth="sm"> <IntroPage /> </Container>
+  | ["new"] => <Container maxWidth="sm"> <CreateCommunityPage /> </Container>
+  | [communityName] =>
+    <Container maxWidth="sm"> <CommunityStartPage communityName /> </Container>
+  | [communityName, "top"] =>
+    <Container maxWidth="lg"> <TopBoard communityName /> </Container>
+  | [communityName, "history"] =>
+    <Container maxWidth="sm"> <ResultHistory communityName /> </Container>
+  | [communityName, playerName] =>
+    <Container maxWidth="sm">
+      <PlayerResults communityName playerName />
+    </Container>
+  | [communityName, player1Name, player2Name] =>
+    <Container maxWidth="sm">
+      <HeadToHeadPage communityName player1Name player2Name />
+    </Container>
+  | _ =>
+    <Container maxWidth="sm">
+      <div> {text("Invalid route")} </div>
+    </Container>
+  };
 };
