@@ -24,14 +24,15 @@ let make = (~communityName: string) => {
 
   React.useEffect1(
     () => {
-      fullResultsQuery.subscribeToMore(
-        ~document=newResultDocument,
-        ~variables=newResultSubscription##variables,
-        ~updateQuery=[%bs.raw
-          {|
+      let unsubscribe =
+        fullResultsQuery.subscribeToMore(
+          ~document=newResultDocument,
+          ~variables=newResultSubscription##variables,
+          ~updateQuery=[%bs.raw
+            {|
             function(prev, { subscriptionData }) {
-              if (subscriptionData.data.newest_result.length === 0) {
-                return { results: prev.results };
+              if (!prev || subscriptionData.data.newest_result.length === 0) {
+                return prev;
               }
 
               const newestResult = subscriptionData.data.newest_result[0];
@@ -43,11 +44,10 @@ let make = (~communityName: string) => {
               };
             }
           |}
-        ],
-        (),
-      )
-      |> ignore;
-      None;
+          ],
+          (),
+        );
+      Some(unsubscribe);
     },
     [|communityName|],
   );
