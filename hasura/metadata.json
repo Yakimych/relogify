@@ -6,6 +6,7 @@
   "tables": [
     {
       "table": "communities",
+      "is_enum": false,
       "object_relationships": [],
       "array_relationships": [
         {
@@ -37,6 +38,7 @@
     },
     {
       "table": "results",
+      "is_enum": false,
       "object_relationships": [
         {
           "using": { "foreign_key_constraint_on": "communityId" },
@@ -62,7 +64,50 @@
       "event_triggers": []
     },
     {
+      "table": "newest_result",
+      "is_enum": false,
+      "object_relationships": [
+        {
+          "using": {
+            "manual_configuration": {
+              "remote_table": "communities",
+              "column_mapping": { "communityId": "id" }
+            }
+          },
+          "name": "community",
+          "comment": null
+        },
+        {
+          "using": {
+            "manual_configuration": {
+              "remote_table": "players",
+              "column_mapping": { "player1Id": "id" }
+            }
+          },
+          "name": "player1",
+          "comment": null
+        },
+        {
+          "using": {
+            "manual_configuration": {
+              "remote_table": "players",
+              "column_mapping": { "player2Id": "id" }
+            }
+          },
+          "name": "player2",
+          "comment": null
+        }
+      ],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
       "table": "players",
+      "is_enum": false,
       "object_relationships": [
         {
           "using": { "foreign_key_constraint_on": "communityId" },
@@ -98,6 +143,5 @@
       "delete_permissions": [],
       "event_triggers": []
     }
-  ],
-  "query_templates": []
+  ]
 }
