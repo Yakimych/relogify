@@ -15,6 +15,15 @@ let byGoalsScored = (r1, r2) =>
   | (a, b) => sortCompareDesc(a, b)
   };
 
+let byGoalsConceded = (r1, r2) =>
+  switch (r1 |> goalsConcededPerMatch, r2 |> goalsConcededPerMatch) {
+  | (a, b) when a == b => sortCompare(r1.goalsConceded, r2.goalsConceded)
+  | (a, b) => sortCompare(a, b)
+  };
+
+let takeMax = (list, maxNumberToTake) =>
+  list->Belt.List.take(maxNumberToTake)->Belt.Option.getWithDefault(list);
+
 [@react.component]
 let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
   let relevantResultsWithRatings =
@@ -24,53 +33,55 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
   let leaderboardRows =
     getLeaderboard(relevantResultsWithRatings->Belt.List.map(r => r.result));
 
-  let sortedWinPercentageRows =
-    leaderboardRows->Belt.List.sort(byWinPercentage);
   let topWinPercentageRows =
-    sortedWinPercentageRows
-    ->Belt.List.take(topNumberOfRows)
-    ->Belt.Option.getWithDefault(sortedWinPercentageRows)
+    leaderboardRows
+    ->Belt.List.sort(byWinPercentage)
+    ->takeMax(topNumberOfRows)
     ->Belt.List.map(row =>
         (row.playerName, row |> matchesWonPerPlayed |> formatPercentage)
       );
 
-  let sortedGoalsScoredPerMatchRows =
-    leaderboardRows->Belt.List.sort(byGoalsScored);
   let topGoalsScoredPerMatchRows =
-    sortedGoalsScoredPerMatchRows
-    ->Belt.List.take(topNumberOfRows)
-    ->Belt.Option.getWithDefault(sortedGoalsScoredPerMatchRows)
+    leaderboardRows
+    ->Belt.List.sort(byGoalsScored)
+    ->takeMax(topNumberOfRows)
     ->Belt.List.map(row =>
         (row.playerName, row |> goalsScoredPerMatch |> formatGoalsPerMatch)
       );
 
-  <>
-    <Paper>
-      <div className="title">
-        <Typography variant="h6"> {text(title)} </Typography>
-      </div>
-      <div className="top-stats-container">
-        <SingleStatCard
-          playersWithStat=topWinPercentageRows
-          statName="Win Percentage"
-          statHeader="Win %"
-        />
-        <SingleStatCard
-          playersWithStat=topGoalsScoredPerMatchRows
-          statName="Goals Scored per Match"
-          statHeader="G/M"
-        />
-      </div>
-    </Paper>
-    // <SingleStatCard
-    //   playersWithStat=weeklyGoalsScoredPerMatch
-    //   statName="Goals Conceded per Match"
-    //   statHeader="GC/M"
-    // />
-    // <SingleStatCard
-    //   playersWithStat=weeklyEloDifference
-    //   statName="Elo Difference"
-    //   statHeader="+/-"
-    // />
-  </>;
+  let topGoalsConcededPerMatchRows =
+    leaderboardRows
+    ->Belt.List.sort(byGoalsConceded)
+    ->takeMax(topNumberOfRows)
+    ->Belt.List.map(row =>
+        (row.playerName, row |> goalsConcededPerMatch |> formatGoalsPerMatch)
+      );
+
+  <Paper>
+    <div className="title">
+      <Typography variant="h6"> {text(title)} </Typography>
+    </div>
+    <div className="top-stats-container">
+      <SingleStatCard
+        playersWithStat=topWinPercentageRows
+        statName="Win Percentage"
+        statHeader="Win %"
+      />
+      <SingleStatCard
+        playersWithStat=topGoalsScoredPerMatchRows
+        statName="Goals Scored per Match"
+        statHeader="G/M"
+      />
+    </div>
+    <SingleStatCard
+      playersWithStat=topGoalsConcededPerMatchRows
+      statName="Goals Conceded per Match"
+      statHeader="GC/M"
+    />
+  </Paper>;
+  // <SingleStatCard
+  //   playersWithStat=weeklyEloDifference
+  //   statName="Elo Difference"
+  //   statHeader="+/-"
+  // />
 };
