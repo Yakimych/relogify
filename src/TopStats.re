@@ -3,6 +3,7 @@ open EloUtils;
 open LeaderboardUtils;
 
 let topNumberOfRows = 5;
+
 let byWinPercentage = (r1, r2) =>
   switch (r1 |> matchesWonPerPlayed, r2 |> matchesWonPerPlayed) {
   | (a, b) when a == b => sortCompareDesc(r1.matchesWon, r2.matchesWon)
@@ -21,8 +22,11 @@ let byGoalsConceded = (r1, r2) =>
   | (a, b) => sortCompare(a, b)
   };
 
-let takeMax = (list, maxNumberToTake) =>
-  list->Belt.List.take(maxNumberToTake)->Belt.Option.getWithDefault(list);
+let byTupleValue = ((_, r1), (_, r2)) =>
+  switch (r1, r2) {
+  | (a, b) when a == b => sortCompareDesc(r1, r2)
+  | (a, b) => sortCompareDesc(a, b)
+  };
 
 [@react.component]
 let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
@@ -57,6 +61,15 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
         (row.playerName, row |> goalsConcededPerMatch |> formatGoalsPerMatch)
       );
 
+  let topEloDiffRows =
+    getRatingDiffs(resultsWithMap.ratingMap, relevantResultsWithRatings)
+    ->Belt_MapString.toList
+    ->Belt.List.sort(byTupleValue)
+    ->takeMax(topNumberOfRows)
+    ->Belt.List.map(((playerName, rating)) =>
+        (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
+      );
+
   <Paper>
     <div className="title">
       <Typography variant="h6"> {text(title)} </Typography>
@@ -72,16 +85,16 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
         statName="Goals Scored per Match"
         statHeader="G/M"
       />
+      <SingleStatCard
+        playersWithStat=topGoalsConcededPerMatchRows
+        statName="Goals Conceded per Match"
+        statHeader="GC/M"
+      />
+      <SingleStatCard
+        playersWithStat=topEloDiffRows
+        statName="Elo Difference"
+        statHeader="+/-"
+      />
     </div>
-    <SingleStatCard
-      playersWithStat=topGoalsConcededPerMatchRows
-      statName="Goals Conceded per Match"
-      statHeader="GC/M"
-    />
   </Paper>;
-  // <SingleStatCard
-  //   playersWithStat=weeklyEloDifference
-  //   statName="Elo Difference"
-  //   statHeader="+/-"
-  // />
 };
