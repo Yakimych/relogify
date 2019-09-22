@@ -30,10 +30,14 @@ let make = (~communityName: string) => {
         ~updateQuery=[%bs.raw
           {|
             function(prev, { subscriptionData }) {
+              if (subscriptionData.data.newest_result.length === 0) {
+                return { results: prev.results };
+              }
+
               const newestResult = subscriptionData.data.newest_result[0];
-              const alreadyInList =
-                newestResult && prev.results.filter(r => r.id === newestResult.id)[0];
+              const alreadyInList = prev.results.filter(r => r.id === newestResult.id)[0];
               newResultRef.current = alreadyInList ? undefined : newestResult.id;
+
               return {
                 results: [...(alreadyInList ? [] : [newestResult]), ...prev.results]
               };
