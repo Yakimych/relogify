@@ -78,15 +78,19 @@ let make = (~communityName: string) => {
           resultsWithMap=resultsWithRatingMap
           startDate=yearStartDate
         />
-        <ResultsTable
-          communityName
-          results={
-            resultsWithRatingMap.resultsWithRatings
-            ->Belt.List.keep(r => r.result.date >= startOfDay)
-          }
-          resultIdsToHighlight
-          temp_showRatings=true
-        />
+        {switch (
+           resultsWithRatingMap.resultsWithRatings
+           ->Belt.List.keep(r => r.result.date >= startOfDay)
+         ) {
+         | [] => React.null
+         | todaysResults =>
+           <ResultsTable
+             communityName
+             results=todaysResults
+             resultIdsToHighlight
+             temp_showRatings=true
+           />
+         }}
       </Box>
     </>;
   };
