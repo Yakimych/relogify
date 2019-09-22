@@ -15,6 +15,10 @@ type resultWithRatings = {
   player2RatingAfter: float,
 };
 
+let resultsWithRatingsByDate =
+    (first: resultWithRatings, second: resultWithRatings) =>
+  DateFns.compareAsc(first.result.date, second.result.date);
+
 // This is only necessary temporarily while ratings are recalculated on the frontend
 type temp_resultsWithRatingMap = {
   ratingMap: eloMap,
@@ -109,3 +113,35 @@ let attachRatings = (results: list(result)): temp_resultsWithRatingMap =>
       {ratingMap: Belt_MapString.empty, resultsWithRatings: []},
       eloRatingReducer,
     );
+
+let getOldestRatingForPlayer =
+    (playerName, resultsWithRatings: list(resultWithRatings)) => {
+  resultsWithRatings
+  ->Belt.List.keep(r =>
+      r.result.player1.name == playerName
+      || r.result.player2.name == playerName
+    )
+  ->Belt.List.sort(resultsWithRatingsByDate)
+  ->Belt.List.head
+  ->Belt.Option.map(r =>
+      if (r.result.player1.name == playerName) {
+        r.player1RatingBefore;
+      } else {
+        r.player2RatingBefore;
+      }
+    );
+};
+
+let getRatingDiffs =
+    (ratingMap: eloMap, resultsWithRatings: list(resultWithRatings)): eloMap => {
+  let ratingDiffReducer = (ratingDiffMap, playerName, currentRating) =>
+    getOldestRatingForPlayer(playerName, resultsWithRatings)
+    ->Belt.Option.mapWithDefault(ratingDiffMap, oldestRating =>
+        ratingDiffMap->Belt_MapString.set(
+          playerName,
+          currentRating -. oldestRating,
+        )
+      );
+
+  ratingMap->Belt_MapString.reduce(Belt_MapString.empty, ratingDiffReducer);
+};

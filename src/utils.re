@@ -30,3 +30,6 @@ let validNumberOfGoals = (goalsString: string): int =>
   try (int_of_string(goalsString) |> Js.Math.max_int(0)) {
   | Failure(_) => 0
   };
+
+let takeMax = (list, maxNumberToTake) =>
+  list->Belt.List.take(maxNumberToTake)->Belt.Option.getWithDefault(list);

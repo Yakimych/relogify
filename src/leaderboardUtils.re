@@ -1,8 +1,7 @@
 open Types;
-open EloUtils;
 
 type columnType =
-  | EloRating(eloMap)
+  | EloRating(EloUtils.eloMap)
   | WinsPerMatch
   | MatchesWon
   | MatchesLost
