@@ -1,13 +1,35 @@
+[@bs.val] external apiBaseUrl: string = "process.env.REACT_APP_API_BASE_URL";
+
 /* Create an InMemoryCache */
 let inMemoryCache = ApolloInMemoryCache.createInMemoryCache();
 
-[@bs.val] external apiBaseUrl: string = "process.env.REACT_APP_API_BASE_URL";
-
 /* Create an HTTP Link */
-let httpLink = ApolloLinks.createHttpLink(~uri=apiBaseUrl, ());
+let httpLink = ApolloLinks.createHttpLink(~uri="https://" ++ apiBaseUrl, ());
+
+/* WebSocket client */
+let webSocketLink =
+  ApolloLinks.webSocketLink(~uri="wss://" ++ apiBaseUrl, ~reconnect=true, ());
+
+/* based on test, execute left or right */
+let webSocketHttpLink =
+  ApolloLinks.split(
+    operation => {
+      let operationDefition =
+        ApolloUtilities.getMainDefinition(operation##query);
+      operationDefition##kind == "OperationDefinition"
+      &&
+      operationDefition##operation == "subscription";
+    },
+    webSocketLink,
+    httpLink,
+  );
 
 let client =
-  ReasonApollo.createApolloClient(~link=httpLink, ~cache=inMemoryCache, ());
+  ReasonApollo.createApolloClient(
+    ~link=webSocketHttpLink,
+    ~cache=inMemoryCache,
+    (),
+  );
 
 let app =
   <ReasonApolloHooks.ApolloProvider client>
