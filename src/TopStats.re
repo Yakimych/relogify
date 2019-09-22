@@ -29,68 +29,75 @@ let byTupleValue = ((_, r1), (_, r2)) =>
   };
 
 [@react.component]
-let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
-  let relevantResultsWithRatings =
+let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) =>
+  switch (
     resultsWithMap.resultsWithRatings
-    ->Belt.List.keep(r => r.result.date >= startDate);
-
-  let leaderboardRows =
-    getLeaderboard(relevantResultsWithRatings->Belt.List.map(r => r.result));
-
-  let topWinPercentageRows =
-    leaderboardRows
-    ->Belt.List.sort(byWinPercentage)
-    ->takeMax(topNumberOfRows)
-    ->Belt.List.map(row =>
-        (row.playerName, row |> matchesWonPerPlayed |> formatPercentage)
+    ->Belt.List.keep(r => r.result.date >= startDate)
+  ) {
+  | [] => React.null
+  | relevantResultsWithRatings =>
+    let leaderboardRows =
+      getLeaderboard(
+        relevantResultsWithRatings->Belt.List.map(r => r.result),
       );
 
-  let topGoalsScoredPerMatchRows =
-    leaderboardRows
-    ->Belt.List.sort(byGoalsScored)
-    ->takeMax(topNumberOfRows)
-    ->Belt.List.map(row =>
-        (row.playerName, row |> goalsScoredPerMatch |> formatGoalsPerMatch)
-      );
+    let topWinPercentageRows =
+      leaderboardRows
+      ->Belt.List.sort(byWinPercentage)
+      ->takeMax(topNumberOfRows)
+      ->Belt.List.map(row =>
+          (row.playerName, row |> matchesWonPerPlayed |> formatPercentage)
+        );
 
-  let topGoalsConcededPerMatchRows =
-    leaderboardRows
-    ->Belt.List.sort(byGoalsConceded)
-    ->takeMax(topNumberOfRows)
-    ->Belt.List.map(row =>
-        (row.playerName, row |> goalsConcededPerMatch |> formatGoalsPerMatch)
-      );
+    let topGoalsScoredPerMatchRows =
+      leaderboardRows
+      ->Belt.List.sort(byGoalsScored)
+      ->takeMax(topNumberOfRows)
+      ->Belt.List.map(row =>
+          (row.playerName, row |> goalsScoredPerMatch |> formatGoalsPerMatch)
+        );
 
-  let topEloDiffRows =
-    getRatingDiffs(resultsWithMap.ratingMap, relevantResultsWithRatings)
-    ->Belt_MapString.toList
-    ->Belt.List.sort(byTupleValue)
-    ->takeMax(topNumberOfRows)
-    ->Belt.List.map(((playerName, rating)) =>
-        (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
-      );
+    let topGoalsConcededPerMatchRows =
+      leaderboardRows
+      ->Belt.List.sort(byGoalsConceded)
+      ->takeMax(topNumberOfRows)
+      ->Belt.List.map(row =>
+          (
+            row.playerName,
+            row |> goalsConcededPerMatch |> formatGoalsPerMatch,
+          )
+        );
 
-  <Paper>
-    <div className="title">
-      <Typography variant="h6"> {text(title)} </Typography>
-    </div>
-    <div className="top-stats-container">
-      <SingleStatCard
-        playersWithStat=topWinPercentageRows
-        statName="Win Percentage"
-      />
-      <SingleStatCard
-        playersWithStat=topGoalsScoredPerMatchRows
-        statName="Goals Scored per Match"
-      />
-      <SingleStatCard
-        playersWithStat=topGoalsConcededPerMatchRows
-        statName="Goals Conceded per Match"
-      />
-      <SingleStatCard
-        playersWithStat=topEloDiffRows
-        statName="Elo Difference"
-      />
-    </div>
-  </Paper>;
-};
+    let topEloDiffRows =
+      getRatingDiffs(resultsWithMap.ratingMap, relevantResultsWithRatings)
+      ->Belt_MapString.toList
+      ->Belt.List.sort(byTupleValue)
+      ->takeMax(topNumberOfRows)
+      ->Belt.List.map(((playerName, rating)) =>
+          (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
+        );
+
+    <Paper>
+      <div className="title">
+        <Typography variant="h6"> {text(title)} </Typography>
+      </div>
+      <div className="top-stats-container">
+        <SingleStatCard
+          playersWithStat=topWinPercentageRows
+          statName="Win Percentage"
+        />
+        <SingleStatCard
+          playersWithStat=topGoalsScoredPerMatchRows
+          statName="Goals Scored per Match"
+        />
+        <SingleStatCard
+          playersWithStat=topGoalsConcededPerMatchRows
+          statName="Goals Conceded per Match"
+        />
+        <SingleStatCard
+          playersWithStat=topEloDiffRows
+          statName="Elo Difference"
+        />
+      </div>
+    </Paper>;
+  };
