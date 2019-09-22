@@ -68,6 +68,16 @@ let make = (~communityName: string) => {
           resultsWithMap=resultsWithRatingMap
           startDate=weekStartDate
         />
+        <TopStats
+          title="This Month"
+          resultsWithMap=resultsWithRatingMap
+          startDate=monthStartDate
+        />
+        <TopStats
+          title="This Year"
+          resultsWithMap=resultsWithRatingMap
+          startDate=yearStartDate
+        />
         <ResultsTable
           communityName
           results={
