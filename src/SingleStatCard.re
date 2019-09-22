@@ -25,7 +25,7 @@ let make =
         <TableBody>
           {playersWithStat
            ->Belt.List.mapWithIndex((i, (name, value)) =>
-               <TableRow>
+               <TableRow key={string_of_int(i)}>
                  <TableCell> {i + 1 |> string_of_int |> text} </TableCell>
                  <TableCell align="right"> {text(name)} </TableCell>
                  <TableCell> {text(value)} </TableCell>

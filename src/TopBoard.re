@@ -4,8 +4,6 @@ open EloUtils;
 open Queries;
 open Subscriptions;
 
-let topNumberOfRows = 5;
-
 [@react.component]
 let make = (~communityName: string) => {
   let now = Js.Date.make();
@@ -65,25 +63,21 @@ let make = (~communityName: string) => {
     <>
       <Header page={TopX(communityName)} />
       <Box margin="10px" textAlign="center">
-        // <Stats
-        //   communityName
-        //   dateFrom=yearStartDate
-        //   dateTo=now
-        //   playerLimit=topNumberOfRows
-        //   title="This year"
-        // />
-
-          <TopStats title="This Week" />
-          <ResultsTable
-            communityName
-            results={
-              resultsWithRatingMap.resultsWithRatings
-              ->Belt.List.keep(r => r.result.date >= startOfDay)
-            }
-            resultIdsToHighlight
-            temp_showRatings=true
-          />
-        </Box>
+        <TopStats
+          title="This Week"
+          resultsWithMap=resultsWithRatingMap
+          startDate=weekStartDate
+        />
+        <ResultsTable
+          communityName
+          results={
+            resultsWithRatingMap.resultsWithRatings
+            ->Belt.List.keep(r => r.result.date >= startOfDay)
+          }
+          resultIdsToHighlight
+          temp_showRatings=true
+        />
+      </Box>
     </>;
   };
 };

@@ -1,4 +1,31 @@
 open Types;
+open EloUtils;
+
+type columnType =
+  | EloRating(eloMap)
+  | WinsPerMatch
+  | MatchesWon
+  | MatchesLost
+  | GoalsScored
+  | GoalsConceded
+  | GoalDiff
+  | GoalsScoredPerMatch
+  | GoalsConcededPerMatch;
+
+type sortDirection =
+  | Asc
+  | Desc;
+
+let sortCompare = (a, b) =>
+  if (a > b) {
+    1;
+  } else if (a < b) {
+    (-1);
+  } else {
+    0;
+  };
+
+let sortCompareDesc = (a, b) => - sortCompare(a, b);
 
 type playerStatsMap = Belt_MapString.t(playerStats);
 
