@@ -5,21 +5,6 @@ open Queries;
 open Styles;
 open EloUtils;
 
-type columnType =
-  | EloRating(eloMap)
-  | WinsPerMatch
-  | MatchesWon
-  | MatchesLost
-  | GoalsScored
-  | GoalsConceded
-  | GoalDiff
-  | GoalsScoredPerMatch
-  | GoalsConcededPerMatch;
-
-type sortDirection =
-  | Asc
-  | Desc;
-
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
   | EloRating(ratingsMap) => (

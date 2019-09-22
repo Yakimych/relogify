@@ -1,30 +1,48 @@
 open Utils;
+open EloUtils;
+open LeaderboardUtils;
+
+let topNumberOfRows = 5;
+let byWinPercentage = (r1, r2) =>
+  switch (r1 |> matchesWonPerPlayed, r2 |> matchesWonPerPlayed) {
+  | (a, b) when a == b => sortCompareDesc(r1.matchesWon, r2.matchesWon)
+  | (a, b) => sortCompareDesc(a, b)
+  };
+
+let byGoalsScored = (r1, r2) =>
+  switch (r1 |> goalsScoredPerMatch, r2 |> goalsScoredPerMatch) {
+  | (a, b) when a == b => sortCompareDesc(r1.goalsScored, r2.goalsScored)
+  | (a, b) => sortCompareDesc(a, b)
+  };
 
 [@react.component]
-let make = (~title) => {
-  let weeklyWinPercentage = [
-    ("Player1", "100%"),
-    ("Player2", "67%"),
-    ("Player3", "43%"),
-    ("Player4", "40%"),
-    ("Player5", "35%"),
-  ];
+let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
+  let relevantResultsWithRatings =
+    resultsWithMap.resultsWithRatings
+    ->Belt.List.keep(r => r.result.date >= startDate);
 
-  let weeklyGoalsScoredPerMatch = [
-    ("Player1", "1.1"),
-    ("Player2", "2.1"),
-    ("Player3", "3.3"),
-    ("Player4", "3.4"),
-    ("Player5", "5.0"),
-  ];
+  let leaderboardRows =
+    getLeaderboard(relevantResultsWithRatings->Belt.List.map(r => r.result));
 
-  let weeklyEloDifference = [
-    ("Player1", "+56"),
-    ("Player2", "+16"),
-    ("Player3", "+2"),
-    ("Player4", "-10"),
-    ("Player5", "-120"),
-  ];
+  let sortedWinPercentageRows =
+    leaderboardRows->Belt.List.sort(byWinPercentage);
+  let topWinPercentageRows =
+    sortedWinPercentageRows
+    ->Belt.List.take(topNumberOfRows)
+    ->Belt.Option.getWithDefault(sortedWinPercentageRows)
+    ->Belt.List.map(row =>
+        (row.playerName, row |> matchesWonPerPlayed |> formatPercentage)
+      );
+
+  let sortedGoalsScoredPerMatchRows =
+    leaderboardRows->Belt.List.sort(byGoalsScored);
+  let topGoalsScoredPerMatchRows =
+    sortedGoalsScoredPerMatchRows
+    ->Belt.List.take(topNumberOfRows)
+    ->Belt.Option.getWithDefault(sortedGoalsScoredPerMatchRows)
+    ->Belt.List.map(row =>
+        (row.playerName, row |> goalsScoredPerMatch |> formatGoalsPerMatch)
+      );
 
   <>
     <Paper>
@@ -33,26 +51,26 @@ let make = (~title) => {
       </div>
       <div className="top-stats-container">
         <SingleStatCard
-          playersWithStat=weeklyWinPercentage
+          playersWithStat=topWinPercentageRows
           statName="Win Percentage"
           statHeader="Win %"
         />
         <SingleStatCard
-          playersWithStat=weeklyGoalsScoredPerMatch
+          playersWithStat=topGoalsScoredPerMatchRows
           statName="Goals Scored per Match"
           statHeader="G/M"
         />
-        <SingleStatCard
-          playersWithStat=weeklyGoalsScoredPerMatch
-          statName="Goals Conceded per Match"
-          statHeader="GC/M"
-        />
-        <SingleStatCard
-          playersWithStat=weeklyEloDifference
-          statName="Elo Difference"
-          statHeader="+/-"
-        />
       </div>
     </Paper>
+    // <SingleStatCard
+    //   playersWithStat=weeklyGoalsScoredPerMatch
+    //   statName="Goals Conceded per Match"
+    //   statHeader="GC/M"
+    // />
+    // <SingleStatCard
+    //   playersWithStat=weeklyEloDifference
+    //   statName="Elo Difference"
+    //   statHeader="+/-"
+    // />
   </>;
 };
