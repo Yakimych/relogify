@@ -9,10 +9,10 @@ let topNumberOfRows = 5;
 [@react.component]
 let make = (~communityName: string) => {
   let now = Js.Date.make();
-  // let startOfDay = now->startOfDay;
-  // let weekStartDate = now->startOfWeek({"weekStartsOn": 1});
-  // let monthStartDate = now->startOfMonth;
-  // let yearStartDate = now->startOfYear;
+  let startOfDay = now->startOfDay;
+  let weekStartDate = now->startOfWeek({"weekStartsOn": 1});
+  let monthStartDate = now->startOfMonth;
+  let yearStartDate = now->startOfYear;
 
   let allResultsQuery = AllResultsQueryConfig.make(~communityName, ());
 
@@ -73,9 +73,13 @@ let make = (~communityName: string) => {
         //   title="This year"
         // />
 
+          <TopStats title="This Week" />
           <ResultsTable
             communityName
-            results={resultsWithRatingMap.resultsWithRatings}
+            results={
+              resultsWithRatingMap.resultsWithRatings
+              ->Belt.List.keep(r => r.result.date >= startOfDay)
+            }
             resultIdsToHighlight
             temp_showRatings=true
           />

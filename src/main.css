@@ -150,3 +150,14 @@ input[type="date"]::-webkit-clear-button {
   margin-top: 10px;
   text-align: center;
 }
+
+.top-stats-container {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+}
+
+.single-stat-card {
+  width: 240px;
+  margin: 10px;
+}
