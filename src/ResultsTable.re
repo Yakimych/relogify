@@ -45,12 +45,10 @@ let make =
       ~results: list(resultWithRatings),
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
-      ~newResultIds: option(list(int))=?,
+      ~resultIdsToHighlight: option(list(int))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) => {
-  Js.log2("ResultsTable - results: ", results |> Belt.List.toArray);
-  Js.log2("ResultsTable - newResults: ", newResultIds);
   let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
     React.useState(_ => None);
 
@@ -100,7 +98,7 @@ let make =
              <TableRow
                key={string_of_int(result.id)}
                className={
-                 getHighlightedClassName(newResultIds, result)
+                 getHighlightedClassName(resultIdsToHighlight, result)
                  ++ " "
                  ++ getWinningLosingRowClassName(mainPlayerWon)
                }>
