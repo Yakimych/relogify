@@ -78,22 +78,18 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) => {
       <SingleStatCard
         playersWithStat=topWinPercentageRows
         statName="Win Percentage"
-        statHeader="Win %"
       />
       <SingleStatCard
         playersWithStat=topGoalsScoredPerMatchRows
         statName="Goals Scored per Match"
-        statHeader="G/M"
       />
       <SingleStatCard
         playersWithStat=topGoalsConcededPerMatchRows
         statName="Goals Conceded per Match"
-        statHeader="GC/M"
       />
       <SingleStatCard
         playersWithStat=topEloDiffRows
         statName="Elo Difference"
-        statHeader="+/-"
       />
     </div>
   </Paper>;

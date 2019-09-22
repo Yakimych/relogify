@@ -9,19 +9,11 @@ let numberCellStyle =
   );
 
 [@react.component]
-let make =
-    (~playersWithStat: list((string, string)), ~statName, ~statHeader) => {
-  <Card className="single-stat-card">
+let make = (~playersWithStat: list((string, string)), ~statName) => {
+  <Card className="single-stat-card" raised=true>
     <CardContent>
-      <Typography> {text(statName)} </Typography>
+      <Typography gutterBottom=true> {text(statName)} </Typography>
       <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell style=numberCellStyle> {text("#")} </TableCell>
-            <TableCell align="right"> {text("Player")} </TableCell>
-            <TableCell> {text(statHeader)} </TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           {playersWithStat
            ->Belt.List.mapWithIndex((i, (name, value)) =>

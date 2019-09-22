@@ -9,7 +9,7 @@ let make = (~page: page) => {
     <AppBar position="fixed" className="app-header">
       <Toolbar>
         {switch (page) {
-         | Home => <div> {text("Result log")} </div>
+         | Home => <div> {text("Relogify")} </div>
          | CreateCommunityPage => <div> {text("Create new community")} </div>
          | CommunityStart(communityName) =>
            <>

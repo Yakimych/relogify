@@ -1,5 +1,11 @@
 [@bs.module "@material-ui/core"] [@react.component]
 external make:
-  (~variant: string=?, ~component: string=?, ~children: React.element, unit) =>
+  (
+    ~variant: string=?,
+    ~gutterBottom: bool=?,
+    ~component: string=?,
+    ~children: React.element,
+    unit
+  ) =>
   React.element =
   "Typography";
