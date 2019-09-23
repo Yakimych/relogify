@@ -10,7 +10,7 @@ let numberCellStyle =
 
 [@react.component]
 let make = (~playersWithStat: list((string, string)), ~statName) => {
-  <Card raised=true>
+  <Card className="single-stat-card" raised=true>
     <CardContent>
       <Typography gutterBottom=true> {text(statName)} </Typography>
       <Table size="small">
