@@ -12,7 +12,9 @@ let numberCellStyle =
 let make = (~playersWithStat: list((string, string)), ~statName) => {
   <Card className="single-stat-card" raised=true>
     <CardContent>
-      <Typography gutterBottom=true> {text(statName)} </Typography>
+      <div className="card-title">
+        <Typography gutterBottom=true> {text(statName)} </Typography>
+      </div>
       <Table size="small">
         <TableBody>
           {playersWithStat

@@ -87,12 +87,14 @@ let make = (~communityName: string) => {
         ) {
         | [] => React.null
         | todaysResults =>
-          <ResultsTable
-            communityName
-            results=todaysResults
-            resultIdsToHighlight
-            temp_showRatings=true
-          />
+          <Container maxWidth="sm">
+            <ResultsTable
+              communityName
+              results=todaysResults
+              resultIdsToHighlight
+              temp_showRatings=true
+            />
+          </Container>
         }}
     </>;
   };
