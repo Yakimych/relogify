@@ -12,7 +12,7 @@ let make = () => {
   | [communityName] =>
     <Container maxWidth="sm"> <CommunityStartPage communityName /> </Container>
   | [communityName, "top"] =>
-    <Container maxWidth="sm"> <TopBoard communityName /> </Container>
+    <Container maxWidth="lg"> <TopBoard communityName /> </Container>
   | [communityName, "history"] =>
     <Container maxWidth="sm"> <ResultHistory communityName /> </Container>
   | [communityName, playerName] =>
