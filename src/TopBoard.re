@@ -66,36 +66,36 @@ let make = (~communityName: string) => {
 
     <>
       <Header page={TopX(communityName)} />
-      <Box margin="10px" textAlign="center">
-        <TopStats
-          title="This Week"
-          resultsWithMap=resultsWithRatingMap
-          startDate=weekStartDate
-        />
-        <TopStats
-          title="This Month"
-          resultsWithMap=resultsWithRatingMap
-          startDate=monthStartDate
-        />
-        <TopStats
-          title="This Year"
-          resultsWithMap=resultsWithRatingMap
-          startDate=yearStartDate
-        />
-        {switch (
-           resultsWithRatingMap.resultsWithRatings
-           ->Belt.List.keep(r => r.result.date >= startOfDay)
-         ) {
-         | [] => React.null
-         | todaysResults =>
-           <ResultsTable
-             communityName
-             results=todaysResults
-             resultIdsToHighlight
-             temp_showRatings=true
-           />
-         }}
-      </Box>
+      <TopStats
+        title="This Week"
+        resultsWithMap=resultsWithRatingMap
+        startDate=weekStartDate
+      />
+      <TopStats
+        title="This Month"
+        resultsWithMap=resultsWithRatingMap
+        startDate=monthStartDate
+      />
+      <TopStats
+        title="This Year"
+        resultsWithMap=resultsWithRatingMap
+        startDate=yearStartDate
+      />
+      {switch (
+          resultsWithRatingMap.resultsWithRatings
+          ->Belt.List.keep(r => r.result.date >= startOfDay)
+        ) {
+        | [] => React.null
+        | todaysResults =>
+          <Container maxWidth="sm">
+            <ResultsTable
+              communityName
+              results=todaysResults
+              resultIdsToHighlight
+              temp_showRatings=true
+            />
+          </Container>
+        }}
     </>;
   };
 };

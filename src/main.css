@@ -152,8 +152,18 @@ input[type="date"]::-webkit-clear-button {
 }
 
 .top-stats-container {
-  display: grid;
-  padding: 10px;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(240px, auto));
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+}
+
+.single-stat-card {
+  width: 240px;
+  margin: 10px 0 10px 10px;
+}
+
+.card-title {
+  margin-top: -5px;
+  text-align: center;
+  margin-bottom: 10px;
 }
