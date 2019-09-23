@@ -77,10 +77,12 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) =>
           (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
         );
 
-    <Paper>
-      <div className="title">
-        <Typography variant="h6"> {text(title)} </Typography>
-      </div>
+    <>
+      <Box margin="10px" textAlign="center">
+        <div className="title">
+          <Typography variant="h6"> {text(title)} </Typography>
+        </div>
+      </Box>
       <div className="top-stats-container">
         <SingleStatCard
           playersWithStat=topWinPercentageRows
@@ -99,5 +101,5 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) =>
           statName="Elo Difference"
         />
       </div>
-    </Paper>;
+    </>;
   };
