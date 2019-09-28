@@ -24,9 +24,10 @@ let make = (~communityName) => {
                 React.null,
                 u => {
                   Js.log3("Identity: '", identity, "'");
-                  u.role == "Admin"
-                    ? <div> {text("Admin content")} </div>
-                    : <span> {text("Access denied to admin content")} </span>;
+                  <EditResults communityName />;
+                  // u.role == "Admin"
+                  //   ? <div> {text("Admin content")} </div>
+                  //   : <span> {text("Access denied to admin content")} </span>;
                 },
               )}
          </>
