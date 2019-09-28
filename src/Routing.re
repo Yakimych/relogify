@@ -11,6 +11,9 @@ let make = () => {
   | ["new"] => <Container maxWidth="sm"> <CreateCommunityPage /> </Container>
   | [communityName] =>
     <Container maxWidth="sm"> <CommunityStartPage communityName /> </Container>
+  | [communityName, "admin"] =>
+    <Container maxWidth="sm"> <CommunityAdminPage communityName /> </Container>
+
   | [communityName, "top"] =>
     <Container maxWidth="lg"> <TopBoard communityName /> </Container>
   | [communityName, "history"] =>

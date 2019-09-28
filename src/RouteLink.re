@@ -5,6 +5,7 @@ let getUrl = (page: page): string =>
   | Home => "/"
   | CreateCommunityPage => "/new"
   | CommunityStart(communityName) => "/" ++ communityName
+  | CommunityAdmin(communityName) => "/" ++ communityName ++ "/admin"
   | TopX(communityName) => "/" ++ communityName ++ "/top"
   | History(communityName) => "/" ++ communityName ++ "/history"
   | PlayerHome(communityName, playerName) =>

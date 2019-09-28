@@ -2,6 +2,7 @@ type page =
   | Home
   | CreateCommunityPage
   | CommunityStart(string)
+  | CommunityAdmin(string)
   | History(string)
   | TopX(string)
   | PlayerHome(string, string)

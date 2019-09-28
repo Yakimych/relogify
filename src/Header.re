@@ -11,6 +11,8 @@ let make = (~page: page) => {
         {switch (page) {
          | Home => <div> {text("Relogify")} </div>
          | CreateCommunityPage => <div> {text("Create new community")} </div>
+         | CommunityAdmin(communityName) =>
+           <div> {text("Admin for " ++ communityName)} </div>
          | CommunityStart(communityName) =>
            <>
              <div className="app-header-grouping">

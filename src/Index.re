@@ -1,4 +1,5 @@
 [@bs.val] external apiBaseUrl: string = "process.env.REACT_APP_API_BASE_URL";
+[@bs.val] external identityUrl: string = "process.env.REACT_APP_IDENTITY_URL";
 
 /* Create an InMemoryCache */
 let inMemoryCache = ApolloInMemoryCache.createInMemoryCache();
@@ -33,7 +34,9 @@ let client =
 
 let app =
   <ReasonApolloHooks.ApolloProvider client>
-    <Routing />
+    <ReactNetlifyIdentity.IdentityContextProvider url=identityUrl>
+      <Routing />
+    </ReactNetlifyIdentity.IdentityContextProvider>
   </ReasonApolloHooks.ApolloProvider>;
 
 ReactDOMRe.renderToElementWithId(app, "root");
