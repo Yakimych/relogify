@@ -2,6 +2,26 @@ open Styles;
 open Utils;
 open Types;
 
+type editableResult = {
+  id: int,
+  player1Name: string,
+  player1Goals: int,
+  player2Goals: int,
+  player2Name: string,
+  extraTime: bool,
+  date: Js.Date.t,
+};
+
+let toEditableResult = (result: result) => {
+  id: result.id,
+  player1Name: result.player1.name,
+  player2Name: result.player2.name,
+  player1Goals: result.player1goals,
+  player2Goals: result.player2goals,
+  extraTime: result.extratime,
+  date: result.date,
+};
+
 let colonStyle =
   ReactDOMRe.Style.make(
     ~width="5px",
@@ -16,6 +36,8 @@ let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 [@react.component]
 let make = (~results: list(result), ~communityName: string) => {
+  let (resultUnderEdit, setResultUnderEdit) = React.useState(_ => None);
+
   <Paper>
     <div className="title">
       <Typography variant="h6"> {text("Results")} </Typography>
@@ -23,6 +45,7 @@ let make = (~results: list(result), ~communityName: string) => {
     <Table size="small">
       <TableHead>
         <TableRow>
+          <TableCell> {text("Edit")} </TableCell>
           <TableCell align="right"> {text("Player1")} </TableCell>
           <TableCell style=numberCellStyle> {text("G1")} </TableCell>
           <TableCell style=colonStyle />
@@ -38,14 +61,45 @@ let make = (~results: list(result), ~communityName: string) => {
         {results
          ->Belt.List.map(result => {
              let formattedDate = formatDate(result.date);
+             let editableResult = result |> toEditableResult;
 
              <TableRow key={string_of_int(result.id)}>
+               <TableCell>
+                 <button
+                   onClick={_ =>
+                     setResultUnderEdit(_ => Some(editableResult))
+                   }>
+                   {text("Edit")}
+                 </button>
+                 <button onClick={_ => setResultUnderEdit(_ => None)}>
+                   {text("Save")}
+                 </button>
+               </TableCell>
                <TableCell align="right">
-                 <RouteLink
-                   toPage={PlayerHome(communityName, result.player1.name)}
-                   style=playerLinkStyle>
-                   {text(result.player1.name)}
-                 </RouteLink>
+                 {resultUnderEdit->Belt.Option.mapWithDefault(false, r =>
+                    r.id == result.id
+                  )
+                    ? <input
+                        type_="text"
+                        onChange={e => {
+                          let newValue = ReactEvent.Form.target(e)##value;
+                          setResultUnderEdit(maybeOldResult =>
+                            maybeOldResult->Belt.Option.map(oldResult =>
+                              {...oldResult, player1Name: newValue}
+                            )
+                          );
+                        }}
+                        value={
+                                Belt.Option.getExn(resultUnderEdit).player1Name
+                              }
+                      />
+                    : <RouteLink
+                        toPage={
+                          PlayerHome(communityName, result.player1.name)
+                        }
+                        style=playerLinkStyle>
+                        {text(result.player1.name)}
+                      </RouteLink>}
                </TableCell>
                <TableCell style=numberCellStyle>
                  {text(string_of_int(result.player1goals))}
