@@ -23,11 +23,21 @@ let make = (~communityName) => {
             ->Belt.Option.mapWithDefault(
                 React.null,
                 u => {
-                  Js.log3("Identity: '", identity, "'");
-                  <EditResults communityName />;
-                  // u.role == "Admin"
-                  //   ? <div> {text("Admin content")} </div>
-                  //   : <span> {text("Access denied to admin content")} </span>;
+                  let isAdmin =
+                    u.appMetaData
+                    ->Belt.Option.mapWithDefault(false, a =>
+                        a.roles
+                        ->Belt.Option.mapWithDefault(false, r =>
+                            r->Belt.Array.some(r => r === "Admin")
+                          )
+                      );
+
+                  isAdmin
+                    ? <div>
+                        {text("Admin content")}
+                        <EditResults communityName />
+                      </div>
+                    : <span> {text("Access denied to admin content")} </span>;
                 },
               )}
          </>
