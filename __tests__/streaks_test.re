@@ -23,9 +23,11 @@ type getStreaksTestCase = {
 let toResult = (testScore: testResult) => {
   id: 0,
   player1: {
+    id: 1,
     name: testScore.name1,
   },
   player2: {
+    id: 2,
     name: testScore.name2,
   },
   player1goals: testScore.goals1,

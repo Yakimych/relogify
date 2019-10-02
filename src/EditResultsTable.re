@@ -1,12 +1,15 @@
 open Styles;
 open Utils;
 open Types;
+open Mutations;
 
 type editableResult = {
   id: int,
+  player1Id: int,
   player1Name: string,
   player1Goals: int,
   player2Goals: int,
+  player2Id: int,
   player2Name: string,
   extraTime: bool,
   date: Js.Date.t,
@@ -14,6 +17,10 @@ type editableResult = {
 
 let toEditableResult = (result: result) => {
   id: result.id,
+  // TODO: Revisit this typing
+  // do we even need the names here?
+  player1Id: result.player1.id,
+  player2Id: result.player2.id,
   player1Name: result.player1.name,
   player2Name: result.player2.name,
   player1Goals: result.player1goals,
@@ -36,7 +43,32 @@ let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 [@react.component]
 let make = (~results: list(result), ~communityName: string) => {
+  let (updateResultMutation, _, _) = UpdateResultMutation.use();
   let (resultUnderEdit, setResultUnderEdit) = React.useState(_ => None);
+
+  let updateResult = resultToUpdate => {
+    // TODO: Loading state?
+    updateResultMutation(
+      ~variables=
+        UpdateResultMutationConfig.make(
+          ~resultId=resultToUpdate.id,
+          ~player1Id=resultToUpdate.player1Id,
+          ~player2Id=resultToUpdate.player2Id,
+          ~player1Goals=resultToUpdate.player1Goals,
+          ~player2Goals=resultToUpdate.player2Goals,
+          ~extraTime=resultToUpdate.extraTime,
+          (),
+        )##variables,
+      (),
+    )
+    |> Js.Promise.then_(_ =>
+         setResultUnderEdit(_ => None) |> Js.Promise.resolve
+       )  // TODO: Loading state?
+    |> Js.Promise.catch(e =>
+         Js.Console.error2("Error: ", e) |> Js.Promise.resolve
+       )
+    |> ignore;
+  };
 
   <Paper>
     <div className="title">
@@ -71,7 +103,10 @@ let make = (~results: list(result), ~communityName: string) => {
                    }>
                    {text("Edit")}
                  </button>
-                 <button onClick={_ => setResultUnderEdit(_ => None)}>
+                 <button
+                   onClick={_ =>
+                     resultUnderEdit->Belt.Option.map(updateResult) |> ignore
+                   }>
                    {text("Save")}
                  </button>
                </TableCell>
@@ -79,6 +114,7 @@ let make = (~results: list(result), ~communityName: string) => {
                  {resultUnderEdit->Belt.Option.mapWithDefault(false, r =>
                     r.id == result.id
                   )
+                    // TODO: Replace with dropdowns
                     ? <input
                         type_="text"
                         onChange={e => {
