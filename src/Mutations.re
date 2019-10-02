@@ -66,3 +66,36 @@ module AddResultMutationConfig = [%graphql
 
 module AddResultMutation =
   ReasonApolloHooks.Mutation.Make(AddResultMutationConfig);
+
+module UpdateResultMutationConfig = [%graphql
+  {|
+    mutation UpdateResultMutation(
+      $resultId: Int!
+      $player1Id: Int!
+      $player2Id: Int!
+      $player1Goals: Int!
+      $player2Goals: Int!
+      $extraTime: Boolean!
+    ) {
+      update_results(
+        where: {
+          id: {
+            _eq: $resultId
+          }
+        }
+        _set: {
+          player1Id: $player1Id
+          player1goals: $player1Goals
+          player2goals: $player2Goals
+          player2Id: $player2Id
+          extratime: $extraTime
+        }
+      ) {
+        affected_rows
+      }
+    }
+  |}
+];
+
+module UpdateResultMutation =
+  ReasonApolloHooks.Mutation.Make(UpdateResultMutationConfig);
