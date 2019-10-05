@@ -14,6 +14,7 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
       onChange(int_of_string(value));
     };
 
+  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
   <>
     {isInCustomMode
        ? <TextField
@@ -21,7 +22,7 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
            className="highlighted"
            autoFocus=true
            _type="number"
-           style={ReactDOMRe.Style.make(~width="80px", ())}
+           style={ReactDOMRe.Style.make(~width=isWide ? "100px" : "80px", ())}
            variant="outlined"
            value={string_of_int(selectedGoals)}
            onChange={e => {
@@ -41,7 +42,10 @@ let make = (~selectedGoals: int, ~disabled: bool, ~onChange) => {
              input={
                <OutlinedInput
                  labelWidth=0
-                 style={ReactDOMRe.Style.make(~width="60px", ())}
+                 style={ReactDOMRe.Style.make(
+                   ~width=isWide ? "64px" : "60px",
+                   (),
+                 )}
                />
              }>
              {goalValues

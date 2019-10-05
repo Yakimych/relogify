@@ -96,7 +96,9 @@ let make = (~communityName: string, ~onResultAdded) => {
       |> ignore;
     };
 
-  <Paper style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
+  <Paper
+    elevation=6
+    style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
     <div
       style={ReactDOMRe.Style.make(~display="flex", ~marginBottom="10px", ())}>
       <PlayerPicker
