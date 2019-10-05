@@ -111,45 +111,95 @@ let make = (~results: list(result), ~communityName: string) => {
                  </button>
                </TableCell>
                <TableCell align="right">
-                 {resultUnderEdit->Belt.Option.mapWithDefault(false, r =>
-                    r.id == result.id
-                  )
-                    // TODO: Replace with dropdowns
-                    ? <input
-                        type_="text"
-                        onChange={e => {
-                          let newValue = ReactEvent.Form.target(e)##value;
-                          setResultUnderEdit(maybeOldResult =>
-                            maybeOldResult->Belt.Option.map(oldResult =>
-                              {...oldResult, player1Name: newValue}
-                            )
-                          );
-                        }}
-                        value={
-                                Belt.Option.getExn(resultUnderEdit).player1Name
+                 {resultUnderEdit
+                  ->Belt.Option.flatMap(r =>
+                      r.id == result.id
+                        ? Some(
+                            <PlayerPicker
+                              // TODO: isUpdating?
+                              disabled=false
+                              allowNewPlayer=false
+                              communityName
+                              selectedPlayerName={Some(r.player1Name)}
+                              onChange={v =>
+                                setResultUnderEdit(_ =>
+                                  Some({...r, player1Name: v})
+                                )
                               }
-                      />
-                    : <RouteLink
-                        toPage={
-                          PlayerHome(communityName, result.player1.name)
-                        }
-                        style=playerLinkStyle>
-                        {text(result.player1.name)}
-                      </RouteLink>}
+                            />,
+                          )
+                        : None
+                    )
+                  ->Belt.Option.getWithDefault(
+                      <span> {text(result.player1.name)} </span>,
+                    )}
                </TableCell>
                <TableCell style=numberCellStyle>
-                 {text(string_of_int(result.player1goals))}
+                 {resultUnderEdit
+                  ->Belt.Option.flatMap(r =>
+                      r.id == result.id
+                        ? Some(
+                            <GoalsPicker
+                              disabled=false
+                              selectedGoals={r.player1Goals}
+                              onChange={v =>
+                                setResultUnderEdit(_ =>
+                                  Some({...r, player1Goals: v})
+                                )
+                              }
+                            />,
+                          )
+                        : None
+                    )
+                  ->Belt.Option.getWithDefault(
+                      text(string_of_int(result.player1goals)),
+                    )}
                </TableCell>
                <TableCell style=colonStyle> {text(":")} </TableCell>
                <TableCell style=numberCellStyle>
-                 {text(string_of_int(result.player2goals))}
+                 {resultUnderEdit
+                  ->Belt.Option.flatMap(r =>
+                      r.id == result.id
+                        ? Some(
+                            <GoalsPicker
+                              disabled=false
+                              selectedGoals={r.player2Goals}
+                              onChange={v =>
+                                setResultUnderEdit(_ =>
+                                  Some({...r, player2Goals: v})
+                                )
+                              }
+                            />,
+                          )
+                        : None
+                    )
+                  ->Belt.Option.getWithDefault(
+                      text(string_of_int(result.player2goals)),
+                    )}
                </TableCell>
                <TableCell>
-                 <RouteLink
-                   toPage={PlayerHome(communityName, result.player2.name)}
-                   style=playerLinkStyle>
-                   {text(result.player2.name)}
-                 </RouteLink>
+                 {resultUnderEdit
+                  ->Belt.Option.flatMap(r =>
+                      r.id == result.id
+                        ? Some(
+                            <PlayerPicker
+                              // TODO: isUpdating?
+                              disabled=false
+                              allowNewPlayer=false
+                              communityName
+                              selectedPlayerName={Some(r.player2Name)}
+                              onChange={v =>
+                                setResultUnderEdit(_ =>
+                                  Some({...r, player2Name: v})
+                                )
+                              }
+                            />,
+                          )
+                        : None
+                    )
+                  ->Belt.Option.getWithDefault(
+                      <span> {text(result.player2.name)} </span>,
+                    )}
                </TableCell>
                <TableCell style=extraTimeStyle align="right">
                  {text(result.extratime ? "X" : "")}

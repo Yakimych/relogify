@@ -11,6 +11,7 @@ let make =
       ~disabled: bool,
       ~placeholderText: option(string)=?,
       ~onChange: string => unit,
+      ~allowNewPlayer: bool=true,
     ) => {
   let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
   let (playersQuery, _) =
@@ -79,9 +80,11 @@ let make =
                <option value=p key={"players_" ++ p}> {text(p)} </option>
              )
            ->React.array}
-          <option key="new_player" value=newPlayerValue>
-            {text("+ Add new player")}
-          </option>
+          {allowNewPlayer
+             ? <option key="new_player" value=newPlayerValue>
+                 {text("+ Add new player")}
+               </option>
+             : React.null}
         </NativeSelect>;
   };
 };
