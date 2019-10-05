@@ -110,101 +110,93 @@ let make = (~results: list(result), ~communityName: string) => {
                    {text("Save")}
                  </button>
                </TableCell>
-               <TableCell align="right">
-                 {resultUnderEdit
-                  ->Belt.Option.flatMap(r =>
-                      r.id == result.id
-                        ? Some(
-                            <PlayerPicker
-                              // TODO: isUpdating?
-                              disabled=false
-                              allowNewPlayer=false
-                              communityName
-                              selectedPlayerName={Some(r.player1Name)}
-                              onChange={v =>
-                                setResultUnderEdit(_ =>
-                                  Some({...r, player1Name: v})
-                                )
-                              }
-                            />,
-                          )
-                        : None
-                    )
-                  ->Belt.Option.getWithDefault(
-                      <span> {text(result.player1.name)} </span>,
-                    )}
-               </TableCell>
-               <TableCell style=numberCellStyle>
-                 {resultUnderEdit
-                  ->Belt.Option.flatMap(r =>
-                      r.id == result.id
-                        ? Some(
-                            <GoalsPicker
-                              disabled=false
-                              selectedGoals={r.player1Goals}
-                              onChange={v =>
-                                setResultUnderEdit(_ =>
-                                  Some({...r, player1Goals: v})
-                                )
-                              }
-                            />,
-                          )
-                        : None
-                    )
-                  ->Belt.Option.getWithDefault(
-                      text(string_of_int(result.player1goals)),
-                    )}
-               </TableCell>
-               <TableCell style=colonStyle> {text(":")} </TableCell>
-               <TableCell style=numberCellStyle>
-                 {resultUnderEdit
-                  ->Belt.Option.flatMap(r =>
-                      r.id == result.id
-                        ? Some(
-                            <GoalsPicker
-                              disabled=false
-                              selectedGoals={r.player2Goals}
-                              onChange={v =>
-                                setResultUnderEdit(_ =>
-                                  Some({...r, player2Goals: v})
-                                )
-                              }
-                            />,
-                          )
-                        : None
-                    )
-                  ->Belt.Option.getWithDefault(
-                      text(string_of_int(result.player2goals)),
-                    )}
-               </TableCell>
-               <TableCell>
-                 {resultUnderEdit
-                  ->Belt.Option.flatMap(r =>
-                      r.id == result.id
-                        ? Some(
-                            <PlayerPicker
-                              // TODO: isUpdating?
-                              disabled=false
-                              allowNewPlayer=false
-                              communityName
-                              selectedPlayerName={Some(r.player2Name)}
-                              onChange={v =>
-                                setResultUnderEdit(_ =>
-                                  Some({...r, player2Name: v})
-                                )
-                              }
-                            />,
-                          )
-                        : None
-                    )
-                  ->Belt.Option.getWithDefault(
-                      <span> {text(result.player2.name)} </span>,
-                    )}
-               </TableCell>
-               <TableCell style=extraTimeStyle align="right">
-                 {text(result.extratime ? "X" : "")}
-               </TableCell>
-               <TableCell> {text(formattedDate)} </TableCell>
+               {resultUnderEdit
+                ->Belt.Option.flatMap(r =>
+                    r.id == result.id
+                      ? Some(
+                          <>
+                            <TableCell align="right">
+                              <PlayerPicker
+                                // TODO: isUpdating?
+                                disabled=false
+                                allowNewPlayer=false
+                                communityName
+                                selectedPlayerName={Some(r.player1Name)}
+                                onChange={v =>
+                                  setResultUnderEdit(_ =>
+                                    Some({...r, player1Name: v})
+                                  )
+                                }
+                              />
+                            </TableCell>
+                            <TableCell style=numberCellStyle>
+                              <GoalsPicker
+                                disabled=false
+                                selectedGoals={r.player1Goals}
+                                onChange={v =>
+                                  setResultUnderEdit(_ =>
+                                    Some({...r, player1Goals: v})
+                                  )
+                                }
+                              />
+                            </TableCell>
+                            <TableCell style=colonStyle>
+                              {text(":")}
+                            </TableCell>
+                            <TableCell style=numberCellStyle>
+                              <GoalsPicker
+                                disabled=false
+                                selectedGoals={r.player2Goals}
+                                onChange={v =>
+                                  setResultUnderEdit(_ =>
+                                    Some({...r, player2Goals: v})
+                                  )
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <PlayerPicker
+                                // TODO: isUpdating?
+                                disabled=false
+                                allowNewPlayer=false
+                                communityName
+                                selectedPlayerName={Some(r.player2Name)}
+                                onChange={v =>
+                                  setResultUnderEdit(_ =>
+                                    Some({...r, player2Name: v})
+                                  )
+                                }
+                              />
+                            </TableCell>
+                            <TableCell style=extraTimeStyle align="right">
+                              {text(result.extratime ? "X" : "")}
+                            </TableCell>
+                            <TableCell> {text(formattedDate)} </TableCell>
+                          </>,
+                        )
+                      : None
+                  )
+                ->Belt.Option.getWithDefault(
+                    <>
+                      <TableCell align="right">
+                        <span> {text(result.player1.name)} </span>
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(result.player1goals))}
+                      </TableCell>
+                      <TableCell style=colonStyle> {text(":")} </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(result.player2goals))}
+                      </TableCell>
+                      <TableCell>
+                        <span> {text(result.player2.name)} </span>
+                      </TableCell>
+                      <TableCell style=extraTimeStyle align="right">
+                        {text(result.extratime ? "X" : "")}
+                      </TableCell>
+                      <TableCell> {text(formattedDate)} </TableCell>
+                    </>,
+                  )}
              </TableRow>;
            })
          ->Array.of_list
