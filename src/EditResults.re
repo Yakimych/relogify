@@ -36,6 +36,10 @@ let make =
             </Typography>
           </CardContent>
         </Card>
-      : <EditResultsTable communityName results />;
+      : <EditResultsTable
+          communityName
+          results
+          queryToRefetch={ReasonApolloHooks.Utils.toQueryObj(allResultsQuery)}
+        />;
   };
 };

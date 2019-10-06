@@ -76,6 +76,7 @@ module UpdateResultMutationConfig = [%graphql
       $player1Goals: Int!
       $player2Goals: Int!
       $extraTime: Boolean!
+      $date: timestamptz!
     ) {
       update_results(
         where: {
@@ -89,6 +90,7 @@ module UpdateResultMutationConfig = [%graphql
           player2goals: $player2Goals
           player2Id: $player2Id
           extratime: $extraTime
+          date: $date
         }
       ) {
         affected_rows

@@ -6,16 +6,15 @@ open Mutations;
 type editableResult = {
   id: int,
   player1Id: int,
+  player2Id: int,
   player1Goals: int,
   player2Goals: int,
-  player2Id: int,
   extraTime: bool,
   date: Js.Date.t,
 };
 
 let toEditableResult = (result: result) => {
   id: result.id,
-  // TODO: Revisit this typing
   player1Id: result.player1.id,
   player2Id: result.player2.id,
   player1Goals: result.player1goals,
@@ -36,17 +35,67 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
+type editResultsTableState =
+  | NotEditing
+  | Editing(editableResult)
+  | Updating(int);
+
+let isUpdating =
+  fun
+  | Updating(_) => true
+  | _ => false;
+
+let mapState =
+    (fn: editableResult => editableResult, state: editResultsTableState) =>
+  switch (state) {
+  | Editing(result) => Editing(result->fn)
+  | _ => state
+  };
+
+type editResultsTableAction =
+  | StartEditing(result)
+  | StopEditing
+  | StartUpdating
+  | SetPlayer1Id(int)
+  | SetPlayer2Id(int)
+  | SetPlayer1Goals(int)
+  | SetPlayer2Goals(int)
+  | ToggleExtraTime
+  | SetDate(string);
+
+let editResultsTableReducer =
+    (state: editResultsTableState, action: editResultsTableAction) =>
+  switch (action) {
+  | StartEditing(result) => Editing(result->toEditableResult)
+  | StartUpdating =>
+    switch (state) {
+    | Editing(result) => Updating(result.id)
+    | _ => state
+    }
+  | StopEditing => NotEditing
+  | SetPlayer1Id(player1Id) => state |> mapState(r => {...r, player1Id})
+  | SetPlayer2Id(player2Id) => state |> mapState(r => {...r, player2Id})
+  | SetPlayer1Goals(player1Goals) =>
+    state |> mapState(r => {...r, player1Goals})
+  | SetPlayer2Goals(player2Goals) =>
+    state |> mapState(r => {...r, player2Goals})
+  | ToggleExtraTime => state |> mapState(r => {...r, extraTime: !r.extraTime})
+  | SetDate(dateString) =>
+    let date = dateString->Js.Date.fromString;
+    state
+    |> mapState(r => {...r, date: DateFns.isValid(date) ? date : r.date});
+  };
+
 [@react.component]
-let make = (~results: list(result), ~communityName: string) => {
+let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => {
   let (updateResultMutation, _, _) = UpdateResultMutation.use();
-  let (resultUnderEdit, setResultUnderEdit) = React.useState(_ => None);
-  let (isUpdating, setIsUpdating) = React.useState(_ => false);
+  let (state, dispatch) =
+    React.useReducer(editResultsTableReducer, NotEditing);
 
   let updateResult = () => {
-    switch (resultUnderEdit) {
-    | Some(resultToUpdate) =>
-      Js.log2("Saving: ", resultUnderEdit);
-      setIsUpdating(_ => true);
+    switch (state) {
+    | Editing(resultToUpdate) =>
+      dispatch(StartUpdating);
       updateResultMutation(
         ~variables=
           UpdateResultMutationConfig.make(
@@ -56,20 +105,20 @@ let make = (~results: list(result), ~communityName: string) => {
             ~player1Goals=resultToUpdate.player1Goals,
             ~player2Goals=resultToUpdate.player2Goals,
             ~extraTime=resultToUpdate.extraTime,
+            ~date=resultToUpdate.date->toJsonDate,
             (),
           )##variables,
+        ~refetchQueries=_ => [|queryToRefetch|],
         (),
       )
-      |> Js.Promise.then_(_ => {
-           setResultUnderEdit(_ => None);
-           setIsUpdating(_ => false) |> Js.Promise.resolve;
-         })
+      |> Js.Promise.then_(_ => dispatch(StopEditing) |> Js.Promise.resolve)
       |> Js.Promise.catch(e => {
            Js.Console.error2("Error: ", e);
-           setIsUpdating(_ => false) |> Js.Promise.resolve;
+           dispatch(StopEditing) |> Js.Promise.resolve;
          })
       |> ignore;
-    | None => ()
+    | Updating(_)
+    | NotEditing => ()
     };
   };
 
@@ -97,130 +146,103 @@ let make = (~results: list(result), ~communityName: string) => {
          ->Belt.List.map(result =>
              <TableRow key={string_of_int(result.id)}>
                <TableCell>
-                 {resultUnderEdit->Belt.Option.isNone
-                    ? <button
-                        onClick={_ =>
-                          setResultUnderEdit(_ =>
-                            Some(result->toEditableResult)
-                          )
-                        }>
-                        {text("Edit")}
-                      </button>
-                    : <button onClick={_ => updateResult()}>
-                        {text("Save")}
-                      </button>}
+                 {switch (state) {
+                  | NotEditing =>
+                    <button onClick={_ => dispatch(StartEditing(result))}>
+                      {text("Edit")}
+                    </button>
+                  | Editing(editedResult) =>
+                    result.id === editedResult.id
+                      ? <>
+                          <button onClick={_ => updateResult()}>
+                            {text("Save")}
+                          </button>
+                          <button onClick={_ => dispatch(StopEditing)}>
+                            {text("Cancel")}
+                          </button>
+                        </>
+                      : React.null
+                  | Updating(updatingId) =>
+                    updatingId === result.id
+                      ? <CircularProgress /> : React.null
+                  }}
                </TableCell>
-               {resultUnderEdit
-                ->Belt.Option.flatMap(r =>
-                    r.id == result.id
-                      ? Some(
-                          <>
-                            <TableCell align="right">
-                              <ExistingPlayerPicker
-                                disabled=isUpdating
-                                communityName
-                                selectedPlayerId={r.player1Id}
-                                onChange={id =>
-                                  setResultUnderEdit(_ =>
-                                    Some({...r, player1Id: id})
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell style=numberCellStyle>
-                              <GoalsPicker
-                                disabled=isUpdating
-                                selectedGoals={r.player1Goals}
-                                onChange={v =>
-                                  setResultUnderEdit(_ =>
-                                    Some({...r, player1Goals: v})
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell style=colonStyle>
-                              {text(":")}
-                            </TableCell>
-                            <TableCell style=numberCellStyle>
-                              <GoalsPicker
-                                disabled=isUpdating
-                                selectedGoals={r.player2Goals}
-                                onChange={v =>
-                                  setResultUnderEdit(_ =>
-                                    Some({...r, player2Goals: v})
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <ExistingPlayerPicker
-                                disabled=isUpdating
-                                communityName
-                                selectedPlayerId={r.player2Id}
-                                onChange={id =>
-                                  setResultUnderEdit(_ =>
-                                    Some({...r, player2Id: id})
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell style=extraTimeStyle align="right">
-                              <Checkbox
-                                disabled=isUpdating
-                                color="default"
-                                checked={r.extraTime}
-                                onClick={_ =>
-                                  setResultUnderEdit(_ =>
-                                    Some({...r, extraTime: !r.extraTime})
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                disabled=isUpdating
-                                _type="date"
-                                value={formatDate(r.date)}
-                                onChange={e => {
-                                  let date =
-                                    Js.Date.fromString(
-                                      ReactEvent.Form.target(e)##value,
-                                    );
-                                  if (DateFns.isValid(date)) {
-                                    setResultUnderEdit(_ =>
-                                      Some({...r, date})
-                                    );
-                                  };
-                                }}
-                              />
-                            </TableCell>
-                          </>,
-                        )
-                      : None
-                  )
-                ->Belt.Option.getWithDefault(
-                    <>
-                      <TableCell align="right">
-                        <span> {text(result.player1.name)} </span>
-                      </TableCell>
-                      <TableCell style=numberCellStyle>
-                        {text(string_of_int(result.player1goals))}
-                      </TableCell>
-                      <TableCell style=colonStyle> {text(":")} </TableCell>
-                      <TableCell style=numberCellStyle>
-                        {text(string_of_int(result.player2goals))}
-                      </TableCell>
-                      <TableCell>
-                        <span> {text(result.player2.name)} </span>
-                      </TableCell>
-                      <TableCell style=extraTimeStyle align="right">
-                        {text(result.extratime ? "X" : "")}
-                      </TableCell>
-                      <TableCell>
-                        {text(formatDate(result.date))}
-                      </TableCell>
-                    </>,
-                  )}
+               {switch (state) {
+                | Editing(r) when r.id == result.id =>
+                  <>
+                    <TableCell align="right">
+                      <ExistingPlayerPicker
+                        disabled={isUpdating(state)}
+                        communityName
+                        selectedPlayerId={r.player1Id}
+                        onChange={id => dispatch(SetPlayer1Id(id))}
+                      />
+                    </TableCell>
+                    <TableCell style=numberCellStyle>
+                      <GoalsPicker
+                        disabled={state->isUpdating}
+                        selectedGoals={r.player1Goals}
+                        onChange={g => dispatch(SetPlayer1Goals(g))}
+                      />
+                    </TableCell>
+                    <TableCell style=colonStyle> {text(":")} </TableCell>
+                    <TableCell style=numberCellStyle>
+                      <GoalsPicker
+                        disabled={state->isUpdating}
+                        selectedGoals={r.player2Goals}
+                        onChange={g => dispatch(SetPlayer2Goals(g))}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <ExistingPlayerPicker
+                        disabled={state->isUpdating}
+                        communityName
+                        selectedPlayerId={r.player2Id}
+                        onChange={id => dispatch(SetPlayer2Id(id))}
+                      />
+                    </TableCell>
+                    <TableCell style=extraTimeStyle align="right">
+                      <Checkbox
+                        disabled={state->isUpdating}
+                        color="default"
+                        checked={r.extraTime}
+                        onClick={_ => dispatch(ToggleExtraTime)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        disabled={state->isUpdating}
+                        _type="date"
+                        value={formatDate(r.date)}
+                        onChange={e => {
+                          let dateString = ReactEvent.Form.target(e)##value;
+                          // TODO: Allow setting time
+                          dispatch(SetDate(dateString));
+                        }}
+                      />
+                    </TableCell>
+                  </>
+                | _ =>
+                  <>
+                    <TableCell align="right">
+                      <span> {text(result.player1.name)} </span>
+                    </TableCell>
+                    <TableCell style=numberCellStyle>
+                      {text(string_of_int(result.player1goals))}
+                    </TableCell>
+                    <TableCell style=colonStyle> {text(":")} </TableCell>
+                    <TableCell style=numberCellStyle>
+                      {text(string_of_int(result.player2goals))}
+                    </TableCell>
+                    <TableCell>
+                      <span> {text(result.player2.name)} </span>
+                    </TableCell>
+                    <TableCell style=extraTimeStyle align="right">
+                      {text(result.extratime ? "X" : "")}
+                    </TableCell>
+                    <TableCell> {text(formatDate(result.date))} </TableCell>
+                  </>
+                }}
              </TableRow>
            )
          ->Array.of_list
