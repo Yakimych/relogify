@@ -216,13 +216,14 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                         value={formatDate(r.date)}
                         onChange={e => {
                           let dateString = ReactEvent.Form.target(e)##value;
-                          // TODO: Allow setting time
                           dispatch(SetDate(dateString));
                         }}
                       />
                     </TableCell>
                   </>
-                | _ =>
+                | Editing(_)
+                | Updating(_)
+                | NotEditing =>
                   <>
                     <TableCell align="right">
                       <span> {text(result.player1.name)} </span>

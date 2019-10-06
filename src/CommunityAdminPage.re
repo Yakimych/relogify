@@ -9,7 +9,6 @@ let make = (~communityName) => {
   let isLoggedIn = identity.isLoggedIn;
 
   <>
-    // <Header page={CommunityAdmin(communityName)} />
     <div> {text("Admin for " ++ communityName)} </div>
     {isLoggedIn
        ? <>
@@ -25,11 +24,9 @@ let make = (~communityName) => {
                 u => {
                   let isAdmin =
                     u.appMetaData
-                    ->Belt.Option.mapWithDefault(false, a =>
-                        a.roles
-                        ->Belt.Option.mapWithDefault(false, r =>
-                            r->Belt.Array.some(r => r === "Admin")
-                          )
+                    ->Belt.Option.flatMap(a => a.roles)
+                    ->Belt.Option.mapWithDefault(false, r =>
+                        r->Belt.Array.some(r => r === "Admin")
                       );
 
                   isAdmin
