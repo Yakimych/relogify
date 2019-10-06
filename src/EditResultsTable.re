@@ -6,11 +6,9 @@ open Mutations;
 type editableResult = {
   id: int,
   player1Id: int,
-  player1Name: string,
   player1Goals: int,
   player2Goals: int,
   player2Id: int,
-  player2Name: string,
   extraTime: bool,
   date: Js.Date.t,
 };
@@ -18,11 +16,8 @@ type editableResult = {
 let toEditableResult = (result: result) => {
   id: result.id,
   // TODO: Revisit this typing
-  // do we even need the names here?
   player1Id: result.player1.id,
   player2Id: result.player2.id,
-  player1Name: result.player1.name,
-  player2Name: result.player2.name,
   player1Goals: result.player1goals,
   player2Goals: result.player2goals,
   extraTime: result.extratime,
@@ -45,29 +40,37 @@ let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 let make = (~results: list(result), ~communityName: string) => {
   let (updateResultMutation, _, _) = UpdateResultMutation.use();
   let (resultUnderEdit, setResultUnderEdit) = React.useState(_ => None);
+  let (isUpdating, setIsUpdating) = React.useState(_ => false);
 
-  let updateResult = resultToUpdate => {
-    // TODO: Loading state?
-    updateResultMutation(
-      ~variables=
-        UpdateResultMutationConfig.make(
-          ~resultId=resultToUpdate.id,
-          ~player1Id=resultToUpdate.player1Id,
-          ~player2Id=resultToUpdate.player2Id,
-          ~player1Goals=resultToUpdate.player1Goals,
-          ~player2Goals=resultToUpdate.player2Goals,
-          ~extraTime=resultToUpdate.extraTime,
-          (),
-        )##variables,
-      (),
-    )
-    |> Js.Promise.then_(_ =>
-         setResultUnderEdit(_ => None) |> Js.Promise.resolve
-       )  // TODO: Loading state?
-    |> Js.Promise.catch(e =>
-         Js.Console.error2("Error: ", e) |> Js.Promise.resolve
-       )
-    |> ignore;
+  let updateResult = () => {
+    switch (resultUnderEdit) {
+    | Some(resultToUpdate) =>
+      Js.log2("Saving: ", resultUnderEdit);
+      setIsUpdating(_ => true);
+      updateResultMutation(
+        ~variables=
+          UpdateResultMutationConfig.make(
+            ~resultId=resultToUpdate.id,
+            ~player1Id=resultToUpdate.player1Id,
+            ~player2Id=resultToUpdate.player2Id,
+            ~player1Goals=resultToUpdate.player1Goals,
+            ~player2Goals=resultToUpdate.player2Goals,
+            ~extraTime=resultToUpdate.extraTime,
+            (),
+          )##variables,
+        (),
+      )
+      |> Js.Promise.then_(_ => {
+           setResultUnderEdit(_ => None);
+           setIsUpdating(_ => false) |> Js.Promise.resolve;
+         })
+      |> Js.Promise.catch(e => {
+           Js.Console.error2("Error: ", e);
+           setIsUpdating(_ => false) |> Js.Promise.resolve;
+         })
+      |> ignore;
+    | None => ()
+    };
   };
 
   <Paper>
@@ -91,24 +94,21 @@ let make = (~results: list(result), ~communityName: string) => {
       </TableHead>
       <TableBody>
         {results
-         ->Belt.List.map(result => {
-             let formattedDate = formatDate(result.date);
-             let editableResult = result |> toEditableResult;
-
+         ->Belt.List.map(result =>
              <TableRow key={string_of_int(result.id)}>
                <TableCell>
-                 <button
-                   onClick={_ =>
-                     setResultUnderEdit(_ => Some(editableResult))
-                   }>
-                   {text("Edit")}
-                 </button>
-                 <button
-                   onClick={_ =>
-                     resultUnderEdit->Belt.Option.map(updateResult) |> ignore
-                   }>
-                   {text("Save")}
-                 </button>
+                 {resultUnderEdit->Belt.Option.isNone
+                    ? <button
+                        onClick={_ =>
+                          setResultUnderEdit(_ =>
+                            Some(result->toEditableResult)
+                          )
+                        }>
+                        {text("Edit")}
+                      </button>
+                    : <button onClick={_ => updateResult()}>
+                        {text("Save")}
+                      </button>}
                </TableCell>
                {resultUnderEdit
                 ->Belt.Option.flatMap(r =>
@@ -116,22 +116,20 @@ let make = (~results: list(result), ~communityName: string) => {
                       ? Some(
                           <>
                             <TableCell align="right">
-                              <PlayerPicker
-                                // TODO: isUpdating?
-                                disabled=false
-                                allowNewPlayer=false
+                              <ExistingPlayerPicker
+                                disabled=isUpdating
                                 communityName
-                                selectedPlayerName={Some(r.player1Name)}
-                                onChange={v =>
+                                selectedPlayerId={r.player1Id}
+                                onChange={id =>
                                   setResultUnderEdit(_ =>
-                                    Some({...r, player1Name: v})
+                                    Some({...r, player1Id: id})
                                   )
                                 }
                               />
                             </TableCell>
                             <TableCell style=numberCellStyle>
                               <GoalsPicker
-                                disabled=false
+                                disabled=isUpdating
                                 selectedGoals={r.player1Goals}
                                 onChange={v =>
                                   setResultUnderEdit(_ =>
@@ -145,7 +143,7 @@ let make = (~results: list(result), ~communityName: string) => {
                             </TableCell>
                             <TableCell style=numberCellStyle>
                               <GoalsPicker
-                                disabled=false
+                                disabled=isUpdating
                                 selectedGoals={r.player2Goals}
                                 onChange={v =>
                                   setResultUnderEdit(_ =>
@@ -155,23 +153,47 @@ let make = (~results: list(result), ~communityName: string) => {
                               />
                             </TableCell>
                             <TableCell>
-                              <PlayerPicker
-                                // TODO: isUpdating?
-                                disabled=false
-                                allowNewPlayer=false
+                              <ExistingPlayerPicker
+                                disabled=isUpdating
                                 communityName
-                                selectedPlayerName={Some(r.player2Name)}
-                                onChange={v =>
+                                selectedPlayerId={r.player2Id}
+                                onChange={id =>
                                   setResultUnderEdit(_ =>
-                                    Some({...r, player2Name: v})
+                                    Some({...r, player2Id: id})
                                   )
                                 }
                               />
                             </TableCell>
                             <TableCell style=extraTimeStyle align="right">
-                              {text(result.extratime ? "X" : "")}
+                              <Checkbox
+                                disabled=isUpdating
+                                color="default"
+                                checked={r.extraTime}
+                                onClick={_ =>
+                                  setResultUnderEdit(_ =>
+                                    Some({...r, extraTime: !r.extraTime})
+                                  )
+                                }
+                              />
                             </TableCell>
-                            <TableCell> {text(formattedDate)} </TableCell>
+                            <TableCell>
+                              <TextField
+                                disabled=isUpdating
+                                _type="date"
+                                value={formatDate(r.date)}
+                                onChange={e => {
+                                  let date =
+                                    Js.Date.fromString(
+                                      ReactEvent.Form.target(e)##value,
+                                    );
+                                  if (DateFns.isValid(date)) {
+                                    setResultUnderEdit(_ =>
+                                      Some({...r, date})
+                                    );
+                                  };
+                                }}
+                              />
+                            </TableCell>
                           </>,
                         )
                       : None
@@ -194,11 +216,13 @@ let make = (~results: list(result), ~communityName: string) => {
                       <TableCell style=extraTimeStyle align="right">
                         {text(result.extratime ? "X" : "")}
                       </TableCell>
-                      <TableCell> {text(formattedDate)} </TableCell>
+                      <TableCell>
+                        {text(formatDate(result.date))}
+                      </TableCell>
                     </>,
                   )}
-             </TableRow>;
-           })
+             </TableRow>
+           )
          ->Array.of_list
          ->React.array}
       </TableBody>
