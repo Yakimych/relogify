@@ -6,9 +6,11 @@ open PlayerStatsUtils;
 let testResults: list(result) = [
   {
     player1: {
+      id: 1,
       name: "Qwe",
     },
     player2: {
+      id: 2,
       name: "Abc",
     },
     player2goals: 4,
@@ -19,9 +21,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 1,
       name: "Qwe",
     },
     player2: {
+      id: 2,
       name: "Abc",
     },
     player2goals: 1,
@@ -32,9 +36,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 2,
       name: "Abc",
     },
     player2: {
+      id: 3,
       name: "Def",
     },
     player2goals: 4,
@@ -45,9 +51,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 2,
       name: "Abc",
     },
     player2: {
+      id: 1,
       name: "Qwe",
     },
     player2goals: 1,
@@ -58,9 +66,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 4,
       name: "Player4",
     },
     player2: {
+      id: 5,
       name: "Yet another one",
     },
     player2goals: 12,
@@ -71,9 +81,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 5,
       name: "Another new player",
     },
     player2: {
+      id: 6,
       name: "Yet another one",
     },
     player2goals: 1,
@@ -84,9 +96,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 7,
       name: "NewP1",
     },
     player2: {
+      id: 8,
       name: "NewP2",
     },
     player2goals: 1,
@@ -97,9 +111,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 9,
       name: "Player4",
     },
     player2: {
+      id: 6,
       name: "Yet another one",
     },
     player2goals: 6,
@@ -110,9 +126,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 1,
       name: "Qwe",
     },
     player2: {
+      id: 10,
       name: "Def",
     },
     player2goals: 0,
@@ -123,9 +141,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 11,
       name: "New Player 5",
     },
     player2: {
+      id: 12,
       name: "Cde",
     },
     player2goals: 0,
@@ -136,9 +156,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 2,
       name: "Abc",
     },
     player2: {
+      id: 9,
       name: "Player4",
     },
     player2goals: 12,
@@ -149,9 +171,11 @@ let testResults: list(result) = [
   },
   {
     player1: {
+      id: 2,
       name: "Abc",
     },
     player2: {
+      id: 6,
       name: "Another new player",
     },
     player2goals: 0,
@@ -181,9 +205,11 @@ let emptyPlayerStats = (playerName: string) => {
 let singleResult = {
   id: 0,
   player1: {
+    id: 1,
     name: "Bob",
   },
   player2: {
+    id: 2,
     name: "Alice",
   },
   player1goals: 2,

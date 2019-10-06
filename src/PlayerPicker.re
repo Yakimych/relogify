@@ -1,16 +1,22 @@
 open Utils;
+open Queries;
 
 let newPlayerValue = "NEW_PLAYER";
 
 [@react.component]
 let make =
     (
-      ~playerNames: array(string),
+      ~communityName: string,
       ~selectedPlayerName: option(string),
       ~disabled: bool,
       ~placeholderText: option(string)=?,
       ~onChange: string => unit,
+      ~allowNewPlayer: bool=true,
     ) => {
+  let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
+  let (playersQuery, _) =
+    AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
+
   let (isInCustomMode, setIsInCustomMode) = React.useState(_ => false);
 
   let handleSelectChange = (value: string) =>
@@ -21,58 +27,64 @@ let make =
       onChange(value);
     };
 
-  React.useEffect2(
+  React.useEffect1(
     _ => {
-      if (Belt.Array.length(playerNames) === 0) {
-        setIsInCustomMode(_ => true);
-      } else if (selectedPlayerName->Belt.Option.isNone) {
+      if (selectedPlayerName->Belt.Option.isNone) {
         setIsInCustomMode(_ => false);
       };
       None;
     },
-    (selectedPlayerName, playerNames),
+    [|selectedPlayerName|],
   );
 
-  <>
-    {isInCustomMode
-       ? <TextField
-           disabled
-           className="highlighted"
-           autoFocus=true
-           style={ReactDOMRe.Style.make(~width="200px", ())}
-           variant="outlined"
-           inputProps={"maxLength": 20}
-           value={selectedPlayerName->Belt.Option.getWithDefault("")}
-           onChange={e => {
-             let newName = ReactEvent.Form.target(e)##value;
-             onChange(newName);
-           }}
-         />
-       : <NativeSelect
-           disabled
-           style={ReactDOMRe.Style.make(~width="200px", ())}
-           onChange={e => {
-             let newName = ReactEvent.Form.target(e)##value;
-             handleSelectChange(newName);
-           }}
-           value={selectedPlayerName->Belt.Option.getWithDefault("")}
-           input={
-             <OutlinedInput
-               style={ReactDOMRe.Style.make(~width="60px", ())}
-               labelWidth=0
-             />
-           }>
-           <option key="empty" value="" disabled=true>
-             {text(placeholderText->Belt.Option.getWithDefault(""))}
-           </option>
-           {playerNames
-            ->Belt.Array.map(p =>
-                <option value=p key={"players_" ++ p}> {text(p)} </option>
-              )
-            ->React.array}
-           <option key="new_player" value=newPlayerValue>
-             {text("+ Add new player")}
-           </option>
-         </NativeSelect>}
-  </>;
+  switch (playersQuery) {
+  | Loading => <CircularProgress />
+  | NoData
+  | Error(_) => <span> {text("Error")} </span>
+  | Data(data) =>
+    let playerNames = data##players->Belt.Array.map(p => p##name);
+
+    isInCustomMode || Belt.Array.length(playerNames) === 0
+      ? <TextField
+          disabled
+          className="highlighted"
+          autoFocus=true
+          style={ReactDOMRe.Style.make(~width="200px", ())}
+          variant="outlined"
+          inputProps={"maxLength": 20}
+          value={selectedPlayerName->Belt.Option.getWithDefault("")}
+          onChange={e => {
+            let newName = ReactEvent.Form.target(e)##value;
+            onChange(newName);
+          }}
+        />
+      : <NativeSelect
+          disabled
+          style={ReactDOMRe.Style.make(~width="200px", ())}
+          onChange={e => {
+            let newName = ReactEvent.Form.target(e)##value;
+            handleSelectChange(newName);
+          }}
+          value={selectedPlayerName->Belt.Option.getWithDefault("")}
+          input={
+            <OutlinedInput
+              style={ReactDOMRe.Style.make(~width="60px", ())}
+              labelWidth=0
+            />
+          }>
+          <option key="empty" value="" disabled=true>
+            {text(placeholderText->Belt.Option.getWithDefault(""))}
+          </option>
+          {playerNames
+           ->Belt.Array.map(p =>
+               <option value=p key={"players_" ++ p}> {text(p)} </option>
+             )
+           ->React.array}
+          {allowNewPlayer
+             ? <option key="new_player" value=newPlayerValue>
+                 {text("+ Add new player")}
+               </option>
+             : React.null}
+        </NativeSelect>;
+  };
 };

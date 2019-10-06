@@ -2,12 +2,16 @@ type page =
   | Home
   | CreateCommunityPage
   | CommunityStart(string)
+  | CommunityAdmin(string)
   | History(string)
   | TopX(string)
   | PlayerHome(string, string)
   | HeadToHead(string, string, string);
 
-type player = {name: string};
+type player = {
+  id: int,
+  name: string,
+};
 
 type result = {
   id: int,

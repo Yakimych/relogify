@@ -27,9 +27,11 @@ module AllResultsQueryConfig = [%graphql
         order_by: { date: desc }
       ) {
         player1 {
+          id
           name
         }
         player2 {
+          id
           name
         }
         player2goals
@@ -69,10 +71,12 @@ module HeadToHeadQueryConfig = [%graphql
       ) {
         id
         player1 {
+          id
           name
         }
         player1goals
         player2 {
+          id
           name
         }
         player2goals
@@ -117,10 +121,12 @@ module PlayerResultsQueryConfig = [%graphql
       ) {
         id
         player1 {
+          id
           name
         }
         player1goals
         player2 {
+          id
           name
         }
         player2goals
@@ -142,9 +148,11 @@ let toRecord = (res): list(result) =>
       {
         id: r##id,
         player1: {
+          id: r##player1##id,
           name: r##player1##name,
         },
         player2: {
+          id: r##player2##id,
           name: r##player2##name,
         },
         player1goals: r##player1goals,
