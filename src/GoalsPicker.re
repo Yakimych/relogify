@@ -1,6 +1,6 @@
 open Utils;
 
-let goalValues = Belt.Array.range(0, 9);
+let goalValues = Belt.Array.range(0, 11);
 let moreGoalsValue = "MORE_GOALS";
 
 [@react.component]
