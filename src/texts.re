@@ -10,6 +10,11 @@ type scoreTypeTexts = {
   pointsLostPerMatch: string,
   pointsLostPerMatchShort: string,
   pointsPlayerShort: string,
+  totalPointsWon: string,
+  totalPointsLost: string,
+  allTimePointDiff: string,
+  totalPointsWonPerMatch: string,
+  totalPointsLostPerMatch: string,
 };
 
 let scoreTypeGoalsTexts = {
@@ -24,6 +29,11 @@ let scoreTypeGoalsTexts = {
   pointsLostPerMatch: "Goals conceded per match",
   pointsLostPerMatchShort: "C/M",
   pointsPlayerShort: "G",
+  totalPointsWon: "Total goals scored",
+  totalPointsLost: "Total goals conceded",
+  allTimePointDiff: "All-time goals difference",
+  totalPointsWonPerMatch: "Total goals scored per match",
+  totalPointsLostPerMatch: "Total goals conceded per match",
 };
 
 let scoreTypePointTexts = {
@@ -38,6 +48,11 @@ let scoreTypePointTexts = {
   pointsLostPerMatch: "Points lost per match",
   pointsLostPerMatchShort: "L/M",
   pointsPlayerShort: "P",
+  totalPointsWon: "Total points won",
+  totalPointsLost: "Total points lost",
+  allTimePointDiff: "All-time point difference",
+  totalPointsWonPerMatch: "Total points won per match",
+  totalPointsLostPerMatch: "Total points lost per match",
 };
 
 let getScoreTypeTexts =

@@ -68,6 +68,11 @@ let make =
   let (resultsQuery, _) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());
 
+  let settingsQueryConfig =
+    CommunitySettingsQueryConfig.make(~communityName, ());
+  let (settingsQuery, _) =
+    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+
   let (sortBy, setSortBy) = React.useState(_ => WinsPerMatch);
   let (sortDirection, setSortDirection) = React.useState(_ => Desc);
 
@@ -80,12 +85,18 @@ let make =
 
   let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
   <>
-    {switch (resultsQuery) {
-     | Loading => <CircularProgress />
-     | NoData
-     | Error(_) => <span> {text("Error")} </span>
-     | Data(data) =>
-       let results = data##results |> toListOfResults;
+    {switch (resultsQuery, settingsQuery) {
+     | (_, Loading)
+     | (Loading, _) => <CircularProgress />
+     | (NoData, _)
+     | (_, NoData)
+     | (Error(_), _)
+     | (_, Error(_)) => <span> {text("Error")} </span>
+     | (Data(resultsData), Data(settingsData)) =>
+       let results = resultsData##results |> toListOfResults;
+       let communitySettings = toCommunitySettings(settingsData);
+       let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
+
        let showEloRatings =
          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 
@@ -161,26 +172,26 @@ let make =
                        {text("L")}
                      </TableSortLabel>
                    </TableCell>
-                   <TableCell style=numberCellStyle title="Goals scored">
+                   <TableCell style=numberCellStyle title={texts.pointsWon}>
                      <TableSortLabel
                        active={sortBy === GoalsScored}
                        direction={sortDirection === Asc ? "asc" : "desc"}
                        onClick={_ => requestSort(GoalsScored)}>
-                       {text("GS")}
+                       {text(texts.pointsWonShort)}
                      </TableSortLabel>
                    </TableCell>
-                   <TableCell style=numberCellStyle title="Goals conceded">
+                   <TableCell style=numberCellStyle title={texts.pointsLost}>
                      <TableSortLabel
                        active={sortBy === GoalsConceded}
                        direction={sortDirection === Asc ? "asc" : "desc"}
                        onClick={_ => requestSort(GoalsConceded)}>
-                       {text("GC")}
+                       {text(texts.pointsLostShort)}
                      </TableSortLabel>
                    </TableCell>
                    {isWide
                       ? <>
                           <TableCell
-                            style=numberCellStyle title="Goal difference">
+                            style=numberCellStyle title={texts.pointDiff}>
                             <TableSortLabel
                               active={sortBy === GoalDiff}
                               direction={
@@ -192,19 +203,19 @@ let make =
                           </TableCell>
                           <TableCell
                             style=numberCellStyle
-                            title="Goals scored per match">
+                            title={texts.pointsWonPerMatch}>
                             <TableSortLabel
                               active={sortBy === GoalsScoredPerMatch}
                               direction={
                                 sortDirection === Asc ? "asc" : "desc"
                               }
                               onClick={_ => requestSort(GoalsScoredPerMatch)}>
-                              {text("G/M")}
+                              {text(texts.pointsWonPerMatchShort)}
                             </TableSortLabel>
                           </TableCell>
                           <TableCell
                             style=numberCellStyle
-                            title="Goals conceded per match">
+                            title={texts.pointsLostPerMatch}>
                             <TableSortLabel
                               active={sortBy === GoalsConcededPerMatch}
                               direction={
@@ -213,7 +224,7 @@ let make =
                               onClick={_ =>
                                 requestSort(GoalsConcededPerMatch)
                               }>
-                              {text("C/M")}
+                              {text(texts.pointsLostPerMatchShort)}
                             </TableSortLabel>
                           </TableCell>
                         </>

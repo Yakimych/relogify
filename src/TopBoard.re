@@ -68,16 +68,19 @@ let make = (~communityName: string) => {
       <Header page={TopX(communityName)} />
       <Box margin="10px" textAlign="center">
         <TopStats
+          communityName
           title="This Week"
           resultsWithMap=resultsWithRatingMap
           startDate=weekStartDate
         />
         <TopStats
+          communityName
           title="This Month"
           resultsWithMap=resultsWithRatingMap
           startDate=monthStartDate
         />
         <TopStats
+          communityName
           title="This Year"
           resultsWithMap=resultsWithRatingMap
           startDate=yearStartDate
