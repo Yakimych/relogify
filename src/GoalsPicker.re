@@ -2,13 +2,6 @@ open Utils;
 
 let moreGoalsValue = "MORE_GOALS";
 
-// TODO: Move to centralize text-handling module
-let moreGoalsText = scoreType =>
-  switch (scoreType) {
-  | `Goals => "More goals!"
-  | `Points => "More points!"
-  };
-
 [@react.component]
 let make =
     (
@@ -18,6 +11,7 @@ let make =
       ~scoreType,
       ~maxSelectablePoints: int,
     ) => {
+  let scoreTypeTexts = Texts.getScoreTypeTexts(scoreType);
   let (isInCustomMode, setIsInCustomMode) = React.useState(_ => false);
   let goalValues = Belt.Array.range(0, maxSelectablePoints);
 
@@ -72,7 +66,7 @@ let make =
                 )
               ->React.array}
              <option key="more_goals" value=moreGoalsValue>
-               {text(moreGoalsText(scoreType))}
+               {text(scoreTypeTexts.morePoints)}
              </option>
            </NativeSelect>
          </span>}
