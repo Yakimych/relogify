@@ -7,6 +7,17 @@
     {
       "table": "communities",
       "is_enum": false,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
       "object_relationships": [],
       "array_relationships": [
         {
@@ -28,6 +39,16 @@
           },
           "name": "players",
           "comment": null
+        },
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "community_id",
+              "table": "community_settings"
+            }
+          },
+          "name": "community_settings",
+          "comment": null
         }
       ],
       "insert_permissions": [],
@@ -37,8 +58,69 @@
       "event_triggers": []
     },
     {
+      "table": "score_types",
+      "is_enum": true,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
+      "object_relationships": [],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "community_settings",
+      "is_enum": false,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
+      "object_relationships": [
+        {
+          "using": { "foreign_key_constraint_on": "community_id" },
+          "name": "community",
+          "comment": null
+        }
+      ],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
       "table": "results",
       "is_enum": false,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
       "object_relationships": [
         {
           "using": { "foreign_key_constraint_on": "communityId" },
@@ -66,6 +148,17 @@
     {
       "table": "newest_result",
       "is_enum": false,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
       "object_relationships": [
         {
           "using": {
@@ -108,6 +201,17 @@
     {
       "table": "players",
       "is_enum": false,
+      "configuration": {
+        "custom_root_fields": {
+          "select": null,
+          "select_by_pk": null,
+          "select_aggregate": null,
+          "insert": null,
+          "update": null,
+          "delete": null
+        },
+        "custom_column_names": {}
+      },
       "object_relationships": [
         {
           "using": { "foreign_key_constraint_on": "communityId" },
