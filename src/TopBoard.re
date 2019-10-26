@@ -57,7 +57,7 @@ let make = (~communityName: string) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    let results = data##results |> toRecord;
+    let results = data##results |> toListOfResults;
     let resultsWithRatingMap = results |> attachRatings;
 
     let resultIdsToHighlight =

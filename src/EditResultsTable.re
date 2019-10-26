@@ -1,6 +1,7 @@
 open Styles;
 open Utils;
 open Types;
+open Queries;
 open Mutations;
 
 type editableResult = {
@@ -88,6 +89,11 @@ let editResultsTableReducer =
 
 [@react.component]
 let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => {
+  let settingsQueryConfig =
+    CommunitySettingsQueryConfig.make(~communityName, ());
+  let (settingsQuery, _) =
+    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+
   let (updateResultMutation, _, _) = UpdateResultMutation.use();
   let (state, dispatch) =
     React.useReducer(editResultsTableReducer, NotEditing);
@@ -122,133 +128,152 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
     };
   };
 
-  <Paper>
-    <div className="title">
-      <Typography variant="h6"> {text("Results")} </Typography>
-    </div>
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell> {text("Edit")} </TableCell>
-          <TableCell align="right"> {text("Player1")} </TableCell>
-          <TableCell style=numberCellStyle> {text("G1")} </TableCell>
-          <TableCell style=colonStyle />
-          <TableCell style=numberCellStyle> {text("G2")} </TableCell>
-          <TableCell> {text("Player2")} </TableCell>
-          <TableCell style=extraTimeStyle align="right" title="Extra time">
-            {text("E")}
-          </TableCell>
-          <TableCell style=dateStyle> {text("Date")} </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {results
-         ->Belt.List.map(result =>
-             <TableRow key={string_of_int(result.id)}>
-               <TableCell>
+  switch (settingsQuery) {
+  | Loading => <CircularProgress />
+  | NoData
+  | Error(_) => <span> {text("Error")} </span>
+  | Data(data) =>
+    let communitySettings = toCommunitySettings(data);
+    <Paper>
+      <div className="title">
+        <Typography variant="h6"> {text("Results")} </Typography>
+      </div>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell> {text("Edit")} </TableCell>
+            <TableCell align="right"> {text("Player1")} </TableCell>
+            <TableCell style=numberCellStyle> {text("G1")} </TableCell>
+            <TableCell style=colonStyle />
+            <TableCell style=numberCellStyle> {text("G2")} </TableCell>
+            <TableCell> {text("Player2")} </TableCell>
+            <TableCell style=extraTimeStyle align="right" title="Extra time">
+              {text("E")}
+            </TableCell>
+            <TableCell style=dateStyle> {text("Date")} </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {results
+           ->Belt.List.map(result =>
+               <TableRow key={string_of_int(result.id)}>
+                 <TableCell>
+                   {switch (state) {
+                    | NotEditing =>
+                      <button onClick={_ => dispatch(StartEditing(result))}>
+                        {text("Edit")}
+                      </button>
+                    | Editing(editedResult) =>
+                      result.id === editedResult.id
+                        ? <>
+                            <button onClick={_ => updateResult()}>
+                              {text("Save")}
+                            </button>
+                            <button onClick={_ => dispatch(StopEditing)}>
+                              {text("Cancel")}
+                            </button>
+                          </>
+                        : React.null
+                    | Updating(updatingId) =>
+                      updatingId === result.id
+                        ? <CircularProgress /> : React.null
+                    }}
+                 </TableCell>
                  {switch (state) {
+                  | Editing(r) when r.id == result.id =>
+                    <>
+                      <TableCell align="right">
+                        <ExistingPlayerPicker
+                          disabled={isUpdating(state)}
+                          communityName
+                          selectedPlayerId={r.player1Id}
+                          onChange={id => dispatch(SetPlayer1Id(id))}
+                        />
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        <GoalsPicker
+                          disabled={state->isUpdating}
+                          selectedGoals={r.player1Goals}
+                          onChange={g => dispatch(SetPlayer1Goals(g))}
+                          maxSelectablePoints={
+                                                communitySettings.
+                                                  maxSelectablePoints
+                                              }
+                          scoreType={communitySettings.scoreType}
+                        />
+                      </TableCell>
+                      <TableCell style=colonStyle> {text(":")} </TableCell>
+                      <TableCell style=numberCellStyle>
+                        <GoalsPicker
+                          disabled={state->isUpdating}
+                          selectedGoals={r.player2Goals}
+                          onChange={g => dispatch(SetPlayer2Goals(g))}
+                          maxSelectablePoints={
+                                                communitySettings.
+                                                  maxSelectablePoints
+                                              }
+                          scoreType={communitySettings.scoreType}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <ExistingPlayerPicker
+                          disabled={state->isUpdating}
+                          communityName
+                          selectedPlayerId={r.player2Id}
+                          onChange={id => dispatch(SetPlayer2Id(id))}
+                        />
+                      </TableCell>
+                      <TableCell style=extraTimeStyle align="right">
+                        <Checkbox
+                          disabled={state->isUpdating}
+                          color="default"
+                          checked={r.extraTime}
+                          onClick={_ => dispatch(ToggleExtraTime)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          disabled={state->isUpdating}
+                          _type="date"
+                          value={formatDate(r.date)}
+                          onChange={e => {
+                            let dateString = ReactEvent.Form.target(e)##value;
+                            dispatch(SetDate(dateString));
+                          }}
+                        />
+                      </TableCell>
+                    </>
+                  | Editing(_)
+                  | Updating(_)
                   | NotEditing =>
-                    <button onClick={_ => dispatch(StartEditing(result))}>
-                      {text("Edit")}
-                    </button>
-                  | Editing(editedResult) =>
-                    result.id === editedResult.id
-                      ? <>
-                          <button onClick={_ => updateResult()}>
-                            {text("Save")}
-                          </button>
-                          <button onClick={_ => dispatch(StopEditing)}>
-                            {text("Cancel")}
-                          </button>
-                        </>
-                      : React.null
-                  | Updating(updatingId) =>
-                    updatingId === result.id
-                      ? <CircularProgress /> : React.null
+                    <>
+                      <TableCell align="right">
+                        <span> {text(result.player1.name)} </span>
+                      </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(result.player1goals))}
+                      </TableCell>
+                      <TableCell style=colonStyle> {text(":")} </TableCell>
+                      <TableCell style=numberCellStyle>
+                        {text(string_of_int(result.player2goals))}
+                      </TableCell>
+                      <TableCell>
+                        <span> {text(result.player2.name)} </span>
+                      </TableCell>
+                      <TableCell style=extraTimeStyle align="right">
+                        {text(result.extratime ? "X" : "")}
+                      </TableCell>
+                      <TableCell>
+                        {text(formatDate(result.date))}
+                      </TableCell>
+                    </>
                   }}
-               </TableCell>
-               {switch (state) {
-                | Editing(r) when r.id == result.id =>
-                  <>
-                    <TableCell align="right">
-                      <ExistingPlayerPicker
-                        disabled={isUpdating(state)}
-                        communityName
-                        selectedPlayerId={r.player1Id}
-                        onChange={id => dispatch(SetPlayer1Id(id))}
-                      />
-                    </TableCell>
-                    <TableCell style=numberCellStyle>
-                      <GoalsPicker
-                        disabled={state->isUpdating}
-                        selectedGoals={r.player1Goals}
-                        onChange={g => dispatch(SetPlayer1Goals(g))}
-                      />
-                    </TableCell>
-                    <TableCell style=colonStyle> {text(":")} </TableCell>
-                    <TableCell style=numberCellStyle>
-                      <GoalsPicker
-                        disabled={state->isUpdating}
-                        selectedGoals={r.player2Goals}
-                        onChange={g => dispatch(SetPlayer2Goals(g))}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <ExistingPlayerPicker
-                        disabled={state->isUpdating}
-                        communityName
-                        selectedPlayerId={r.player2Id}
-                        onChange={id => dispatch(SetPlayer2Id(id))}
-                      />
-                    </TableCell>
-                    <TableCell style=extraTimeStyle align="right">
-                      <Checkbox
-                        disabled={state->isUpdating}
-                        color="default"
-                        checked={r.extraTime}
-                        onClick={_ => dispatch(ToggleExtraTime)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        disabled={state->isUpdating}
-                        _type="date"
-                        value={formatDate(r.date)}
-                        onChange={e => {
-                          let dateString = ReactEvent.Form.target(e)##value;
-                          dispatch(SetDate(dateString));
-                        }}
-                      />
-                    </TableCell>
-                  </>
-                | Editing(_)
-                | Updating(_)
-                | NotEditing =>
-                  <>
-                    <TableCell align="right">
-                      <span> {text(result.player1.name)} </span>
-                    </TableCell>
-                    <TableCell style=numberCellStyle>
-                      {text(string_of_int(result.player1goals))}
-                    </TableCell>
-                    <TableCell style=colonStyle> {text(":")} </TableCell>
-                    <TableCell style=numberCellStyle>
-                      {text(string_of_int(result.player2goals))}
-                    </TableCell>
-                    <TableCell>
-                      <span> {text(result.player2.name)} </span>
-                    </TableCell>
-                    <TableCell style=extraTimeStyle align="right">
-                      {text(result.extratime ? "X" : "")}
-                    </TableCell>
-                    <TableCell> {text(formatDate(result.date))} </TableCell>
-                  </>
-                }}
-             </TableRow>
-           )
-         ->Array.of_list
-         ->React.array}
-      </TableBody>
-    </Table>
-  </Paper>;
+               </TableRow>
+             )
+           ->Array.of_list
+           ->React.array}
+        </TableBody>
+      </Table>
+    </Paper>;
+  };
 };

@@ -33,7 +33,7 @@ let make =
 
       fullResultsQuery.data
       ->Belt.Option.map(data => {
-          let newlyFetchedResults = data##results |> toRecord;
+          let newlyFetchedResults = data##results |> toListOfResults;
           lastFetchedResults->Belt.Option.map(ar =>
             setNewResultIds(_ =>
               newlyFetchedResults
@@ -59,7 +59,7 @@ let make =
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    let results = data##results |> toRecord;
+    let results = data##results |> toListOfResults;
     let resultsWithRatingMap = results |> attachRatings;
 
     results->Belt.List.length === 0

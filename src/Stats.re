@@ -85,7 +85,7 @@ let make =
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       let results = data##results |> toRecord;
+       let results = data##results |> toListOfResults;
        let showEloRatings =
          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 

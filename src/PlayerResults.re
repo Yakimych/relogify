@@ -21,7 +21,7 @@ let make = (~playerName: string, ~communityName: string) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       let results = data##results |> toRecord;
+       let results = data##results |> toListOfResults;
        let playerStats: playerStats = getPlayerStats(playerName, results);
 
        let streaks = getAllStreaks(playerName, results);
