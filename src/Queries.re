@@ -105,7 +105,7 @@ module AllCommunitiesQuery =
 module CommunitySettingsQueryConfig = [%graphql
   {|
     query communitySettings($communityName: String!) {
-      community_settings(where: {community: {name: {_eq: $communityName }}})
+      community_settings(limit: 1, where: {community: {name: {_eq: $communityName }}})
       {
         allow_draws
         max_selectable_points
