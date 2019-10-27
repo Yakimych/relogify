@@ -1,7 +1,7 @@
 open Utils;
 open EloUtils;
 open LeaderboardUtils;
-open Queries;
+open UseCommunitySettings;
 
 let topNumberOfRows = 5;
 
@@ -37,10 +37,7 @@ let make =
       ~resultsWithMap: temp_resultsWithRatingMap,
       ~startDate,
     ) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   switch (
     resultsWithMap.resultsWithRatings
@@ -93,8 +90,7 @@ let make =
     | Loading => <CircularProgress />
     | NoData
     | Error(_) => <span> {text("Error")} </span>
-    | Data(data) =>
-      let communitySettings = toCommunitySettings(data);
+    | Data(communitySettings) =>
       let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
       <Paper>

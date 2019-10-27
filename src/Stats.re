@@ -4,6 +4,7 @@ open Types;
 open Queries;
 open Styles;
 open EloUtils;
+open UseCommunitySettings;
 
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
@@ -68,10 +69,7 @@ let make =
   let (resultsQuery, _) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());
 
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   let (sortBy, setSortBy) = React.useState(_ => WinsPerMatch);
   let (sortDirection, setSortDirection) = React.useState(_ => Desc);
@@ -92,9 +90,8 @@ let make =
      | (_, NoData)
      | (Error(_), _)
      | (_, Error(_)) => <span> {text("Error")} </span>
-     | (Data(resultsData), Data(settingsData)) =>
+     | (Data(resultsData), Data(communitySettings)) =>
        let results = resultsData##results |> toListOfResults;
-       let communitySettings = toCommunitySettings(settingsData);
        let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
        let showEloRatings =

@@ -2,16 +2,14 @@ open Utils;
 open Queries;
 open Mutations;
 open StorageUtils;
+open UseCommunitySettings;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
 let make = (~communityName: string, ~onResultAdded) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
@@ -105,8 +103,7 @@ let make = (~communityName: string, ~onResultAdded) => {
   | Loading => <CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
-  | Data(data) =>
-    let communitySettings = toCommunitySettings(data);
+  | Data(communitySettings) =>
     <Paper
       elevation=6
       style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
@@ -181,6 +178,6 @@ let make = (~communityName: string, ~onResultAdded) => {
           }}
         />
       </div>
-    </Paper>;
+    </Paper>
   };
 };

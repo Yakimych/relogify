@@ -5,6 +5,7 @@ open Streaks;
 open Types;
 open Queries;
 open EloUtils;
+open UseCommunitySettings;
 
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
@@ -14,10 +15,7 @@ let make = (~playerName: string, ~communityName: string) => {
   let (playerResultsQuery, _) =
     PlayerResultsQuery.use(~variables=playerResultsQuery##variables, ());
 
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   <>
     <Header page={PlayerHome(communityName, playerName)} />
@@ -28,9 +26,8 @@ let make = (~playerName: string, ~communityName: string) => {
      | (_, NoData)
      | (Error(_), _)
      | (_, Error(_)) => <span> {text("Error")} </span>
-     | (Data(resultsData), Data(settingsData)) =>
+     | (Data(resultsData), Data(communitySettings)) =>
        let results = resultsData##results |> toListOfResults;
-       let communitySettings = settingsData |> toCommunitySettings;
        let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
        let playerStats: playerStats = getPlayerStats(playerName, results);

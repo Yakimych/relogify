@@ -1,8 +1,8 @@
 open Styles;
 open Utils;
 open Types;
-open Queries;
 open Mutations;
+open UseCommunitySettings;
 
 type editableResult = {
   id: int,
@@ -89,10 +89,7 @@ let editResultsTableReducer =
 
 [@react.component]
 let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   let (updateResultMutation, _, _) = UpdateResultMutation.use();
   let (state, dispatch) =
@@ -132,8 +129,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
   | Loading => <CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
-  | Data(data) =>
-    let communitySettings = toCommunitySettings(data);
+  | Data(communitySettings) =>
     <Paper>
       <div className="title">
         <Typography variant="h6"> {text("Results")} </Typography>
@@ -274,6 +270,6 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
            ->React.array}
         </TableBody>
       </Table>
-    </Paper>;
+    </Paper>
   };
 };

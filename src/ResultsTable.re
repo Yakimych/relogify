@@ -2,7 +2,7 @@ open Styles;
 open Utils;
 open Types;
 open EloUtils;
-open Queries;
+open UseCommunitySettings;
 
 let getPlayerStyle = (isWinningPlayer: bool) =>
   ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());
@@ -50,10 +50,7 @@ let make =
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
-  let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+  let settingsQuery = useCommunitySettings(communityName);
 
   let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
     React.useState(_ => None);
@@ -69,8 +66,7 @@ let make =
   | Loading => <CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
-  | Data(data) =>
-    let communitySettings = toCommunitySettings(data);
+  | Data(communitySettings) =>
     let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
     <Paper>
