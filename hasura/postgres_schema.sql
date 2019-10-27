@@ -14,6 +14,37 @@ CREATE SEQUENCE communities_id_seq
 
 ALTER SEQUENCE communities_id_seq OWNED BY communities.id;
 
+CREATE TABLE score_types (
+    name text NOT NULL
+);
+
+INSERT INTO score_types VALUES ('Goals');
+INSERT INTO score_types VALUES ('Points');
+
+ALTER TABLE ONLY score_types
+    ADD CONSTRAINT score_types_name_key UNIQUE (name);
+
+ALTER TABLE ONLY score_types
+    ADD CONSTRAINT score_types_pkey PRIMARY KEY (name);
+
+CREATE TABLE community_settings (
+    community_id integer NOT NULL,
+    score_type text NOT NULL,
+    use_dropdown_for_points boolean NOT NULL,
+    max_selectable_points integer NOT NULL,
+    allow_draws boolean NOT NULL,
+    include_extra_time boolean NOT NULL,
+);
+
+ALTER TABLE ONLY community_settings 
+    ADD CONSTRAINT community_settings_pkey PRIMARY KEY (community_id); 
+
+ALTER TABLE ONLY community_settings
+    ADD CONSTRAINT community_settings_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE ONLY community_settings
+    ADD CONSTRAINT community_settings_score_type_fkey FOREIGN KEY (score_type) REFERENCES score_types(name) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
 CREATE TABLE players (
     id integer NOT NULL,
     name character varying NOT NULL,

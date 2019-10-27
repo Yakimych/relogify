@@ -5,6 +5,7 @@ open Streaks;
 open Types;
 open Queries;
 open EloUtils;
+open UseCommunitySettings;
 
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
@@ -14,14 +15,21 @@ let make = (~playerName: string, ~communityName: string) => {
   let (playerResultsQuery, _) =
     PlayerResultsQuery.use(~variables=playerResultsQuery##variables, ());
 
+  let settingsQuery = useCommunitySettings(communityName);
+
   <>
     <Header page={PlayerHome(communityName, playerName)} />
-    {switch (playerResultsQuery) {
-     | Loading => <CircularProgress />
-     | NoData
-     | Error(_) => <span> {text("Error")} </span>
-     | Data(data) =>
-       let results = data##results |> toRecord;
+    {switch (playerResultsQuery, settingsQuery) {
+     | (Loading, _)
+     | (_, Loading) => <CircularProgress />
+     | (NoData, _)
+     | (_, NoData)
+     | (Error(_), _)
+     | (_, Error(_)) => <span> {text("Error")} </span>
+     | (Data(resultsData), Data(communitySettings)) =>
+       let results = resultsData##results |> toListOfResults;
+       let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
+
        let playerStats: playerStats = getPlayerStats(playerName, results);
 
        let streaks = getAllStreaks(playerName, results);
@@ -46,31 +54,36 @@ let make = (~playerName: string, ~communityName: string) => {
            </Typography>
            <Typography>
              {text(
-                "Total goals scored: "
+                texts.totalPointsWon
+                ++ ": "
                 ++ string_of_int(playerStats.goalsScored),
               )}
            </Typography>
            <Typography>
              {text(
-                "Total goals conceded: "
+                texts.totalPointsLost
+                ++ ": "
                 ++ string_of_int(playerStats.goalsConceded),
               )}
            </Typography>
            <Typography>
              {text(
-                "All-time goal difference: "
+                texts.allTimePointDiff
+                ++ ": "
                 ++ (playerStats |> goalDiff |> formatDiff),
               )}
            </Typography>
            <Typography>
              {text(
-                "Total goals scored per match: "
+                texts.totalPointsWonPerMatch
+                ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsScoredPerMatch),
               )}
            </Typography>
            <Typography>
              {text(
-                "Total goals conceded per match: "
+                texts.totalPointsLostPerMatch
+                ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsConcededPerMatch),
               )}
            </Typography>

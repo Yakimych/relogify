@@ -1,6 +1,7 @@
 open Utils;
 open EloUtils;
 open LeaderboardUtils;
+open UseCommunitySettings;
 
 let topNumberOfRows = 5;
 
@@ -29,7 +30,15 @@ let byTupleValue = ((_, r1), (_, r2)) =>
   };
 
 [@react.component]
-let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) =>
+let make =
+    (
+      ~communityName,
+      ~title,
+      ~resultsWithMap: temp_resultsWithRatingMap,
+      ~startDate,
+    ) => {
+  let settingsQuery = useCommunitySettings(communityName);
+
   switch (
     resultsWithMap.resultsWithRatings
     ->Belt.List.keep(r => r.result.date >= startDate)
@@ -77,27 +86,36 @@ let make = (~title, ~resultsWithMap: temp_resultsWithRatingMap, ~startDate) =>
           (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
         );
 
-    <Paper>
-      <div className="title">
-        <Typography variant="h6"> {text(title)} </Typography>
-      </div>
-      <div className="top-stats-container">
-        <SingleStatCard
-          playersWithStat=topWinPercentageRows
-          statName="Win Percentage"
-        />
-        <SingleStatCard
-          playersWithStat=topGoalsScoredPerMatchRows
-          statName="Goals Scored per Match"
-        />
-        <SingleStatCard
-          playersWithStat=topGoalsConcededPerMatchRows
-          statName="Goals Conceded per Match"
-        />
-        <SingleStatCard
-          playersWithStat=topEloDiffRows
-          statName="Elo Difference"
-        />
-      </div>
-    </Paper>;
+    switch (settingsQuery) {
+    | Loading => <CircularProgress />
+    | NoData
+    | Error(_) => <span> {text("Error")} </span>
+    | Data(communitySettings) =>
+      let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
+
+      <Paper>
+        <div className="title">
+          <Typography variant="h6"> {text(title)} </Typography>
+        </div>
+        <div className="top-stats-container">
+          <SingleStatCard
+            playersWithStat=topWinPercentageRows
+            statName="Win Percentage"
+          />
+          <SingleStatCard
+            playersWithStat=topGoalsScoredPerMatchRows
+            statName={texts.pointsWonPerMatch}
+          />
+          <SingleStatCard
+            playersWithStat=topGoalsConcededPerMatchRows
+            statName={texts.pointsLostPerMatch}
+          />
+          <SingleStatCard
+            playersWithStat=topEloDiffRows
+            statName="Elo Difference"
+          />
+        </div>
+      </Paper>;
+    };
   };
+};

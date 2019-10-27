@@ -102,6 +102,22 @@ module AllCommunitiesQueryConfig = [%graphql
 module AllCommunitiesQuery =
   ReasonApolloHooks.Query.Make(AllCommunitiesQueryConfig);
 
+module CommunitySettingsQueryConfig = [%graphql
+  {|
+    query communitySettings($communityName: String!) {
+      community_settings(limit: 1, where: {community: {name: {_eq: $communityName }}})
+      {
+        allow_draws
+        max_selectable_points
+        score_type
+      }
+    }
+  |}
+];
+
+module CommunitySettingsQuery =
+  ReasonApolloHooks.Query.Make(CommunitySettingsQueryConfig);
+
 module PlayerResultsQueryConfig = [%graphql
   {|
     query playerResults($communityName: String!, $playerName: String!) {
@@ -140,9 +156,8 @@ module PlayerResultsQueryConfig = [%graphql
 module PlayerResultsQuery =
   ReasonApolloHooks.Query.Make(PlayerResultsQueryConfig);
 
-/* TODO: bsRecord instead of a mapping function */
 open Types;
-let toRecord = (res): list(result) =>
+let toListOfResults = (res): list(result) =>
   res
   ->Belt.Array.map(r =>
       {
@@ -162,3 +177,21 @@ let toRecord = (res): list(result) =>
       }
     )
   ->Belt.List.fromArray;
+
+let toCommunitySettingsRecord = (communitySettingsObject): communitySettings => {
+  allowDraws: communitySettingsObject##allow_draws,
+  maxSelectablePoints: communitySettingsObject##max_selectable_points,
+  scoreType: communitySettingsObject##score_type,
+};
+
+let toCommunitySettings =
+    (queryResult: CommunitySettingsQueryConfig.t): communitySettings => {
+  switch (queryResult##community_settings) {
+  | [||] => defaultCommunitySettings
+  | [|settings|] => settings |> toCommunitySettingsRecord
+  | _ =>
+    Js.Exn.raiseError(
+      "Unexpected query result - found multiple settings for community ",
+    )
+  };
+};

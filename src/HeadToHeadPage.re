@@ -24,7 +24,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
-       let results = data##results |> toRecord;
+       let results = data##results |> toListOfResults;
        let stats = getPlayerStats(player1Name, results);
        let resultsWithRatings = results |> attachRatings;
 

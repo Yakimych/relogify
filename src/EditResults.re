@@ -24,7 +24,7 @@ let make =
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    let results = data##results |> toRecord;
+    let results = data##results |> toListOfResults;
 
     results->Belt.List.length === 0
       ? <Card className="no-result-info">

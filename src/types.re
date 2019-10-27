@@ -55,3 +55,17 @@ type streaks = {
   longestStreak: option(streak),
   currentStreak: option(streak),
 };
+
+type scoreType = [ | `Goals | `Points];
+
+type communitySettings = {
+  allowDraws: bool,
+  maxSelectablePoints: int,
+  scoreType,
+};
+
+let defaultCommunitySettings = {
+  allowDraws: false,
+  maxSelectablePoints: 9,
+  scoreType: `Goals,
+};
