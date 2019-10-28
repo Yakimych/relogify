@@ -58,6 +58,17 @@ type streaks = {
 
 type scoreType = [ | `Goals | `Points];
 
+let scoreTypeToString =
+  fun
+  | `Goals => "Goals"
+  | `Points => "Points";
+
+let toScoreType =
+  fun
+  | "Goals" => `Goals
+  | "Points" => `Points
+  | otherString => Js.Exn.raiseError("Unknown score type: " ++ otherString);
+
 type communitySettings = {
   allowDraws: bool,
   maxSelectablePoints: int,

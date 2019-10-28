@@ -32,6 +32,7 @@ let make = (~communityName) => {
                   isAdmin
                     ? <div>
                         {text("Admin content")}
+                        <EditSettings communityName />
                         <EditResults communityName />
                       </div>
                     : <span> {text("Access denied to admin content")} </span>;
