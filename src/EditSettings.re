@@ -1,6 +1,10 @@
 open Utils;
 open Queries;
+open Mutations;
 open Types;
+
+// TODO: Style this component (including the alert)
+[@bs.val] external alert: string => unit = "alert";
 
 type editCommunitySettingsAction =
   | SetAllSettings(communitySettings)
@@ -28,11 +32,33 @@ let make = (~communityName: string) => {
   let (_, fullSettingsQuery) =
     CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
 
+  let (updateSettingsMutation, _, _) = UpdateCommunitySettingsMutation.use();
+
   let (state, dispatch) =
     React.useReducer(reducer, defaultCommunitySettings);
 
   let saveCommunitySettings = () => {
-    Js.log(state);
+    Js.Promise.(
+      updateSettingsMutation(
+        ~variables=
+          UpdateCommunitySettingsMutationConfig.make(
+            ~communityName,
+            ~allowDraws=state.allowDraws,
+            ~maxSelectablePoints=state.maxSelectablePoints,
+            ~scoreType=state.scoreType,
+            ~includeExtraTime=state.includeExtraTime,
+            ~useDropDownForPoints=state.useDropDownForPoints,
+            (),
+          )##variables,
+        (),
+      )
+      |> then_(_ => alert("Settings saved") |> resolve)
+      |> catch(e => {
+           Js.Console.error2("Error when saving: ", e);
+           alert("Error when saving") |> resolve;
+         })
+      |> ignore
+    );
   };
 
   React.useEffect1(

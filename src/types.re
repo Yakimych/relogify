@@ -73,10 +73,14 @@ type communitySettings = {
   allowDraws: bool,
   maxSelectablePoints: int,
   scoreType,
+  includeExtraTime: bool,
+  useDropDownForPoints: bool,
 };
 
 let defaultCommunitySettings = {
   allowDraws: false,
   maxSelectablePoints: 9,
   scoreType: `Goals,
+  includeExtraTime: true,
+  useDropDownForPoints: true,
 };

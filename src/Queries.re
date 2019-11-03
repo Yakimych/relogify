@@ -110,6 +110,8 @@ module CommunitySettingsQueryConfig = [%graphql
         allow_draws
         max_selectable_points
         score_type
+        use_dropdown_for_points
+        include_extra_time
       }
     }
   |}
@@ -182,11 +184,14 @@ let toCommunitySettingsRecord = (communitySettingsObject): communitySettings => 
   allowDraws: communitySettingsObject##allow_draws,
   maxSelectablePoints: communitySettingsObject##max_selectable_points,
   scoreType: communitySettingsObject##score_type,
+  includeExtraTime: communitySettingsObject##include_extra_time,
+  useDropDownForPoints: communitySettingsObject##use_dropdown_for_points,
 };
 
 let toCommunitySettings =
     (queryResult: CommunitySettingsQueryConfig.t): communitySettings => {
   switch (queryResult##community_settings) {
+  // TODO: Set default community settings in the database
   | [||] => defaultCommunitySettings
   | [|settings|] => settings |> toCommunitySettingsRecord
   | _ =>
