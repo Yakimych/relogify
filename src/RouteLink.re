@@ -4,6 +4,10 @@ let getUrl = (page: page): string =>
   switch (page) {
   | Home => "/"
   | CreateCommunityPage => "/new"
+  | AdminSettingsPage(communityName) =>
+    "/" ++ communityName ++ "/admin/settings"
+  | AdminResultsPage(communityName) =>
+    "/" ++ communityName ++ "/admin/results"
   | CommunityStart(communityName) => "/" ++ communityName
   | CommunityAdmin(communityName) => "/" ++ communityName ++ "/admin"
   | TopX(communityName) => "/" ++ communityName ++ "/top"

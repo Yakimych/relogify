@@ -1,7 +1,8 @@
 open Utils;
+open Types;
 
 [@react.component]
-let make = (~communityName) => {
+let make = (~communityName, ~subRoute) => {
   let identity = ReactNetlifyIdentity.useIdentityContextSimple();
   let handleClick = _ => identity.loginProvider(Google);
 
@@ -32,8 +33,17 @@ let make = (~communityName) => {
                   isAdmin
                     ? <div>
                         {text("Admin content")}
-                        <EditSettings communityName />
-                        <EditResults communityName />
+                        <RouteLink toPage={AdminSettingsPage(communityName)}>
+                          {text("Settings")}
+                        </RouteLink>
+                        <RouteLink toPage={AdminResultsPage(communityName)}>
+                          {text("Results")}
+                        </RouteLink>
+                        {switch (subRoute) {
+                         | ["settings"] => <EditSettings communityName />
+                         | ["results"]
+                         | _ => <EditResults communityName />
+                         }}
                       </div>
                     : <span> {text("Access denied to admin content")} </span>;
                 },

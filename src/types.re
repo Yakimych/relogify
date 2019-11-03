@@ -1,5 +1,7 @@
 type page =
   | Home
+  | AdminSettingsPage(string)
+  | AdminResultsPage(string)
   | CreateCommunityPage
   | CommunityStart(string)
   | CommunityAdmin(string)
