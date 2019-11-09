@@ -1,5 +1,4 @@
 open Utils;
-open Types;
 
 [@react.component]
 let make = (~communityName, ~subRoute) => {
@@ -7,40 +6,31 @@ let make = (~communityName, ~subRoute) => {
   let handleClick = _ => identity.loginProvider(Google);
 
   let isLoggedIn = identity.isLoggedIn;
+  let isLoggedInAsAdmin =
+    identity.user
+    ->Belt.Option.flatMap(u => u.appMetaData)
+    ->Belt.Option.flatMap(a => a.roles)
+    ->Belt.Option.mapWithDefault(false, r =>
+        r->Belt.Array.some(r => r === "Admin")
+      );
 
   <>
     {isLoggedIn
-       ? <>
-           {identity.user
-            ->Belt.Option.mapWithDefault(
-                React.null,
-                u => {
-                  let isAdmin =
-                    u.appMetaData
-                    ->Belt.Option.flatMap(a => a.roles)
-                    ->Belt.Option.mapWithDefault(false, r =>
-                        r->Belt.Array.some(r => r === "Admin")
-                      );
-
-                  isAdmin
-                    ? <div>
-                        {text("Admin content")}
-                        <RouteLink toPage={AdminSettingsPage(communityName)}>
-                          {text("Settings")}
-                        </RouteLink>
-                        <RouteLink toPage={AdminResultsPage(communityName)}>
-                          {text("Results")}
-                        </RouteLink>
-                        {switch (subRoute) {
-                         | ["settings"] => <EditSettings communityName />
-                         | ["results"]
-                         | _ => <EditResults communityName />
-                         }}
-                      </div>
-                    : <span> {text("Access denied to admin content")} </span>;
-                },
-              )}
-         </>
-       : <button onClick=handleClick> {text("Login with Google")} </button>}
+       ? isLoggedInAsAdmin
+           ? {
+             switch (subRoute) {
+             | ["settings"] => <EditSettings communityName />
+             | ["results"]
+             | _ => <EditResults communityName />
+             };
+           }
+           : <span> {text("Access denied to admin content")} </span>
+       : <Button
+           color="primary"
+           variant="outlined"
+           onClick=handleClick
+           style={ReactDOMRe.Style.make(~margin="20px", ())}>
+           {text("Login with Google")}
+         </Button>}
   </>;
 };
