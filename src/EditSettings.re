@@ -38,6 +38,7 @@ let make = (~communityName: string) => {
     React.useReducer(reducer, defaultCommunitySettings);
 
   let saveCommunitySettings = () => {
+    // TODO: Create settings if they don't exist
     Js.Promise.(
       updateSettingsMutation(
         ~variables=
@@ -78,44 +79,76 @@ let make = (~communityName: string) => {
   | None => <div />
   | Some(_) =>
     <>
-      <div>
-        {text("Allow draws: ")}
-        <input
-          type_="checkbox"
-          checked={state.allowDraws}
-          onChange={_ => dispatch(ToggleAllowDraws)}
-        />
-      </div>
-      <div>
-        {text("Max selectable points:")}
-        <input
-          type_="number"
-          value={string_of_int(state.maxSelectablePoints)}
-          onChange={e => {
-            let selectablePointsString = ReactEvent.Form.target(e)##value;
-            dispatch(
-              SetMaxSelectablePoints(int_of_string(selectablePointsString)),
-            );
-          }}
-        />
-      </div>
-      <div>
-        {text("Score type: ")}
-        <select
-          value={state.scoreType |> scoreTypeToString}
-          onChange={e => {
-            let scoreTypeString = ReactEvent.Form.target(e)##value;
-            dispatch(SetScoreType(scoreTypeString |> toScoreType));
-          }}>
-          {scoreTypes->Belt.Array.map(scoreType =>
-             <option value=scoreType key=scoreType>
-               {text(scoreType)}
-             </option>
-           )
-           |> React.array}
-        </select>
-      </div>
-      <button onClick={_ => saveCommunitySettings()}> {text("Save")} </button>
+      <Header page={AdminSettingsPage(communityName)} />
+      <Container maxWidth="lg">
+        <div className="admin-settings">
+          <FormControlLabel
+            control={
+              <Checkbox
+                // TODO: Enable as soon as the setting is used
+                disabled=true
+                color="default"
+                checked={state.allowDraws}
+                onClick={_ => dispatch(ToggleAllowDraws)}
+              />
+            }
+            label="Allow draws"
+          />
+          <TextField
+            _type="number"
+            variant="outlined"
+            style={ReactDOMRe.Style.make(
+              ~width="200px",
+              ~marginTop="10px",
+              ~marginBottom="10px",
+              (),
+            )}
+            value={string_of_int(state.maxSelectablePoints)}
+            label="Max selectable points"
+            onChange={e => {
+              let selectablePointsString = ReactEvent.Form.target(e)##value;
+              dispatch(
+                SetMaxSelectablePoints(
+                  int_of_string(selectablePointsString),
+                ),
+              );
+            }}
+          />
+          {text("Score type: ")}
+          // TODO: Style this without inline styles
+          <NativeSelect
+            value={state.scoreType |> scoreTypeToString}
+            style={ReactDOMRe.Style.make(
+              ~width="200px",
+              ~marginBottom="10px",
+              (),
+            )}
+            onChange={e => {
+              let scoreTypeString = ReactEvent.Form.target(e)##value;
+              dispatch(SetScoreType(scoreTypeString |> toScoreType));
+            }}
+            input={
+              <OutlinedInput
+                labelWidth=0
+                style={ReactDOMRe.Style.make(~width="150px", ())}
+              />
+            }>
+            {scoreTypes->Belt.Array.map(scoreType =>
+               <option value=scoreType key=scoreType>
+                 {text(scoreType)}
+               </option>
+             )
+             |> React.array}
+          </NativeSelect>
+          <Button
+            variant="contained"
+            color="primary"
+            style={ReactDOMRe.Style.make(~width="100px", ())}
+            onClick={_ => saveCommunitySettings()}>
+            {text("Save")}
+          </Button>
+        </div>
+      </Container>
     </>
   };
 };

@@ -6,19 +6,11 @@ let make = (~communityName, ~subRoute) => {
   let identity = ReactNetlifyIdentity.useIdentityContextSimple();
   let handleClick = _ => identity.loginProvider(Google);
 
-  // check if user is logged in
   let isLoggedIn = identity.isLoggedIn;
 
   <>
-    <div> {text("Admin for " ++ communityName)} </div>
     {isLoggedIn
        ? <>
-           <span>
-             {text(
-                "Logged in as "
-                ++ identity.user->Belt.Option.mapWithDefault("", u => u.email),
-              )}
-           </span>
            {identity.user
             ->Belt.Option.mapWithDefault(
                 React.null,

@@ -4,9 +4,23 @@ open Types;
 [@react.component]
 let make = (~page: page) => {
   let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
+  let identity = ReactNetlifyIdentity.useIdentityContextSimple();
+  let userEmail = identity.user->Belt.Option.mapWithDefault("", u => u.email);
+  let isAdmin =
+    identity.user
+    ->Belt.Option.mapWithDefault(false, u =>
+        u.appMetaData
+        ->Belt.Option.flatMap(a => a.roles)
+        ->Belt.Option.mapWithDefault(false, r =>
+            r->Belt.Array.some(r => r === "Admin")
+          )
+      );
 
   <>
-    <AppBar position="fixed" className="app-header">
+    <AppBar
+      position="fixed"
+      color={isAdmin ? "secondary" : "primary"}
+      className="app-header">
       <Toolbar>
         {switch (page) {
          | Home => <div> {text("Relogify")} </div>
@@ -100,6 +114,42 @@ let make = (~page: page) => {
                className="app-header-item" toPage={History(communityName)}>
                {text("History")}
              </RouteLink>
+           </>
+         | AdminSettingsPage(communityName) =>
+           <>
+             <div className="app-header-grouping">
+               <RouteLink
+                 className="app-header-item"
+                 toPage={CommunityStart(communityName)}>
+                 <HomeIcon />
+               </RouteLink>
+             </div>
+             <div className="app-header-grow" />
+             <div className="app-header-title"> {text(userEmail)} </div>
+             <div className="app-header-item"> {text("Settings")} </div>
+             <RouteLink
+               className="app-header-item"
+               toPage={AdminResultsPage(communityName)}>
+               {text("History")}
+             </RouteLink>
+           </>
+         | AdminResultsPage(communityName) =>
+           <>
+             <div className="app-header-grouping">
+               <RouteLink
+                 className="app-header-item"
+                 toPage={CommunityStart(communityName)}>
+                 <HomeIcon />
+               </RouteLink>
+             </div>
+             <div className="app-header-grow" />
+             <div className="app-header-title"> {text(userEmail)} </div>
+             <RouteLink
+               className="app-header-item"
+               toPage={AdminSettingsPage(communityName)}>
+               {text("Settings")}
+             </RouteLink>
+             <div className="app-header-item"> {text("History")} </div>
            </>
          }}
       </Toolbar>
