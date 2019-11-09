@@ -101,3 +101,38 @@ module UpdateResultMutationConfig = [%graphql
 
 module UpdateResultMutation =
   ReasonApolloHooks.Mutation.Make(UpdateResultMutationConfig);
+
+module UpdateCommunitySettingsMutationConfig = [%graphql
+  {|
+    mutation updateCommunitySettingsMutation(
+      $communityName: String!,
+      $allowDraws: Boolean,
+      $maxSelectablePoints: Int,
+      $scoreType: score_types_enum,
+      $includeExtraTime: Boolean,
+      $useDropDownForPoints: Boolean,
+    ) {
+      update_community_settings(
+        where: {
+          community: {
+            name: {
+                _eq: $communityName
+              }
+            }
+          },
+        _set: {
+          allow_draws: $allowDraws,
+          max_selectable_points: $maxSelectablePoints,
+          score_type: $scoreType,
+          include_extra_time: $includeExtraTime,
+          use_dropdown_for_points: $useDropDownForPoints,
+        }
+      ) {
+        affected_rows
+      }
+    }
+  |}
+];
+
+module UpdateCommunitySettingsMutation =
+  ReasonApolloHooks.Mutation.Make(UpdateCommunitySettingsMutationConfig);

@@ -1,5 +1,7 @@
 type page =
   | Home
+  | AdminSettingsPage(string)
+  | AdminResultsPage(string)
   | CreateCommunityPage
   | CommunityStart(string)
   | CommunityAdmin(string)
@@ -58,14 +60,29 @@ type streaks = {
 
 type scoreType = [ | `Goals | `Points];
 
+let scoreTypeToString =
+  fun
+  | `Goals => "Goals"
+  | `Points => "Points";
+
+let toScoreType =
+  fun
+  | "Goals" => `Goals
+  | "Points" => `Points
+  | otherString => Js.Exn.raiseError("Unknown score type: " ++ otherString);
+
 type communitySettings = {
   allowDraws: bool,
   maxSelectablePoints: int,
   scoreType,
+  includeExtraTime: bool,
+  useDropDownForPoints: bool,
 };
 
 let defaultCommunitySettings = {
   allowDraws: false,
   maxSelectablePoints: 9,
   scoreType: `Goals,
+  includeExtraTime: true,
+  useDropDownForPoints: true,
 };

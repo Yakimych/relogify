@@ -157,3 +157,8 @@ input[type="date"]::-webkit-clear-button {
   grid-gap: 10px;
   grid-template-columns: repeat(auto-fill, minmax(240px, auto));
 }
+
+.admin-settings {
+  display: flex;
+  flex-direction: column;
+}

@@ -19,27 +19,32 @@ let make =
   let (resultsQuery, _) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());
 
-  switch (resultsQuery) {
-  | Loading => <CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(data) =>
-    let results = data##results |> toListOfResults;
+  <>
+    <Header page={AdminResultsPage(communityName)} />
+    {switch (resultsQuery) {
+     | Loading => <CircularProgress />
+     | NoData
+     | Error(_) => <span> {text("Error")} </span>
+     | Data(data) =>
+       let results = data##results |> toListOfResults;
 
-    results->Belt.List.length === 0
-      ? <Card className="no-result-info">
-          <CardContent>
-            <Typography variant="h6">
-              {React.string(
-                 "No results reported during the selected time period",
-               )}
-            </Typography>
-          </CardContent>
-        </Card>
-      : <EditResultsTable
-          communityName
-          results
-          queryToRefetch={ReasonApolloHooks.Utils.toQueryObj(allResultsQuery)}
-        />;
-  };
+       results->Belt.List.length === 0
+         ? <Card className="no-result-info">
+             <CardContent>
+               <Typography variant="h6">
+                 {React.string(
+                    "No results reported during the selected time period",
+                  )}
+               </Typography>
+             </CardContent>
+           </Card>
+         : <EditResultsTable
+             communityName
+             results
+             queryToRefetch={ReasonApolloHooks.Utils.toQueryObj(
+               allResultsQuery,
+             )}
+           />;
+     }}
+  </>;
 };
