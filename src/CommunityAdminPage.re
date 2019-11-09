@@ -15,22 +15,20 @@ let make = (~communityName, ~subRoute) => {
       );
 
   <>
-    {isLoggedIn
-       ? isLoggedInAsAdmin
-           ? {
-             switch (subRoute) {
-             | ["settings"] => <EditSettings communityName />
-             | ["results"]
-             | _ => <EditResults communityName />
-             };
-           }
-           : <span> {text("Access denied to admin content")} </span>
-       : <Button
-           color="primary"
-           variant="outlined"
-           onClick=handleClick
-           style={ReactDOMRe.Style.make(~margin="20px", ())}>
-           {text("Login with Google")}
-         </Button>}
+    {switch (isLoggedIn, isLoggedInAsAdmin, subRoute) {
+     | (true, true, ["settings"]) => <EditSettings communityName />
+     | (true, true, ["results"])
+     | (true, true, _) => <EditResults communityName />
+     | (true, false, _) =>
+       <span> {text("Access denied to admin content")} </span>
+     | (false, _, _) =>
+       <Button
+         color="primary"
+         variant="outlined"
+         onClick=handleClick
+         style={ReactDOMRe.Style.make(~margin="20px", ())}>
+         {text("Login with Google")}
+       </Button>
+     }}
   </>;
 };
