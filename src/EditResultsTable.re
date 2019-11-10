@@ -37,13 +37,16 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 type editResultsTableState =
-  | NotEditing
+  | Idle
   | Editing(editableResult)
-  | Updating(int);
+  | Updating(int)
+  | DeleteConfirmationPending(int)
+  | Deleting(int);
 
-let isUpdating =
+let apiRequestIsInProgress =
   fun
-  | Updating(_) => true
+  | Updating(_)
+  | Deleting(_) => true
   | _ => false;
 
 let mapState =
@@ -57,6 +60,9 @@ type editResultsTableAction =
   | StartEditing(result)
   | StopEditing
   | StartUpdating
+  | DeleteRequested(int)
+  | StopDeleting
+  | StartDeleting
   | SetPlayer1Id(int)
   | SetPlayer2Id(int)
   | SetPlayer1Goals(int)
@@ -73,7 +79,14 @@ let editResultsTableReducer =
     | Editing(result) => Updating(result.id)
     | _ => state
     }
-  | StopEditing => NotEditing
+  | StopEditing
+  | StopDeleting => Idle
+  | DeleteRequested(resultId) => DeleteConfirmationPending(resultId)
+  | StartDeleting =>
+    switch (state) {
+    | DeleteConfirmationPending(resultId) => Deleting(resultId)
+    | _ => state
+    }
   | SetPlayer1Id(player1Id) => state |> mapState(r => {...r, player1Id})
   | SetPlayer2Id(player2Id) => state |> mapState(r => {...r, player2Id})
   | SetPlayer1Goals(player1Goals) =>
@@ -92,8 +105,31 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
   let settingsQuery = useCommunitySettings(communityName);
 
   let (updateResultMutation, _, _) = UpdateResultMutation.use();
-  let (state, dispatch) =
-    React.useReducer(editResultsTableReducer, NotEditing);
+  let (deleteResultMutation, _, _) = DeleteResultMutation.use();
+  let (state, dispatch) = React.useReducer(editResultsTableReducer, Idle);
+
+  let deleteResult = () => {
+    switch (state) {
+    | DeleteConfirmationPending(resultId) =>
+      dispatch(StartDeleting);
+      deleteResultMutation(
+        ~variables=DeleteResultMutationConfig.make(~resultId, ())##variables,
+        ~refetchQueries=_ => [|queryToRefetch|],
+        // TODO: Update local apollo cache manually instead of refetchQueries
+        (),
+      )
+      |> Js.Promise.then_(_ => dispatch(StopEditing) |> Js.Promise.resolve)
+      |> Js.Promise.catch(e => {
+           Js.Console.error2("Error: ", e);
+           dispatch(StopDeleting) |> Js.Promise.resolve;
+         })
+      |> ignore;
+    | Editing(_)
+    | Updating(_)
+    | Idle
+    | Deleting(_) => ()
+    };
+  };
 
   let updateResult = () => {
     switch (state) {
@@ -112,6 +148,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
             (),
           )##variables,
         ~refetchQueries=_ => [|queryToRefetch|],
+        // TODO: Update local apollo cache manually instead of refetchQueries
         (),
       )
       |> Js.Promise.then_(_ => dispatch(StopEditing) |> Js.Promise.resolve)
@@ -121,7 +158,9 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
          })
       |> ignore;
     | Updating(_)
-    | NotEditing => ()
+    | Idle
+    | DeleteConfirmationPending(_)
+    | Deleting(_) => ()
     };
   };
 
@@ -155,10 +194,29 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                <TableRow key={string_of_int(result.id)}>
                  <TableCell>
                    {switch (state) {
-                    | NotEditing =>
-                      <button onClick={_ => dispatch(StartEditing(result))}>
-                        {text("Edit")}
-                      </button>
+                    | Idle =>
+                      <>
+                        <button
+                          onClick={_ => dispatch(StartEditing(result))}>
+                          {text("Edit")}
+                        </button>
+                        <button
+                          onClick={_ => dispatch(DeleteRequested(result.id))}>
+                          {text("Delete")}
+                        </button>
+                      </>
+                    | DeleteConfirmationPending(resultToDeleteId) =>
+                      result.id === resultToDeleteId
+                        ? <>
+                            <span> {text("Are you sure?")} </span>
+                            <button onClick={_ => deleteResult()}>
+                              {text("Yes")}
+                            </button>
+                            <button onClick={_ => dispatch(StopDeleting)}>
+                              {text("No")}
+                            </button>
+                          </>
+                        : React.null
                     | Editing(editedResult) =>
                       result.id === editedResult.id
                         ? <>
@@ -170,9 +228,9 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                             </button>
                           </>
                         : React.null
-                    | Updating(updatingId) =>
-                      updatingId === result.id
-                        ? <CircularProgress /> : React.null
+                    | Deleting(id)
+                    | Updating(id) =>
+                      id === result.id ? <CircularProgress /> : React.null
                     }}
                  </TableCell>
                  {switch (state) {
@@ -180,7 +238,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                     <>
                       <TableCell align="right">
                         <ExistingPlayerPicker
-                          disabled={isUpdating(state)}
+                          disabled={apiRequestIsInProgress(state)}
                           communityName
                           selectedPlayerId={r.player1Id}
                           onChange={id => dispatch(SetPlayer1Id(id))}
@@ -188,7 +246,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       </TableCell>
                       <TableCell style=numberCellStyle>
                         <GoalsPicker
-                          disabled={state->isUpdating}
+                          disabled={state->apiRequestIsInProgress}
                           selectedGoals={r.player1Goals}
                           onChange={g => dispatch(SetPlayer1Goals(g))}
                           maxSelectablePoints={
@@ -201,7 +259,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       <TableCell style=colonStyle> {text(":")} </TableCell>
                       <TableCell style=numberCellStyle>
                         <GoalsPicker
-                          disabled={state->isUpdating}
+                          disabled={state->apiRequestIsInProgress}
                           selectedGoals={r.player2Goals}
                           onChange={g => dispatch(SetPlayer2Goals(g))}
                           maxSelectablePoints={
@@ -213,7 +271,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       </TableCell>
                       <TableCell>
                         <ExistingPlayerPicker
-                          disabled={state->isUpdating}
+                          disabled={state->apiRequestIsInProgress}
                           communityName
                           selectedPlayerId={r.player2Id}
                           onChange={id => dispatch(SetPlayer2Id(id))}
@@ -221,7 +279,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       </TableCell>
                       <TableCell style=extraTimeStyle align="right">
                         <Checkbox
-                          disabled={state->isUpdating}
+                          disabled={state->apiRequestIsInProgress}
                           color="default"
                           checked={r.extraTime}
                           onClick={_ => dispatch(ToggleExtraTime)}
@@ -229,7 +287,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       </TableCell>
                       <TableCell>
                         <TextField
-                          disabled={state->isUpdating}
+                          disabled={state->apiRequestIsInProgress}
                           _type="date"
                           value={formatDate(r.date)}
                           onChange={e => {
@@ -241,7 +299,9 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                     </>
                   | Editing(_)
                   | Updating(_)
-                  | NotEditing =>
+                  | Deleting(_)
+                  | DeleteConfirmationPending(_)
+                  | Idle =>
                     <>
                       <TableCell align="right">
                         <span> {text(result.player1.name)} </span>

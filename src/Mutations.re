@@ -102,6 +102,27 @@ module UpdateResultMutationConfig = [%graphql
 module UpdateResultMutation =
   ReasonApolloHooks.Mutation.Make(UpdateResultMutationConfig);
 
+module DeleteResultMutationConfig = [%graphql
+  {|
+    mutation DeleteResultMutation(
+      $resultId: Int!
+    ) {
+      delete_results(
+        where: {
+          id: {
+            _eq: $resultId
+          }
+        }
+      ) {
+        affected_rows
+      }
+    }
+  |}
+];
+
+module DeleteResultMutation =
+  ReasonApolloHooks.Mutation.Make(DeleteResultMutationConfig);
+
 module UpdateCommunitySettingsMutationConfig = [%graphql
   {|
     mutation updateCommunitySettingsMutation(
