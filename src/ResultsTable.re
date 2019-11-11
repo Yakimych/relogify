@@ -86,14 +86,14 @@ let make =
               {text(texts.pointsPlayerShort ++ "2")}
             </TableCell>
             <TableCell> {text("Player2")} </TableCell>
+            {isWide && communitySettings.includeExtraTime
+               ? <TableCell
+                   style=extraTimeStyle align="right" title="Extra time">
+                   {text("E")}
+                 </TableCell>
+               : React.null}
             {isWide
-               ? <>
-                   <TableCell
-                     style=extraTimeStyle align="right" title="Extra time">
-                     {text("E")}
-                   </TableCell>
-                   <TableCell style=dateStyle> {text("Date")} </TableCell>
-                 </>
+               ? <TableCell style=dateStyle> {text("Date")} </TableCell>
                : React.null}
           </TableRow>
         </TableHead>
@@ -168,13 +168,13 @@ let make =
                         />
                       : React.null}
                  </TableCell>
+                 {isWide && communitySettings.includeExtraTime
+                    ? <TableCell style=extraTimeStyle align="right">
+                        {text(result.extratime ? "X" : "")}
+                      </TableCell>
+                    : React.null}
                  {isWide
-                    ? <>
-                        <TableCell style=extraTimeStyle align="right">
-                          {text(result.extratime ? "X" : "")}
-                        </TableCell>
-                        <TableCell> {text(formattedDate)} </TableCell>
-                      </>
+                    ? <TableCell> {text(formattedDate)} </TableCell>
                     : React.null}
                </TableRow>;
              })

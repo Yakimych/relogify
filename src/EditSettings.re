@@ -9,6 +9,7 @@ open Types;
 type editCommunitySettingsAction =
   | SetAllSettings(communitySettings)
   | ToggleAllowDraws
+  | ToggleIncludeExtraTime
   | SetScoreType(scoreType)
   | SetMaxSelectablePoints(int);
 
@@ -16,6 +17,10 @@ let reducer = (settings, action): communitySettings =>
   switch (action) {
   | SetAllSettings(allSettings) => allSettings
   | ToggleAllowDraws => {...settings, allowDraws: !settings.allowDraws}
+  | ToggleIncludeExtraTime => {
+      ...settings,
+      includeExtraTime: !settings.includeExtraTime,
+    }
   | SetScoreType(scoreType) => {...settings, scoreType}
   | SetMaxSelectablePoints(maxSelectablePoints) => {
       ...settings,
@@ -91,6 +96,16 @@ let make = (~communityName: string) => {
               />
             }
             label="Allow draws"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="default"
+                checked={state.includeExtraTime}
+                onClick={_ => dispatch(ToggleIncludeExtraTime)}
+              />
+            }
+            label="Include Extra Time"
           />
           <TextField
             _type="number"

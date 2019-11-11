@@ -155,17 +155,19 @@ let make = (~communityName: string, ~onResultAdded) => {
           onClick={_ => addResult(communitySettings.allowDraws)}>
           {text("Submit")}
         </Button>
-        <FormControlLabel
-          control={
-            <Checkbox
-              disabled=isAddingResult
-              color="default"
-              checked=extraTime
-              onClick=toggleExtraTime
-            />
-          }
-          label="Extra Time"
-        />
+        {communitySettings.includeExtraTime
+           ? <FormControlLabel
+               control={
+                 <Checkbox
+                   disabled=isAddingResult
+                   color="default"
+                   checked=extraTime
+                   onClick=toggleExtraTime
+                 />
+               }
+               label="Extra Time"
+             />
+           : React.null}
         <TextField
           disabled=isAddingResult
           _type="date"
