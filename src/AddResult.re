@@ -38,11 +38,11 @@ let make = (~communityName: string, ~onResultAdded) => {
     setDate(_ => Js.Date.make());
   };
 
-  let addResult = () =>
+  let addResult = allowDraws =>
     switch (maybePlayer1Name, maybePlayer2Name, goals1, goals2, extraTime) {
     | (None | Some(""), _, _, _, _)
     | (_, None | Some(""), _, _, _) => alert("You must select both players!")
-    | (_, _, goals1, goals2, _) when goals1 === goals2 =>
+    | (_, _, goals1, goals2, _) when goals1 === goals2 && !allowDraws =>
       alert("A game cannot end in a draw!")
     | (_, _, goals1, goals2, extraTime)
         when Js.Math.abs_int(goals1 - goals2) != 1 && extraTime =>
@@ -152,7 +152,7 @@ let make = (~communityName: string, ~onResultAdded) => {
           disabled=isAddingResult
           variant="contained"
           color="primary"
-          onClick=addResult>
+          onClick={_ => addResult(communitySettings.allowDraws)}>
           {text("Submit")}
         </Button>
         <FormControlLabel

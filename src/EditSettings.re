@@ -85,8 +85,6 @@ let make = (~communityName: string) => {
           <FormControlLabel
             control={
               <Checkbox
-                // TODO: Enable as soon as the setting is used
-                disabled=true
                 color="default"
                 checked={state.allowDraws}
                 onClick={_ => dispatch(ToggleAllowDraws)}
