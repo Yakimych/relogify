@@ -4,17 +4,8 @@ open Types;
 open Mutations;
 open UseCommunitySettings;
 
-type editableResult = {
-  id: int,
-  player1Id: int,
-  player2Id: int,
-  player1Goals: int,
-  player2Goals: int,
-  extraTime: bool,
-  date: Js.Date.t,
-};
-
-let toEditableResult = (result: result) => {
+// TODO: Move into the EditResultTableRow component?
+let toEditableResult = (result: result): EditResultTableRow.editableResult => {
   id: result.id,
   player1Id: result.player1.id,
   player2Id: result.player2.id,
@@ -24,21 +15,11 @@ let toEditableResult = (result: result) => {
   date: result.date,
 };
 
-let colonStyle =
-  ReactDOMRe.Style.make(
-    ~width="5px",
-    ~paddingLeft="0",
-    ~paddingRight="0",
-    (),
-  );
-
 let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
-
-let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 type editResultsTableState =
   | Idle
-  | Editing(editableResult)
+  | Editing(EditResultTableRow.editableResult)
   | Updating(int)
   | DeleteConfirmationPending(int)
   | Deleting(int);
@@ -49,12 +30,16 @@ let apiRequestIsInProgress =
   | Deleting(_) => true
   | _ => false;
 
-let mapState =
-    (fn: editableResult => editableResult, state: editResultsTableState) =>
-  switch (state) {
-  | Editing(result) => Editing(result->fn)
-  | _ => state
-  };
+// let mapState =
+//     (
+//       fn:
+//         EditResultTableRow.editableResult => EditResultTableRow.editableResult,
+//       state: editResultsTableState,
+//     ) =>
+//   switch (state) {
+//   | Editing(result) => Editing(result->fn)
+//   | _ => state
+//   };
 
 type editResultsTableAction =
   | StartEditing(result)
@@ -62,13 +47,7 @@ type editResultsTableAction =
   | StartUpdating
   | DeleteRequested(int)
   | StopDeleting
-  | StartDeleting
-  | SetPlayer1Id(int)
-  | SetPlayer2Id(int)
-  | SetPlayer1Goals(int)
-  | SetPlayer2Goals(int)
-  | ToggleExtraTime
-  | SetDate(string);
+  | StartDeleting;
 
 let editResultsTableReducer =
     (state: editResultsTableState, action: editResultsTableAction) =>
@@ -87,17 +66,6 @@ let editResultsTableReducer =
     | DeleteConfirmationPending(resultId) => Deleting(resultId)
     | _ => state
     }
-  | SetPlayer1Id(player1Id) => state |> mapState(r => {...r, player1Id})
-  | SetPlayer2Id(player2Id) => state |> mapState(r => {...r, player2Id})
-  | SetPlayer1Goals(player1Goals) =>
-    state |> mapState(r => {...r, player1Goals})
-  | SetPlayer2Goals(player2Goals) =>
-    state |> mapState(r => {...r, player2Goals})
-  | ToggleExtraTime => state |> mapState(r => {...r, extraTime: !r.extraTime})
-  | SetDate(dateString) =>
-    let date = dateString->Js.Date.fromString;
-    state
-    |> mapState(r => {...r, date: DateFns.isValid(date) ? date : r.date});
   };
 
 [@react.component]
@@ -235,68 +203,12 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                  </TableCell>
                  {switch (state) {
                   | Editing(r) when r.id == result.id =>
-                    <>
-                      <TableCell align="right">
-                        <ExistingPlayerPicker
-                          disabled={apiRequestIsInProgress(state)}
-                          communityName
-                          selectedPlayerId={r.player1Id}
-                          onChange={id => dispatch(SetPlayer1Id(id))}
-                        />
-                      </TableCell>
-                      <TableCell style=numberCellStyle>
-                        <GoalsPicker
-                          disabled={state->apiRequestIsInProgress}
-                          selectedGoals={r.player1Goals}
-                          onChange={g => dispatch(SetPlayer1Goals(g))}
-                          maxSelectablePoints={
-                                                communitySettings.
-                                                  maxSelectablePoints
-                                              }
-                          scoreType={communitySettings.scoreType}
-                        />
-                      </TableCell>
-                      <TableCell style=colonStyle> {text(":")} </TableCell>
-                      <TableCell style=numberCellStyle>
-                        <GoalsPicker
-                          disabled={state->apiRequestIsInProgress}
-                          selectedGoals={r.player2Goals}
-                          onChange={g => dispatch(SetPlayer2Goals(g))}
-                          maxSelectablePoints={
-                                                communitySettings.
-                                                  maxSelectablePoints
-                                              }
-                          scoreType={communitySettings.scoreType}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <ExistingPlayerPicker
-                          disabled={state->apiRequestIsInProgress}
-                          communityName
-                          selectedPlayerId={r.player2Id}
-                          onChange={id => dispatch(SetPlayer2Id(id))}
-                        />
-                      </TableCell>
-                      <TableCell style=extraTimeStyle align="right">
-                        <Checkbox
-                          disabled={state->apiRequestIsInProgress}
-                          color="default"
-                          checked={r.extraTime}
-                          onClick={_ => dispatch(ToggleExtraTime)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          disabled={state->apiRequestIsInProgress}
-                          _type="date"
-                          value={formatDate(r.date)}
-                          onChange={e => {
-                            let dateString = ReactEvent.Form.target(e)##value;
-                            dispatch(SetDate(dateString));
-                          }}
-                        />
-                      </TableCell>
-                    </>
+                    <EditResultTableRow
+                      communityName
+                      communitySettings
+                      editableResult=r
+                      disabled={apiRequestIsInProgress(state)}
+                    />
                   | Editing(_)
                   | Updating(_)
                   | Deleting(_)
