@@ -86,3 +86,23 @@ let defaultCommunitySettings = {
   includeExtraTime: true,
   useDropDownForPoints: true,
 };
+
+type editableResult = {
+  id: int,
+  player1Id: int,
+  player2Id: int,
+  player1Goals: int,
+  player2Goals: int,
+  extraTime: bool,
+  date: Js.Date.t,
+};
+
+let toEditableResult = (result: result): editableResult => {
+  id: result.id,
+  player1Id: result.player1.id,
+  player2Id: result.player2.id,
+  player1Goals: result.player1goals,
+  player2Goals: result.player2goals,
+  extraTime: result.extratime,
+  date: result.date,
+};

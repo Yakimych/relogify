@@ -2,16 +2,6 @@ open Styles;
 open Utils;
 open Types;
 
-type editableResult = {
-  id: int,
-  player1Id: int,
-  player2Id: int,
-  player1Goals: int,
-  player2Goals: int,
-  extraTime: bool,
-  date: Js.Date.t,
-};
-
 type editResultAction =
   | SetPlayer1Id(int)
   | SetPlayer2Id(int)
@@ -20,16 +10,23 @@ type editResultAction =
   | ToggleExtraTime
   | SetDate(string);
 
-let editResultReducer = (state: editableResult, action: editResultAction) =>
+let editResultReducer =
+    (resultUnderEdit: editableResult, action: editResultAction) =>
   switch (action) {
-  | SetPlayer1Id(player1Id) => {...state, player1Id}
-  | SetPlayer2Id(player2Id) => {...state, player2Id}
-  | SetPlayer1Goals(player1Goals) => {...state, player1Goals}
-  | SetPlayer2Goals(player2Goals) => {...state, player2Goals}
-  | ToggleExtraTime => {...state, extraTime: !state.extraTime}
+  | SetPlayer1Id(player1Id) => {...resultUnderEdit, player1Id}
+  | SetPlayer2Id(player2Id) => {...resultUnderEdit, player2Id}
+  | SetPlayer1Goals(player1Goals) => {...resultUnderEdit, player1Goals}
+  | SetPlayer2Goals(player2Goals) => {...resultUnderEdit, player2Goals}
+  | ToggleExtraTime => {
+      ...resultUnderEdit,
+      extraTime: !resultUnderEdit.extraTime,
+    }
   | SetDate(dateString) =>
     let date = dateString->Js.Date.fromString;
-    {...state, date: DateFns.isValid(date) ? date : state.date};
+    {
+      ...resultUnderEdit,
+      date: DateFns.isValid(date) ? date : resultUnderEdit.date,
+    };
   };
 
 [@react.component]
@@ -39,11 +36,19 @@ let make =
       ~communitySettings: communitySettings,
       ~editableResult: editableResult,
       ~disabled,
+      ~onSave,
+      ~onCancel,
     ) => {
-  let (state, dispatch) =
+  let (resultUnderEdit, dispatch) =
     React.useReducer(editResultReducer, editableResult);
 
   <>
+    <TableCell>
+      <button onClick={_ => onSave(resultUnderEdit)}>
+        {text("Save")}
+      </button>
+      <button onClick=onCancel> {text("Cancel")} </button>
+    </TableCell>
     <TableCell align="right">
       <ExistingPlayerPicker
         disabled
@@ -55,7 +60,7 @@ let make =
     <TableCell style=numberCellStyle>
       <GoalsPicker
         disabled
-        selectedGoals={state.player1Goals}
+        selectedGoals={resultUnderEdit.player1Goals}
         onChange={g => dispatch(SetPlayer1Goals(g))}
         maxSelectablePoints={communitySettings.maxSelectablePoints}
         scoreType={communitySettings.scoreType}
@@ -65,7 +70,7 @@ let make =
     <TableCell style=numberCellStyle>
       <GoalsPicker
         disabled
-        selectedGoals={state.player2Goals}
+        selectedGoals={resultUnderEdit.player2Goals}
         onChange={g => dispatch(SetPlayer2Goals(g))}
         maxSelectablePoints={communitySettings.maxSelectablePoints}
         scoreType={communitySettings.scoreType}
@@ -75,7 +80,7 @@ let make =
       <ExistingPlayerPicker
         disabled
         communityName
-        selectedPlayerId={state.player2Id}
+        selectedPlayerId={resultUnderEdit.player2Id}
         onChange={id => dispatch(SetPlayer2Id(id))}
       />
     </TableCell>
@@ -83,7 +88,7 @@ let make =
       <Checkbox
         disabled
         color="default"
-        checked={state.extraTime}
+        checked={resultUnderEdit.extraTime}
         onClick={_ => dispatch(ToggleExtraTime)}
       />
     </TableCell>
@@ -91,7 +96,7 @@ let make =
       <TextField
         disabled
         _type="date"
-        value={formatDate(state.date)}
+        value={formatDate(resultUnderEdit.date)}
         onChange={e => {
           let dateString = ReactEvent.Form.target(e)##value;
           dispatch(SetDate(dateString));

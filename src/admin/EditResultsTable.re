@@ -1,25 +1,14 @@
-open Styles;
 open Utils;
+open Styles;
 open Types;
 open Mutations;
 open UseCommunitySettings;
-
-// TODO: Move into the EditResultTableRow component?
-let toEditableResult = (result: result): EditResultTableRow.editableResult => {
-  id: result.id,
-  player1Id: result.player1.id,
-  player2Id: result.player2.id,
-  player1Goals: result.player1goals,
-  player2Goals: result.player2goals,
-  extraTime: result.extratime,
-  date: result.date,
-};
 
 let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
 type editResultsTableState =
   | Idle
-  | Editing(EditResultTableRow.editableResult)
+  | Editing(editableResult)
   | Updating(int)
   | DeleteConfirmationPending(int)
   | Deleting(int);
@@ -29,17 +18,6 @@ let apiRequestIsInProgress =
   | Updating(_)
   | Deleting(_) => true
   | _ => false;
-
-// let mapState =
-//     (
-//       fn:
-//         EditResultTableRow.editableResult => EditResultTableRow.editableResult,
-//       state: editResultsTableState,
-//     ) =>
-//   switch (state) {
-//   | Editing(result) => Editing(result->fn)
-//   | _ => state
-//   };
 
 type editResultsTableAction =
   | StartEditing(result)
@@ -94,25 +72,25 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
       |> ignore;
     | Editing(_)
     | Updating(_)
-    | Idle
-    | Deleting(_) => ()
+    | Deleting(_)
+    | Idle => ()
     };
   };
 
-  let updateResult = () => {
+  let updateResult = (editedResult: editableResult) => {
     switch (state) {
-    | Editing(resultToUpdate) =>
+    | Editing(_) =>
       dispatch(StartUpdating);
       updateResultMutation(
         ~variables=
           UpdateResultMutationConfig.make(
-            ~resultId=resultToUpdate.id,
-            ~player1Id=resultToUpdate.player1Id,
-            ~player2Id=resultToUpdate.player2Id,
-            ~player1Goals=resultToUpdate.player1Goals,
-            ~player2Goals=resultToUpdate.player2Goals,
-            ~extraTime=resultToUpdate.extraTime,
-            ~date=resultToUpdate.date->toJsonDate,
+            ~resultId=editedResult.id,
+            ~player1Id=editedResult.player1Id,
+            ~player2Id=editedResult.player2Id,
+            ~player1Goals=editedResult.player1Goals,
+            ~player2Goals=editedResult.player2Goals,
+            ~extraTime=editedResult.extraTime,
+            ~date=editedResult.date->toJsonDate,
             (),
           )##variables,
         ~refetchQueries=_ => [|queryToRefetch|],
@@ -126,9 +104,9 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
          })
       |> ignore;
     | Updating(_)
-    | Idle
     | DeleteConfirmationPending(_)
-    | Deleting(_) => ()
+    | Deleting(_)
+    | Idle => ()
     };
   };
 
@@ -160,10 +138,33 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
           {results
            ->Belt.List.map(result =>
                <TableRow key={string_of_int(result.id)}>
-                 <TableCell>
-                   {switch (state) {
-                    | Idle =>
-                      <>
+                 {switch (state) {
+                  | DeleteConfirmationPending(resultToDeleteId)
+                      when result.id === resultToDeleteId =>
+                    <>
+                      <TableCell>
+                        <span> {text("Are you sure?")} </span>
+                        <button onClick={_ => deleteResult()}>
+                          {text("Yes")}
+                        </button>
+                        <button onClick={_ => dispatch(StopDeleting)}>
+                          {text("No")}
+                        </button>
+                      </TableCell>
+                      <ResultTableRow result />
+                    </>
+                  | Editing(editedResult) when result.id === editedResult.id =>
+                    <EditResultTableRow
+                      communityName
+                      communitySettings
+                      editableResult=editedResult
+                      disabled={apiRequestIsInProgress(state)}
+                      onSave={editedResult => updateResult(editedResult)}
+                      onCancel={_ => dispatch(StopEditing)}
+                    />
+                  | Idle =>
+                    <>
+                      <TableCell>
                         <button
                           onClick={_ => dispatch(StartEditing(result))}>
                           {text("Edit")}
@@ -172,69 +173,15 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                           onClick={_ => dispatch(DeleteRequested(result.id))}>
                           {text("Delete")}
                         </button>
-                      </>
-                    | DeleteConfirmationPending(resultToDeleteId) =>
-                      result.id === resultToDeleteId
-                        ? <>
-                            <span> {text("Are you sure?")} </span>
-                            <button onClick={_ => deleteResult()}>
-                              {text("Yes")}
-                            </button>
-                            <button onClick={_ => dispatch(StopDeleting)}>
-                              {text("No")}
-                            </button>
-                          </>
-                        : React.null
-                    | Editing(editedResult) =>
-                      result.id === editedResult.id
-                        ? <>
-                            <button onClick={_ => updateResult()}>
-                              {text("Save")}
-                            </button>
-                            <button onClick={_ => dispatch(StopEditing)}>
-                              {text("Cancel")}
-                            </button>
-                          </>
-                        : React.null
-                    | Deleting(id)
-                    | Updating(id) =>
-                      id === result.id ? <CircularProgress /> : React.null
-                    }}
-                 </TableCell>
-                 {switch (state) {
-                  | Editing(r) when r.id == result.id =>
-                    <EditResultTableRow
-                      communityName
-                      communitySettings
-                      editableResult=r
-                      disabled={apiRequestIsInProgress(state)}
-                    />
-                  | Editing(_)
-                  | Updating(_)
-                  | Deleting(_)
-                  | DeleteConfirmationPending(_)
-                  | Idle =>
-                    <>
-                      <TableCell align="right">
-                        <span> {text(result.player1.name)} </span>
                       </TableCell>
-                      <TableCell style=numberCellStyle>
-                        {text(string_of_int(result.player1goals))}
-                      </TableCell>
-                      <TableCell style=colonStyle> {text(":")} </TableCell>
-                      <TableCell style=numberCellStyle>
-                        {text(string_of_int(result.player2goals))}
-                      </TableCell>
-                      <TableCell>
-                        <span> {text(result.player2.name)} </span>
-                      </TableCell>
-                      <TableCell style=extraTimeStyle align="right">
-                        {text(result.extratime ? "X" : "")}
-                      </TableCell>
-                      <TableCell>
-                        {text(formatDate(result.date))}
-                      </TableCell>
+                      <ResultTableRow result />
                     </>
+                  | DeleteConfirmationPending(_)
+                  | Editing(_) =>
+                    <> <TableCell /> <ResultTableRow result /> </>
+                  | Deleting(id)
+                  | Updating(id) =>
+                    id === result.id ? <CircularProgress /> : React.null
                   }}
                </TableRow>
              )
