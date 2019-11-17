@@ -87,8 +87,7 @@ let defaultCommunitySettings = {
   useDropDownForPoints: true,
 };
 
-type editableResult = {
-  id: int,
+type editableResultValues = {
   player1Id: int,
   player2Id: int,
   player1Goals: int,
@@ -97,8 +96,7 @@ type editableResult = {
   date: Js.Date.t,
 };
 
-let toEditableResult = (result: result): editableResult => {
-  id: result.id,
+let toEditableResultValues = (result: result): editableResultValues => {
   player1Id: result.player1.id,
   player2Id: result.player2.id,
   player1Goals: result.player1goals,

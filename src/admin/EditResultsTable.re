@@ -8,7 +8,7 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
 type editResultsTableState =
   | Idle
-  | Editing(editableResult)
+  | Editing(int, editableResultValues)
   | Updating(int)
   | DeleteConfirmationPending(int)
   | Deleting(int);
@@ -30,10 +30,11 @@ type editResultsTableAction =
 let editResultsTableReducer =
     (state: editResultsTableState, action: editResultsTableAction) =>
   switch (action) {
-  | StartEditing(result) => Editing(result->toEditableResult)
+  | StartEditing(result) =>
+    Editing(result.id, result->toEditableResultValues)
   | StartUpdating =>
     switch (state) {
-    | Editing(result) => Updating(result.id)
+    | Editing(id, _) => Updating(id)
     | _ => state
     }
   | StopEditing
@@ -77,20 +78,20 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
     };
   };
 
-  let updateResult = (editedResult: editableResult) => {
+  let updateResult = (resultId, editedValues: editableResultValues) => {
     switch (state) {
     | Editing(_) =>
       dispatch(StartUpdating);
       updateResultMutation(
         ~variables=
           UpdateResultMutationConfig.make(
-            ~resultId=editedResult.id,
-            ~player1Id=editedResult.player1Id,
-            ~player2Id=editedResult.player2Id,
-            ~player1Goals=editedResult.player1Goals,
-            ~player2Goals=editedResult.player2Goals,
-            ~extraTime=editedResult.extraTime,
-            ~date=editedResult.date->toJsonDate,
+            ~resultId,
+            ~player1Id=editedValues.player1Id,
+            ~player2Id=editedValues.player2Id,
+            ~player1Goals=editedValues.player1Goals,
+            ~player2Goals=editedValues.player2Goals,
+            ~extraTime=editedValues.extraTime,
+            ~date=editedValues.date->toJsonDate,
             (),
           )##variables,
         ~refetchQueries=_ => [|queryToRefetch|],
@@ -153,13 +154,16 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                       </TableCell>
                       <ResultTableRow result />
                     </>
-                  | Editing(editedResult) when result.id === editedResult.id =>
+                  | Editing(id, editedValues) when result.id === id =>
                     <EditResultTableRow
                       communityName
                       communitySettings
-                      editableResult=editedResult
+                      initialValuesToEdit=editedValues
+                      id
                       disabled={apiRequestIsInProgress(state)}
-                      onSave={editedResult => updateResult(editedResult)}
+                      onSave={(id, editedResult) =>
+                        updateResult(id, editedResult)
+                      }
                       onCancel={_ => dispatch(StopEditing)}
                     />
                   | Idle =>
@@ -181,7 +185,12 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
                     <> <TableCell /> <ResultTableRow result /> </>
                   | Deleting(id)
                   | Updating(id) =>
-                    id === result.id ? <CircularProgress /> : React.null
+                    <>
+                      <TableCell>
+                        {id === result.id ? <CircularProgress /> : React.null}
+                      </TableCell>
+                      <ResultTableRow result />
+                    </>
                   }}
                </TableRow>
              )
