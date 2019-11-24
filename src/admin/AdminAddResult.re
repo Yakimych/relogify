@@ -1,23 +1,18 @@
 open Utils;
 open Queries;
 open Mutations;
-open StorageUtils;
 open UseCommunitySettings;
 
-// TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
-let make = (~communityName: string, ~onResultAdded) => {
+let make = (~communityName: string) => {
+  // TODO: Is it possible to combine all those hooks into one and use both here and in AddResult?
   let settingsQuery = useCommunitySettings(communityName);
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let (getMostUsedPlayer, updateUsedPlayers) =
-    useMostUsedPlayer(communityName);
-
-  let (maybePlayer1Name, setMaybePlayer1Name) =
-    React.useState(_ => getMostUsedPlayer());
+  let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
@@ -29,16 +24,7 @@ let make = (~communityName: string, ~onResultAdded) => {
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
-  let resetState = () => {
-    setMaybePlayer1Name(_ => getMostUsedPlayer());
-    setMaybePlayer2Name(_ => None);
-    setGoals1(_ => 0);
-    setGoals2(_ => 0);
-    setExtraTime(_ => false);
-    setDate(_ => Js.Date.make());
-  };
-
-  // TODO: Move the validation logic to a common place and use in AdminAddResult too
+  // TODO: Move the validation logic to a common place and use in AddResult too
   let addResult = allowDraws =>
     switch (maybePlayer1Name, maybePlayer2Name, goals1, goals2, extraTime) {
     | (None | Some(""), _, _, _, _)
@@ -55,10 +41,8 @@ let make = (~communityName: string, ~onResultAdded) => {
       alert("You must select two DIFFERENT players!")
     | (Some(player1Name), Some(player2Name), goals1, goals2, extraTime) =>
       setIsAddingResult(_ => true);
-      updateUsedPlayers(player1Name, player2Name);
 
-      // Will refetch query for current week after adding result
-      let (startDate, endDate) = getCurrentWeek();
+      // TODO: Pass in a query to refetch instead?
       addResultMutation(
         ~variables=
           AddResultMutationConfig.make(
@@ -75,12 +59,7 @@ let make = (~communityName: string, ~onResultAdded) => {
           _ =>
             [|
               ReasonApolloHooks.Utils.toQueryObj(
-                AllResultsQueryConfig.make(
-                  ~communityName,
-                  ~dateFrom=startDate |> toJsonDate,
-                  ~dateTo=endDate |> toJsonDate,
-                  (),
-                ),
+                AllResultsQueryConfig.make(~communityName, ()),
               ),
               ReasonApolloHooks.Utils.toQueryObj(
                 AllPlayersQueryConfig.make(~communityName, ()),
@@ -88,11 +67,9 @@ let make = (~communityName: string, ~onResultAdded) => {
             |],
         (),
       )
-      |> Js.Promise.then_(_ => {
-           resetState();
-           setIsAddingResult(_ => false);
-           onResultAdded() |> Js.Promise.resolve;
-         })
+      |> Js.Promise.then_(_ =>
+           setIsAddingResult(_ => false) |> Js.Promise.resolve
+         )
       |> Js.Promise.catch(e => {
            Js.Console.error2("Error: ", e);
            setIsAddingResult(_ => false) |> Js.Promise.resolve;
@@ -105,6 +82,7 @@ let make = (~communityName: string, ~onResultAdded) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
+    // TODO: Restyle this as a TableRow
     <Paper
       elevation=6
       style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
