@@ -129,6 +129,34 @@ let make = (~page: page) => {
              <div className="app-header-item"> {text("Settings")} </div>
              <RouteLink
                className="app-header-item"
+               toPage={AdminPlayersPage(communityName)}>
+               {text("Players")}
+             </RouteLink>
+             <RouteLink
+               className="app-header-item"
+               toPage={AdminResultsPage(communityName)}>
+               {text("History")}
+             </RouteLink>
+           </>
+         | AdminPlayersPage(communityName) =>
+           <>
+             <div className="app-header-grouping">
+               <RouteLink
+                 className="app-header-item"
+                 toPage={CommunityStart(communityName)}>
+                 <HomeIcon />
+               </RouteLink>
+             </div>
+             <div className="app-header-grow" />
+             <div className="app-header-title"> {text(userEmail)} </div>
+             <RouteLink
+               className="app-header-item"
+               toPage={AdminSettingsPage(communityName)}>
+               {text("Settings")}
+             </RouteLink>
+             <div className="app-header-item"> {text("Players")} </div>
+             <RouteLink
+               className="app-header-item"
                toPage={AdminResultsPage(communityName)}>
                {text("History")}
              </RouteLink>
@@ -148,6 +176,11 @@ let make = (~page: page) => {
                className="app-header-item"
                toPage={AdminSettingsPage(communityName)}>
                {text("Settings")}
+             </RouteLink>
+             <RouteLink
+               className="app-header-item"
+               toPage={AdminPlayersPage(communityName)}>
+               {text("Players")}
              </RouteLink>
              <div className="app-header-item"> {text("History")} </div>
            </>
