@@ -38,12 +38,12 @@ let make = (~communityName: string) => {
     CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
 
   let (updateSettingsMutation, _, _) = UpdateCommunitySettingsMutation.use();
+  let (createSettingsMutation, _, _) = CreateCommunitySettingsMutation.use();
 
   let (state, dispatch) =
     React.useReducer(reducer, defaultCommunitySettings);
 
   let saveCommunitySettings = () => {
-    // TODO: Create settings if they don't exist
     Js.Promise.(
       updateSettingsMutation(
         ~variables=
@@ -58,7 +58,13 @@ let make = (~communityName: string) => {
           )##variables,
         (),
       )
-      |> then_(_ => alert("Settings saved") |> resolve)
+      |> then_(result => {
+           Js.log2("result: ", result);
+           //  if (result##update_community_settings##affected_rows === 0) {
+           //    createSubscriptionMutaiton with the same parameters
+           //  }
+           alert("Settings saved") |> resolve;
+         })
       |> catch(e => {
            Js.Console.error2("Error when saving: ", e);
            alert("Error when saving") |> resolve;
