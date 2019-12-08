@@ -18,19 +18,12 @@ let make = (~communityName: string) => {
       <Container maxWidth="sm">
         <Table size="small">
           <TableHead>
-            <TableRow>
-              <TableCell> {text("Edit")} </TableCell>
-              <TableCell> {text("Player")} </TableCell>
-            </TableRow>
+            <TableRow> <TableCell> {text("Player")} </TableCell> </TableRow>
           </TableHead>
           <TableBody>
             {data##players
              ->Belt.Array.map(p =>
                  <TableRow key={string_of_int(p##id)}>
-                   <TableCell>
-                     <button> {text("Edit")} </button>
-                     <button> {text("Delete")} </button>
-                   </TableCell>
                    <TableCell> {text(p##name)} </TableCell>
                  </TableRow>
                )

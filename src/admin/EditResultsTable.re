@@ -135,8 +135,8 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
             <TableCell style=dateStyle> {text("Date")} </TableCell>
           </TableRow>
         </TableHead>
-        <AdminAddResult communityName />
         <TableBody>
+          <AddResultTableRow communityName />
           {results
            ->Belt.List.map(result =>
                <TableRow key={string_of_int(result.id)}>

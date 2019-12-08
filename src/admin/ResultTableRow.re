@@ -8,7 +8,7 @@ let make = (~result) => {
     <TableCell align="right">
       <span> {text(result.player1.name)} </span>
     </TableCell>
-    <TableCell style=numberCellStyle>
+    <TableCell style=adminPlayer1PointsCellStyle>
       {text(string_of_int(result.player1goals))}
     </TableCell>
     <TableCell style=colonStyle> {text(":")} </TableCell>

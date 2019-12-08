@@ -1,3 +1,12 @@
+let adminPlayer1PointsCellStyle =
+  ReactDOMRe.Style.make(
+    ~width="20px",
+    ~textAlign="right",
+    ~paddingLeft="0",
+    ~paddingRight="10px",
+    (),
+  );
+
 let numberCellStyle =
   ReactDOMRe.Style.make(
     ~width="20px",

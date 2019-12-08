@@ -2,6 +2,7 @@ open Utils;
 open Queries;
 open Mutations;
 open UseCommunitySettings;
+open Styles;
 
 [@bs.val] external alert: string => unit = "alert";
 
@@ -82,16 +83,15 @@ let make = (~communityName: string) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    // TODO: Restyle this as a TableRow
-    <Paper
-      elevation=6
-      style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~marginBottom="10px",
-          (),
-        )}>
+    <TableRow>
+      <TableCell>
+        <button
+          disabled=isAddingResult
+          onClick={_ => addResult(communitySettings.allowDraws)}>
+          {text("Add")}
+        </button>
+      </TableCell>
+      <TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player1"
@@ -99,6 +99,8 @@ let make = (~communityName: string) => {
           selectedPlayerName=maybePlayer1Name
           onChange={v => setMaybePlayer1Name(_ => Some(v))}
         />
+      </TableCell>
+      <TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals1
@@ -106,6 +108,9 @@ let make = (~communityName: string) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
+      </TableCell>
+      <TableCell style=colonStyle> {text(":")} </TableCell>
+      <TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals2
@@ -113,6 +118,8 @@ let make = (~communityName: string) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
+      </TableCell>
+      <TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player2"
@@ -120,33 +127,21 @@ let make = (~communityName: string) => {
           selectedPlayerName=maybePlayer2Name
           onChange={v => setMaybePlayer2Name(_ => Some(v))}
         />
-      </div>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~justifyContent="space-between",
-          (),
-        )}>
-        <Button
-          disabled=isAddingResult
-          variant="contained"
-          color="primary"
-          onClick={_ => addResult(communitySettings.allowDraws)}>
-          {text("Submit")}
-        </Button>
-        {communitySettings.includeExtraTime
-           ? <FormControlLabel
-               control={
-                 <Checkbox
-                   disabled=isAddingResult
-                   color="default"
-                   checked=extraTime
-                   onClick=toggleExtraTime
-                 />
-               }
-               label="Extra Time"
-             />
-           : React.null}
+      </TableCell>
+      <TableCell>
+        <FormControlLabel
+          control={
+            <Checkbox
+              disabled=isAddingResult
+              color="default"
+              checked=extraTime
+              onClick=toggleExtraTime
+            />
+          }
+          label="Extra Time"
+        />
+      </TableCell>
+      <TableCell>
         <TextField
           disabled=isAddingResult
           _type="date"
@@ -158,7 +153,7 @@ let make = (~communityName: string) => {
             };
           }}
         />
-      </div>
-    </Paper>
+      </TableCell>
+    </TableRow>
   };
 };
