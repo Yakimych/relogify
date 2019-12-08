@@ -1,23 +1,20 @@
 open Utils;
 open Queries;
 open Mutations;
-open StorageUtils;
 open UseCommunitySettings;
+open Styles;
 
-// TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
 [@react.component]
-let make = (~communityName: string, ~onResultAdded) => {
+let make = (~communityName: string) => {
+  // TODO: Is it possible to combine all those hooks into one and use both here and in AddResult?
+  // TODO: Rewrite all useState into useReducer?
   let settingsQuery = useCommunitySettings(communityName);
 
   let (addResultMutation, _, _) = AddResultMutation.use();
 
-  let (getMostUsedPlayer, updateUsedPlayers) =
-    useMostUsedPlayer(communityName);
-
-  let (maybePlayer1Name, setMaybePlayer1Name) =
-    React.useState(_ => getMostUsedPlayer());
+  let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
 
   let (maybePlayer2Name, setMaybePlayer2Name) = React.useState(_ => None);
@@ -28,15 +25,6 @@ let make = (~communityName: string, ~onResultAdded) => {
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
-
-  let resetState = () => {
-    setMaybePlayer1Name(_ => getMostUsedPlayer());
-    setMaybePlayer2Name(_ => None);
-    setGoals1(_ => 0);
-    setGoals2(_ => 0);
-    setExtraTime(_ => false);
-    setDate(_ => Js.Date.make());
-  };
 
   let addResult = allowDraws => {
     let validationResult =
@@ -53,10 +41,8 @@ let make = (~communityName: string, ~onResultAdded) => {
     | Error(message) => alert(message)
     | Ok((player1Name, player2Name)) =>
       setIsAddingResult(_ => true);
-      updateUsedPlayers(player1Name, player2Name);
 
-      // Will refetch query for current week after adding result
-      let (startDate, endDate) = getCurrentWeek();
+      // TODO: Pass in a query to refetch instead? Consolidate with AddResult.re?
       addResultMutation(
         ~variables=
           AddResultMutationConfig.make(
@@ -73,12 +59,7 @@ let make = (~communityName: string, ~onResultAdded) => {
           _ =>
             [|
               ReasonApolloHooks.Utils.toQueryObj(
-                AllResultsQueryConfig.make(
-                  ~communityName,
-                  ~dateFrom=startDate |> toJsonDate,
-                  ~dateTo=endDate |> toJsonDate,
-                  (),
-                ),
+                AllResultsQueryConfig.make(~communityName, ()),
               ),
               ReasonApolloHooks.Utils.toQueryObj(
                 AllPlayersQueryConfig.make(~communityName, ()),
@@ -86,11 +67,9 @@ let make = (~communityName: string, ~onResultAdded) => {
             |],
         (),
       )
-      |> Js.Promise.then_(_ => {
-           resetState();
-           setIsAddingResult(_ => false);
-           onResultAdded() |> Js.Promise.resolve;
-         })
+      |> Js.Promise.then_(_ =>
+           setIsAddingResult(_ => false) |> Js.Promise.resolve
+         )
       |> Js.Promise.catch(e => {
            Js.Console.error2("Error: ", e);
            setIsAddingResult(_ => false) |> Js.Promise.resolve;
@@ -104,15 +83,15 @@ let make = (~communityName: string, ~onResultAdded) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <Paper
-      elevation=6
-      style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~marginBottom="10px",
-          (),
-        )}>
+    <TableRow>
+      <TableCell>
+        <button
+          disabled=isAddingResult
+          onClick={_ => addResult(communitySettings.allowDraws)}>
+          {text("Add")}
+        </button>
+      </TableCell>
+      <TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player1"
@@ -120,6 +99,8 @@ let make = (~communityName: string, ~onResultAdded) => {
           selectedPlayerName=maybePlayer1Name
           onChange={v => setMaybePlayer1Name(_ => Some(v))}
         />
+      </TableCell>
+      <TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals1
@@ -127,6 +108,9 @@ let make = (~communityName: string, ~onResultAdded) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
+      </TableCell>
+      <TableCell style=colonStyle> {text(":")} </TableCell>
+      <TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals2
@@ -134,6 +118,8 @@ let make = (~communityName: string, ~onResultAdded) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
+      </TableCell>
+      <TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player2"
@@ -141,33 +127,21 @@ let make = (~communityName: string, ~onResultAdded) => {
           selectedPlayerName=maybePlayer2Name
           onChange={v => setMaybePlayer2Name(_ => Some(v))}
         />
-      </div>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~justifyContent="space-between",
-          (),
-        )}>
-        <Button
-          disabled=isAddingResult
-          variant="contained"
-          color="primary"
-          onClick={_ => addResult(communitySettings.allowDraws)}>
-          {text("Submit")}
-        </Button>
-        {communitySettings.includeExtraTime
-           ? <FormControlLabel
-               control={
-                 <Checkbox
-                   disabled=isAddingResult
-                   color="default"
-                   checked=extraTime
-                   onClick=toggleExtraTime
-                 />
-               }
-               label="Extra Time"
-             />
-           : React.null}
+      </TableCell>
+      <TableCell>
+        <FormControlLabel
+          control={
+            <Checkbox
+              disabled=isAddingResult
+              color="default"
+              checked=extraTime
+              onClick=toggleExtraTime
+            />
+          }
+          label="Extra Time"
+        />
+      </TableCell>
+      <TableCell>
         <TextField
           disabled=isAddingResult
           _type="date"
@@ -179,7 +153,7 @@ let make = (~communityName: string, ~onResultAdded) => {
             };
           }}
         />
-      </div>
-    </Paper>
+      </TableCell>
+    </TableRow>
   };
 };

@@ -17,6 +17,7 @@ let make = (~communityName, ~subRoute) => {
   <>
     {switch (isLoggedIn, isLoggedInAsAdmin, subRoute) {
      | (true, true, ["settings"]) => <EditSettings communityName />
+     | (true, true, ["players"]) => <EditPlayers communityName />
      | (true, true, ["results"])
      | (true, true, _) => <EditResults communityName />
      | (true, false, _) =>
