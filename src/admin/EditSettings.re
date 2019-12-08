@@ -2,6 +2,7 @@ open Utils;
 open Queries;
 open Mutations;
 open Types;
+open ReasonApolloHooks.Mutation;
 
 // TODO: Style this component (including the alert)
 [@bs.val] external alert: string => unit = "alert";
@@ -58,13 +59,36 @@ let make = (~communityName: string) => {
           )##variables,
         (),
       )
-      |> then_(result => {
-           Js.log2("result: ", result);
-           //  if (result##update_community_settings##affected_rows === 0) {
-           //    createSubscriptionMutaiton with the same parameters
-           //  }
-           alert("Settings saved") |> resolve;
-         })
+      |> then_(result =>
+           switch (result) {
+           | Data(d) =>
+             // TODO: Simplify as soon as upsert is available on the backend
+             let settingsUpdated =
+               d##update_community_settings
+               ->Belt.Option.mapWithDefault(false, s => s##affected_rows > 0);
+             (
+               if (!settingsUpdated) {
+                 createSettingsMutation(
+                   ~variables=
+                     CreateCommunitySettingsMutationConfig.make(
+                       ~communityName,
+                       ~allowDraws=state.allowDraws,
+                       ~maxSelectablePoints=state.maxSelectablePoints,
+                       ~scoreType=state.scoreType,
+                       ~includeExtraTime=state.includeExtraTime,
+                       ~useDropDownForPoints=state.useDropDownForPoints,
+                       (),
+                     )##variables,
+                   (),
+                 )
+                 |> ignore;
+               }
+             )
+             |> resolve;
+           | _ => () |> resolve // TODO: Reject?
+           }
+         )
+      |> then_(_ => alert("Settings saved") |> resolve)
       |> catch(e => {
            Js.Console.error2("Error when saving: ", e);
            alert("Error when saving") |> resolve;
