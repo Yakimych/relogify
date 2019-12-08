@@ -8,6 +8,7 @@ open UseCommunitySettings;
 [@react.component]
 let make = (~communityName: string) => {
   // TODO: Is it possible to combine all those hooks into one and use both here and in AddResult?
+  // TODO: Rewrite all useState into useReducer?
   let settingsQuery = useCommunitySettings(communityName);
 
   let (addResultMutation, _, _) = AddResultMutation.use();
@@ -24,25 +25,23 @@ let make = (~communityName: string) => {
   let (date, setDate) = React.useState(_ => Js.Date.make());
   let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
-  // TODO: Move the validation logic to a common place and use in AddResult too
-  let addResult = allowDraws =>
-    switch (maybePlayer1Name, maybePlayer2Name, goals1, goals2, extraTime) {
-    | (None | Some(""), _, _, _, _)
-    | (_, None | Some(""), _, _, _) => alert("You must select both players!")
-    | (_, _, goals1, goals2, _) when goals1 === goals2 && !allowDraws =>
-      alert("A game cannot end in a draw!")
-    | (_, _, goals1, goals2, extraTime)
-        when Js.Math.abs_int(goals1 - goals2) != 1 && extraTime =>
-      alert(
-        "Games with Extra Time cannot have more than one goal difference!",
-      )
-    | (Some(player1Name), Some(player2Name), _, _, _)
-        when player1Name === player2Name =>
-      alert("You must select two DIFFERENT players!")
-    | (Some(player1Name), Some(player2Name), goals1, goals2, extraTime) =>
+  let addResult = allowDraws => {
+    let validationResult =
+      ResultValidation.canAddResult(
+        allowDraws,
+        maybePlayer1Name,
+        maybePlayer2Name,
+        goals1,
+        goals2,
+        extraTime,
+      );
+
+    switch (validationResult) {
+    | Error(message) => alert(message)
+    | Ok((player1Name, player2Name)) =>
       setIsAddingResult(_ => true);
 
-      // TODO: Pass in a query to refetch instead?
+      // TODO: Pass in a query to refetch instead? Consolidate with AddResult.re?
       addResultMutation(
         ~variables=
           AddResultMutationConfig.make(
@@ -76,6 +75,7 @@ let make = (~communityName: string) => {
          })
       |> ignore;
     };
+  };
 
   switch (settingsQuery) {
   | Loading => <CircularProgress />
