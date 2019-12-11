@@ -13,7 +13,6 @@ let make =
       ~noResultsText: option(string)=?,
     ) => {
   let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
-  let (newResultIds, setNewResultIds) = React.useState(_ => []);
 
   let allResultsQuery =
     AllResultsQueryConfig.make(
@@ -23,46 +22,32 @@ let make =
       (),
     );
 
-  let (resultsQuery, fullResultsQuery) =
+  let (resultsQuery, _) =
     AllResultsQuery.use(~variables=allResultsQuery##variables, ());
-
-  React.useEffect1(
-    () => {
-      let lastFetchedResults =
-        React.Ref.current(lastFetchedResultsRef) |> Js.Nullable.toOption;
-
-      fullResultsQuery.data
-      ->Belt.Option.map(data => {
-          let newlyFetchedResults = data##results |> toListOfResults;
-          lastFetchedResults->Belt.Option.map(ar =>
-            setNewResultIds(_ =>
-              newlyFetchedResults
-              ->Belt.List.keep(r => !ar->Belt.List.has(r, (==)))
-              ->Belt.List.map(r => r.id)
-            )
-          )
-          |> ignore;
-
-          React.Ref.setCurrent(
-            lastFetchedResultsRef,
-            Js.Nullable.fromOption(Some(newlyFetchedResults)),
-          );
-        })
-      |> ignore;
-      None;
-    },
-    [|fullResultsQuery.data|],
-  );
 
   switch (resultsQuery) {
   | Loading => <CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    let results = data##results |> toListOfResults;
-    let resultsWithRatingMap = results |> attachRatings;
+    let newlyFetchedResults = data##results |> toListOfResults;
+    let resultsWithRatingMap = newlyFetchedResults |> attachRatings;
 
-    results->Belt.List.length === 0
+    let newResultIds =
+      React.Ref.current(lastFetchedResultsRef)
+      ->Js.Nullable.toOption
+      ->Belt.Option.mapWithDefault([], lastFetchedResults =>
+          newlyFetchedResults
+          ->Belt.List.keep(r => !lastFetchedResults->Belt.List.has(r, (==)))
+          ->Belt.List.map(r => r.id)
+        );
+
+    React.Ref.setCurrent(
+      lastFetchedResultsRef,
+      Js.Nullable.fromOption(Some(newlyFetchedResults)),
+    );
+
+    newlyFetchedResults->Belt.List.length === 0
       ? <Card className="no-result-info">
           <CardContent>
             <Typography variant="h6">
