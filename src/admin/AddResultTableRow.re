@@ -3,6 +3,7 @@ open Queries;
 open Mutations;
 open UseCommunitySettings;
 open Styles;
+open ApolloHooks;
 
 [@bs.val] external alert: string => unit = "alert";
 
@@ -12,7 +13,7 @@ let make = (~communityName: string) => {
   // TODO: Rewrite all useState into useReducer?
   let settingsQuery = useCommunitySettings(communityName);
 
-  let (addResultMutation, _, _) = AddResultMutation.use();
+  let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
 
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
@@ -45,7 +46,7 @@ let make = (~communityName: string) => {
       // TODO: Pass in a query to refetch instead? Consolidate with AddResult.re?
       addResultMutation(
         ~variables=
-          AddResultMutationConfig.make(
+          AddResultMutation.makeVariables(
             ~communityName,
             ~player1Name,
             ~player2Name,
@@ -54,15 +55,15 @@ let make = (~communityName: string) => {
             ~player2Goals=goals2,
             ~extraTime,
             (),
-          )##variables,
+          ),
         ~refetchQueries=
           _ =>
             [|
-              ReasonApolloHooks.Utils.toQueryObj(
-                AllResultsQueryConfig.make(~communityName, ()),
+              ApolloHooks.toQueryObj(
+                AllResultsQuery.make(~communityName, ()),
               ),
-              ReasonApolloHooks.Utils.toQueryObj(
-                AllPlayersQueryConfig.make(~communityName, ()),
+              ApolloHooks.toQueryObj(
+                AllPlayersQuery.make(~communityName, ()),
               ),
             |],
         (),

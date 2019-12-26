@@ -1,6 +1,7 @@
 open Queries;
 open Utils;
 open EloUtils;
+open ApolloHooks;
 
 [@react.component]
 let make =
@@ -14,16 +15,17 @@ let make =
     ) => {
   let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
 
-  let allResultsQuery =
-    AllResultsQueryConfig.make(
-      ~communityName,
-      ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-      ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
-      (),
-    );
-
   let (resultsQuery, _) =
-    AllResultsQuery.use(~variables=allResultsQuery##variables, ());
+    useQuery(
+      ~variables=
+        AllResultsQuery.makeVariables(
+          ~communityName,
+          ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
+          ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+          (),
+        ),
+      AllResultsQuery.definition,
+    );
 
   switch (resultsQuery) {
   | Loading => <CircularProgress />

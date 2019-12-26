@@ -3,7 +3,7 @@ open Expect;
 open Types;
 open PlayerStatsUtils;
 
-let testResults: list(result) = [
+let testResults: list(matchResult) = [
   {
     player1: {
       id: 1,

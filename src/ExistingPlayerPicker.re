@@ -1,5 +1,6 @@
 open Utils;
 open Queries;
+open ApolloHooks;
 
 [@react.component]
 let make =
@@ -9,9 +10,11 @@ let make =
       ~disabled: bool,
       ~onChange: int => unit,
     ) => {
-  let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
   let (playersQuery, _) =
-    AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
+    useQuery(
+      ~variables=AllPlayersQuery.makeVariables(~communityName, ()),
+      AllPlayersQuery.definition,
+    );
 
   switch (playersQuery) {
   | Loading => <CircularProgress />

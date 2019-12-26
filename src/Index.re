@@ -33,10 +33,10 @@ let client =
   );
 
 let app =
-  <ReasonApolloHooks.ApolloProvider client>
+  <ApolloHooks.Provider client>
     <ReactNetlifyIdentity.IdentityContextProvider url=identityUrl>
       <Routing />
     </ReactNetlifyIdentity.IdentityContextProvider>
-  </ReasonApolloHooks.ApolloProvider>;
+  </ApolloHooks.Provider>;
 
 ReactDOMRe.renderToElementWithId(app, "root");

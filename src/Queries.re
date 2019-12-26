@@ -1,9 +1,11 @@
+open Types;
+
 external castToString: Js.Json.t => string = "%identity";
 
 let dateToString = (dateString: Js.Json.t) =>
   dateString |> castToString |> Js.Date.fromString;
 
-module AllPlayersQueryConfig = [%graphql
+module AllPlayersQuery = [%graphql
   {|
     query AllPlayersQuery($communityName: String!) {
       players(where: { community: { name: { _eq: $communityName } } }) {
@@ -14,9 +16,7 @@ module AllPlayersQueryConfig = [%graphql
   |}
 ];
 
-module AllPlayersQuery = ReasonApolloHooks.Query.Make(AllPlayersQueryConfig);
-
-module AllResultsQueryConfig = [%graphql
+module AllResultsQuery = [%graphql
   {|
     query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
       results(
@@ -44,9 +44,31 @@ module AllResultsQueryConfig = [%graphql
   |}
 ];
 
-module AllResultsQuery = ReasonApolloHooks.Query.Make(AllResultsQueryConfig);
+type playerWithTypeName = {
+  id: int,
+  name: string,
+  __typename: string,
+};
 
-module HeadToHeadQueryConfig = [%graphql
+type resultWithTypeName = {
+  player1: playerWithTypeName,
+  player2: playerWithTypeName,
+  player1Goals: int,
+  player2Goals: int,
+  extratime: bool,
+  id: int,
+  __typename: string,
+};
+
+type allResults = {results: array(resultWithTypeName)};
+type subscriptionData = {newest_result: array(resultWithTypeName)};
+
+external allResultsToJson: allResults => Js.Json.t = "%identity";
+external toAllResults: Js.Json.t => Js.Nullable.t(allResults) = "%identity";
+external toSubscriptionData: Js.Json.t => Js.Nullable.t(subscriptionData) =
+  "%identity";
+
+module HeadToHeadQuery = [%graphql
   {|
     query($communityName: String!, $player1Name: String!, $player2Name: String!) {
       results(
@@ -87,9 +109,7 @@ module HeadToHeadQueryConfig = [%graphql
   |}
 ];
 
-module HeadToHeadQuery = ReasonApolloHooks.Query.Make(HeadToHeadQueryConfig);
-
-module AllCommunitiesQueryConfig = [%graphql
+module AllCommunitiesQuery = [%graphql
   {|
     query communities {
       communities {
@@ -99,10 +119,7 @@ module AllCommunitiesQueryConfig = [%graphql
   |}
 ];
 
-module AllCommunitiesQuery =
-  ReasonApolloHooks.Query.Make(AllCommunitiesQueryConfig);
-
-module CommunitySettingsQueryConfig = [%graphql
+module CommunitySettingsQuery = [%graphql
   {|
     query communitySettings($communityName: String!) {
       community_settings(limit: 1, where: {community: {name: {_eq: $communityName }}})
@@ -117,10 +134,7 @@ module CommunitySettingsQueryConfig = [%graphql
   |}
 ];
 
-module CommunitySettingsQuery =
-  ReasonApolloHooks.Query.Make(CommunitySettingsQueryConfig);
-
-module PlayerResultsQueryConfig = [%graphql
+module PlayerResultsQuery = [%graphql
   {|
     query playerResults($communityName: String!, $playerName: String!) {
       results(
@@ -155,11 +169,7 @@ module PlayerResultsQueryConfig = [%graphql
   |}
 ];
 
-module PlayerResultsQuery =
-  ReasonApolloHooks.Query.Make(PlayerResultsQueryConfig);
-
-open Types;
-let toListOfResults = (res): list(result) =>
+let toListOfResults = (res): list(matchResult) =>
   res
   ->Belt.Array.map(r =>
       {
@@ -189,7 +199,7 @@ let toCommunitySettingsRecord = (communitySettingsObject): communitySettings => 
 };
 
 let toCommunitySettings =
-    (queryResult: CommunitySettingsQueryConfig.t): communitySettings => {
+    (queryResult: CommunitySettingsQuery.t): communitySettings => {
   switch (queryResult##community_settings) {
   // TODO: Set default community settings in the database
   | [||] => defaultCommunitySettings

@@ -1,5 +1,6 @@
 open Utils;
 open Queries;
+open ApolloHooks;
 
 let newPlayerValue = "NEW_PLAYER";
 
@@ -13,9 +14,11 @@ let make =
       ~onChange: string => unit,
       ~allowNewPlayer: bool=true,
     ) => {
-  let allPlayersQuery = AllPlayersQueryConfig.make(~communityName, ());
   let (playersQuery, _) =
-    AllPlayersQuery.use(~variables=allPlayersQuery##variables, ());
+    useQuery(
+      ~variables=AllPlayersQuery.makeVariables(~communityName, ()),
+      AllPlayersQuery.definition,
+    );
 
   let (isInCustomMode, setIsInCustomMode) = React.useState(_ => false);
 

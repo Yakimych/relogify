@@ -36,7 +36,8 @@ let toResult = (testScore: testResult) => {
   extratime: false,
 };
 
-let toTestResults: list(testResult) => list(result) = List.map(toResult);
+let toTestResults: list(testResult) => list(matchResult) =
+  List.map(toResult);
 
 let toTempStreaks: list(testStreak) => list(streak) =
   List.map(s =>

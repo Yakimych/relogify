@@ -3,6 +3,7 @@ open Queries;
 open Mutations;
 open StorageUtils;
 open UseCommunitySettings;
+open ApolloHooks;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
@@ -11,7 +12,7 @@ open UseCommunitySettings;
 let make = (~communityName: string, ~onResultAdded) => {
   let settingsQuery = useCommunitySettings(communityName);
 
-  let (addResultMutation, _, _) = AddResultMutation.use();
+  let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
 
   let (getMostUsedPlayer, updateUsedPlayers) =
     useMostUsedPlayer(communityName);
@@ -59,7 +60,7 @@ let make = (~communityName: string, ~onResultAdded) => {
       let (startDate, endDate) = getCurrentWeek();
       addResultMutation(
         ~variables=
-          AddResultMutationConfig.make(
+          AddResultMutation.makeVariables(
             ~communityName,
             ~player1Name,
             ~player2Name,
@@ -68,20 +69,20 @@ let make = (~communityName: string, ~onResultAdded) => {
             ~player2Goals=goals2,
             ~extraTime,
             (),
-          )##variables,
+          ),
         ~refetchQueries=
           _ =>
             [|
-              ReasonApolloHooks.Utils.toQueryObj(
-                AllResultsQueryConfig.make(
+              ApolloHooks.toQueryObj(
+                AllResultsQuery.make(
                   ~communityName,
                   ~dateFrom=startDate |> toJsonDate,
                   ~dateTo=endDate |> toJsonDate,
                   (),
                 ),
               ),
-              ReasonApolloHooks.Utils.toQueryObj(
-                AllPlayersQueryConfig.make(~communityName, ()),
+              ApolloHooks.toQueryObj(
+                AllPlayersQuery.make(~communityName, ()),
               ),
             |],
         (),

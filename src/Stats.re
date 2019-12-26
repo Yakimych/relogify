@@ -5,6 +5,7 @@ open Queries;
 open Styles;
 open EloUtils;
 open UseCommunitySettings;
+open ApolloHooks;
 
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
@@ -58,16 +59,17 @@ let make =
       ~playerLimit: option(int)=?,
       ~title: option(string)=?,
     ) => {
-  let allResultsQuery =
-    AllResultsQueryConfig.make(
-      ~communityName,
-      ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-      ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
-      (),
-    );
-
   let (resultsQuery, _) =
-    AllResultsQuery.use(~variables=allResultsQuery##variables, ());
+    useQuery(
+      ~variables=
+        AllResultsQuery.makeVariables(
+          ~communityName,
+          ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
+          ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
+          (),
+        ),
+      AllResultsQuery.definition,
+    );
 
   let settingsQuery = useCommunitySettings(communityName);
 

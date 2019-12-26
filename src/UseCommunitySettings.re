@@ -1,11 +1,13 @@
 open Queries;
-open ReasonApolloHooks.Query;
+open ApolloHooks;
 
-let useCommunitySettings = (communityName): variant(Types.communitySettings) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
+let useCommunitySettings =
+    (communityName): Query.variant(Types.communitySettings) => {
   let (settingsQuery, _) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+    useQuery(
+      ~variables=CommunitySettingsQuery.makeVariables(~communityName, ()),
+      CommunitySettingsQuery.definition,
+    );
 
   switch (settingsQuery) {
   | Loading => Loading

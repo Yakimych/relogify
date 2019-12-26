@@ -6,14 +6,16 @@ open Types;
 open Queries;
 open EloUtils;
 open UseCommunitySettings;
+open ApolloHooks;
 
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
-  let playerResultsQuery =
-    PlayerResultsQueryConfig.make(~communityName, ~playerName, ());
-
   let (playerResultsQuery, _) =
-    PlayerResultsQuery.use(~variables=playerResultsQuery##variables, ());
+    useQuery(
+      ~variables=
+        PlayerResultsQuery.makeVariables(~communityName, ~playerName, ()),
+      PlayerResultsQuery.definition,
+    );
 
   let settingsQuery = useCommunitySettings(communityName);
 

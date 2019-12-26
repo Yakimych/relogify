@@ -8,7 +8,7 @@ open Utils;
 type eloMap = Belt_MapString.t(float);
 
 type resultWithRatings = {
-  result,
+  result: matchResult,
   player1RatingBefore: float,
   player1RatingAfter: float,
   player2RatingBefore: float,
@@ -42,7 +42,7 @@ let getR = (rating: float) =>
 let getE1 = (r1: float, r2: float) => r1 /. (r1 +. r2);
 let getE2 = (r1: float, r2: float) => r2 /. (r1 +. r2);
 
-let getResultType = (result: result, playerName: string): resultType =>
+let getResultType = (result: matchResult, playerName: string): resultType =>
   if (result.player1goals === result.player2goals) {
     Draw;
   } else {
@@ -70,7 +70,7 @@ let getNewRating =
 };
 
 let eloRatingReducer =
-    (state: temp_resultsWithRatingMap, result: result)
+    (state: temp_resultsWithRatingMap, result: matchResult)
     : temp_resultsWithRatingMap => {
   let player1Rating =
     state.ratingMap
@@ -106,7 +106,7 @@ let eloRatingReducer =
   };
 };
 
-let attachRatings = (results: list(result)): temp_resultsWithRatingMap =>
+let attachRatings = (results: list(matchResult)): temp_resultsWithRatingMap =>
   results
   ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce(
