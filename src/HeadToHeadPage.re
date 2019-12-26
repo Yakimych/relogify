@@ -3,19 +3,21 @@ open PlayerStatsUtils;
 open Types;
 open Queries;
 open EloUtils;
+open ApolloHooks;
 
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
-  let headToHeadQuery =
-    HeadToHeadQueryConfig.make(
-      ~communityName,
-      ~player1Name,
-      ~player2Name,
-      (),
-    );
-
   let (headToHeadQuery, _) =
-    HeadToHeadQuery.use(~variables=headToHeadQuery##variables, ());
+    useQuery(
+      ~variables=
+        HeadToHeadQuery.makeVariables(
+          ~communityName,
+          ~player1Name,
+          ~player2Name,
+          (),
+        ),
+      HeadToHeadQuery.definition,
+    );
 
   <>
     <Header page={HeadToHead(communityName, player1Name, player2Name)} />

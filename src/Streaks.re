@@ -1,12 +1,12 @@
 open Types;
 open Utils;
 
-let startNewStreakWithResult = (result: result, streaks: list(streak)) => [
+let startNewStreakWithResult = (result: matchResult, streaks: list(streak)) => [
   {results: [result], endingResult: None},
   ...streaks,
 ];
 
-let addResultToCurrentStreak = (result: result, streaks: list(streak)) => {
+let addResultToCurrentStreak = (result: matchResult, streaks: list(streak)) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: [result, ...currentStreak.results], endingResult: None},
@@ -14,7 +14,7 @@ let addResultToCurrentStreak = (result: result, streaks: list(streak)) => {
   ];
 };
 
-let setEndingResult = (result: result, streaks: list(streak)) => {
+let setEndingResult = (result: matchResult, streaks: list(streak)) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: currentStreak.results, endingResult: Some(result)},
@@ -23,7 +23,7 @@ let setEndingResult = (result: result, streaks: list(streak)) => {
 };
 
 let resultStreakReducer =
-    (playerName: string, streaks: list(streak), result: result)
+    (playerName: string, streaks: list(streak), result: matchResult)
     : list(streak) => {
   let isWin =
     result.player1.name == playerName
@@ -45,7 +45,7 @@ let resultStreakReducer =
 };
 
 let getAllStreaks =
-    (playerName: string, results: list(result)): list(streak) =>
+    (playerName: string, results: list(matchResult)): list(streak) =>
   results
   ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce([], resultStreakReducer(playerName));

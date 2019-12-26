@@ -16,7 +16,7 @@ type player = {
   name: string,
 };
 
-type result = {
+type matchResult = {
   id: int,
   player1: player,
   player2: player,
@@ -35,8 +35,8 @@ type playerStats = {
 };
 
 type streak = {
-  results: list(result),
-  endingResult: option(result),
+  results: list(matchResult),
+  endingResult: option(matchResult),
 };
 
 let numberOfMatches = (streak: streak) => streak.results->Belt.List.length;
@@ -97,7 +97,7 @@ type editableResultValues = {
   date: Js.Date.t,
 };
 
-let toEditableResultValues = (result: result): editableResultValues => {
+let toEditableResultValues = (result: matchResult): editableResultValues => {
   player1Id: result.player1.id,
   player2Id: result.player2.id,
   player1Goals: result.player1goals,

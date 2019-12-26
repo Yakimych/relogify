@@ -2,7 +2,7 @@ open Utils;
 open Queries;
 open Mutations;
 open Types;
-open ReasonApolloHooks.Mutation;
+open ApolloHooks;
 
 // TODO: Style this component (including the alert)
 [@bs.val] external alert: string => unit = "alert";
@@ -33,13 +33,16 @@ let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
 
 [@react.component]
 let make = (~communityName: string) => {
-  let settingsQueryConfig =
-    CommunitySettingsQueryConfig.make(~communityName, ());
   let (_, fullSettingsQuery) =
-    CommunitySettingsQuery.use(~variables=settingsQueryConfig##variables, ());
+    useQuery(
+      ~variables=CommunitySettingsQuery.makeVariables(~communityName, ()),
+      CommunitySettingsQuery.definition,
+    );
 
-  let (updateSettingsMutation, _, _) = UpdateCommunitySettingsMutation.use();
-  let (createSettingsMutation, _, _) = CreateCommunitySettingsMutation.use();
+  let (updateSettingsMutation, _, _) =
+    useMutation(UpdateCommunitySettingsMutation.definition);
+  let (createSettingsMutation, _, _) =
+    useMutation(CreateCommunitySettingsMutation.definition);
 
   let (state, dispatch) =
     React.useReducer(reducer, defaultCommunitySettings);
@@ -48,7 +51,7 @@ let make = (~communityName: string) => {
     Js.Promise.(
       updateSettingsMutation(
         ~variables=
-          UpdateCommunitySettingsMutationConfig.make(
+          UpdateCommunitySettingsMutation.make(
             ~communityName,
             ~allowDraws=state.allowDraws,
             ~maxSelectablePoints=state.maxSelectablePoints,
@@ -61,7 +64,7 @@ let make = (~communityName: string) => {
       )
       |> then_(result =>
            switch (result) {
-           | Data(d) =>
+           | Mutation.Data(d) =>
              // TODO: Simplify as soon as upsert is available on the backend
              let settingsUpdated =
                d##update_community_settings
@@ -70,7 +73,7 @@ let make = (~communityName: string) => {
                if (!settingsUpdated) {
                  createSettingsMutation(
                    ~variables=
-                     CreateCommunitySettingsMutationConfig.make(
+                     CreateCommunitySettingsMutation.make(
                        ~communityName,
                        ~allowDraws=state.allowDraws,
                        ~maxSelectablePoints=state.maxSelectablePoints,

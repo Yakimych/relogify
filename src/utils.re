@@ -8,7 +8,7 @@ let getCurrentWeek = () => {
   (startDate, startDate->addWeeks(1.0));
 };
 
-let resultsByDate = (first: result, second: result) =>
+let resultsByDate = (first: matchResult, second: matchResult) =>
   DateFns.compareAsc(first.date, second.date);
 
 let formatDate = (date: Js.Date.t) => date->DateFns.format("YYYY-MM-DD");
@@ -27,7 +27,7 @@ let toJsonDate = (date: Js.Date.t): Js.Json.t =>
   date |> Js.Date.toISOString |> Js.Json.string;
 
 let validNumberOfGoals = (goalsString: string): int =>
-  try (int_of_string(goalsString) |> Js.Math.max_int(0)) {
+  try(int_of_string(goalsString) |> Js.Math.max_int(0)) {
   | Failure(_) => 0
   };
 

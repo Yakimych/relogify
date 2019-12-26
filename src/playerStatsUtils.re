@@ -9,7 +9,7 @@ let emptyPlayerStats = (playerName: string) => {
 };
 
 let playerStatsReducer =
-    (playerName: string, stats: playerStats, result: result): playerStats =>
+    (playerName: string, stats: playerStats, result: matchResult): playerStats =>
   if (result.player1.name !== playerName && result.player2.name !== playerName) {
     stats;
   } else {
@@ -33,7 +33,8 @@ let playerStatsReducer =
     };
   };
 
-let getPlayerStats = (playerName: string, results: list(result)): playerStats =>
+let getPlayerStats =
+    (playerName: string, results: list(matchResult)): playerStats =>
   results->Belt.List.reduce(
     emptyPlayerStats(playerName),
     playerStatsReducer(playerName),

@@ -80,7 +80,7 @@ let updateRow = (row: playerStats, goalsScored: int, goalsConceded: int) => {
 };
 
 let leaderboardReducer =
-    (leaderboardMap: playerStatsMap, result: result): playerStatsMap => {
+    (leaderboardMap: playerStatsMap, result: matchResult): playerStatsMap => {
   let player1Row =
     leaderboardMap->Belt_MapString.getWithDefault(
       result.player1.name,
@@ -104,7 +104,7 @@ let leaderboardReducer =
     );
 };
 
-let getLeaderboard = (results: list(result)): list(playerStats) =>
+let getLeaderboard = (results: list(matchResult)): list(playerStats) =>
   results->Belt.List.reduce(Belt_MapString.empty, leaderboardReducer)
   |> Belt_MapString.toList
   |> List.map(((_, v)) => v);

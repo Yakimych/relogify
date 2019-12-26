@@ -1,5 +1,6 @@
 open Queries;
 open Utils;
+open ApolloHooks;
 
 [@react.component]
 let make =
@@ -9,7 +10,7 @@ let make =
       ~dateTo: option(Js.Date.t)=?,
     ) => {
   let allResultsQuery =
-    AllResultsQueryConfig.make(
+    AllResultsQuery.make(
       ~communityName,
       ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
       ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
@@ -17,7 +18,10 @@ let make =
     );
 
   let (resultsQuery, _) =
-    AllResultsQuery.use(~variables=allResultsQuery##variables, ());
+    useQuery(
+      ~variables=allResultsQuery##variables,
+      AllResultsQuery.definition,
+    );
 
   <>
     <Header page={AdminResultsPage(communityName)} />
@@ -41,9 +45,7 @@ let make =
          : <EditResultsTable
              communityName
              results
-             queryToRefetch={ReasonApolloHooks.Utils.toQueryObj(
-               allResultsQuery,
-             )}
+             queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}
            />;
      }}
   </>;

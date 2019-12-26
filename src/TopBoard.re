@@ -3,6 +3,7 @@ open Utils;
 open EloUtils;
 open Queries;
 open Subscriptions;
+open ApolloHooks;
 
 [@react.component]
 let make = (~communityName: string) => {
@@ -12,13 +13,13 @@ let make = (~communityName: string) => {
   let monthStartDate = now->startOfMonth;
   let yearStartDate = now->startOfYear;
 
-  let allResultsQuery = AllResultsQueryConfig.make(~communityName, ());
-
   let (resultsQuery, fullResultsQuery) =
-    AllResultsQuery.use(~variables=allResultsQuery##variables, ());
+    useQuery(
+      ~variables=AllResultsQuery.makeVariables(~communityName, ()),
+      AllResultsQuery.definition,
+    );
 
-  let newResultSubscription =
-    NewResultSubscriptionConfig.make(~communityName, ());
+  let newResultSubscription = NewResultSubscription.make(~communityName, ());
   let newResultDocument = ApolloClient.gql(. newResultSubscription##query);
   let newResultRef = React.useRef(None);
 
@@ -28,6 +29,7 @@ let make = (~communityName: string) => {
         fullResultsQuery.subscribeToMore(
           ~document=newResultDocument,
           ~variables=newResultSubscription##variables,
+          // TODO: Rewrite this in pure Reason
           ~updateQuery=[%bs.raw
             {|
             function(prev, { subscriptionData }) {

@@ -1,12 +1,15 @@
 open Utils;
 open Queries;
 open Types;
+open ApolloHooks;
 
 [@react.component]
 let make = (~communityName: string) => {
-  let playersQueryConfig = AllPlayersQueryConfig.make(~communityName, ());
   let (playersQuery, _) =
-    AllPlayersQuery.use(~variables=playersQueryConfig##variables, ());
+    useQuery(
+      ~variables=AllPlayersQuery.makeVariables(~communityName, ()),
+      AllPlayersQuery.definition,
+    );
 
   switch (playersQuery) {
   | Loading => <CircularProgress />

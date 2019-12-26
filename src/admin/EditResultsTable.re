@@ -3,6 +3,7 @@ open Styles;
 open Types;
 open Mutations;
 open UseCommunitySettings;
+open ApolloHooks;
 
 let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
@@ -20,7 +21,7 @@ let apiRequestIsInProgress =
   | _ => false;
 
 type editResultsTableAction =
-  | StartEditing(result)
+  | StartEditing(matchResult)
   | StopEditing
   | StartUpdating
   | DeleteRequested(int)
@@ -48,11 +49,14 @@ let editResultsTableReducer =
   };
 
 [@react.component]
-let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => {
+let make =
+    (~results: list(matchResult), ~communityName: string, ~queryToRefetch) => {
   let settingsQuery = useCommunitySettings(communityName);
 
-  let (updateResultMutation, _, _) = UpdateResultMutation.use();
-  let (deleteResultMutation, _, _) = DeleteResultMutation.use();
+  let (updateResultMutation, _, _) =
+    useMutation(UpdateResultMutation.definition);
+  let (deleteResultMutation, _, _) =
+    useMutation(DeleteResultMutation.definition);
   let (state, dispatch) = React.useReducer(editResultsTableReducer, Idle);
 
   let deleteResult = () => {
@@ -60,7 +64,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
     | DeleteConfirmationPending(resultId) =>
       dispatch(StartDeleting);
       deleteResultMutation(
-        ~variables=DeleteResultMutationConfig.make(~resultId, ())##variables,
+        ~variables=DeleteResultMutation.makeVariables(~resultId, ()),
         ~refetchQueries=_ => [|queryToRefetch|],
         // TODO: Update local apollo cache manually instead of refetchQueries
         (),
@@ -84,7 +88,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
       dispatch(StartUpdating);
       updateResultMutation(
         ~variables=
-          UpdateResultMutationConfig.make(
+          UpdateResultMutation.makeVariables(
             ~resultId,
             ~player1Id=editedValues.player1Id,
             ~player2Id=editedValues.player2Id,
@@ -93,7 +97,7 @@ let make = (~results: list(result), ~communityName: string, ~queryToRefetch) => 
             ~extraTime=editedValues.extraTime,
             ~date=editedValues.date->toJsonDate,
             (),
-          )##variables,
+          ),
         ~refetchQueries=_ => [|queryToRefetch|],
         // TODO: Update local apollo cache manually instead of refetchQueries
         (),

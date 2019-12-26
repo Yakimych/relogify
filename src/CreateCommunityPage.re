@@ -1,16 +1,11 @@
 open Utils;
 open Queries;
+open ApolloHooks;
 
 [@react.component]
 let make = () => {
   let (communityName, setCommunityName) = React.useState(_ => "");
-
-  let communityCountByNameQuery = AllCommunitiesQueryConfig.make();
-  let (allCommunitiesResult, _) =
-    AllCommunitiesQuery.use(
-      ~variables=communityCountByNameQuery##variables,
-      (),
-    );
+  let (allCommunitiesResult, _) = useQuery(AllCommunitiesQuery.definition);
 
   let nameIsAvailable = () =>
     switch (communityName, allCommunitiesResult) {

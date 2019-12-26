@@ -3,7 +3,7 @@ open Expect;
 open Types;
 open LeaderboardUtils;
 
-let testResults: list(result) = [
+let testResults: list(matchResult) = [
   {
     player1: {
       id: 1,

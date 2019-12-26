@@ -28,7 +28,7 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let getHighlightedClassName =
-    (newResults: option(list(int)), currentResult: result) => {
+    (newResults: option(list(int)), currentResult: matchResult) => {
   let resultIsFresh =
     newResults
     ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResult.id))

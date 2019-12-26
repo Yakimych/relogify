@@ -1,4 +1,4 @@
-module AddResultMutationConfig = [%graphql
+module AddResultMutation = [%graphql
   {|
   mutation AddResultMutation(
     $communityName: String!
@@ -64,10 +64,7 @@ module AddResultMutationConfig = [%graphql
 |}
 ];
 
-module AddResultMutation =
-  ReasonApolloHooks.Mutation.Make(AddResultMutationConfig);
-
-module UpdateResultMutationConfig = [%graphql
+module UpdateResultMutation = [%graphql
   {|
     mutation UpdateResultMutation(
       $resultId: Int!
@@ -99,10 +96,7 @@ module UpdateResultMutationConfig = [%graphql
   |}
 ];
 
-module UpdateResultMutation =
-  ReasonApolloHooks.Mutation.Make(UpdateResultMutationConfig);
-
-module DeleteResultMutationConfig = [%graphql
+module DeleteResultMutation = [%graphql
   {|
     mutation DeleteResultMutation(
       $resultId: Int!
@@ -120,10 +114,7 @@ module DeleteResultMutationConfig = [%graphql
   |}
 ];
 
-module DeleteResultMutation =
-  ReasonApolloHooks.Mutation.Make(DeleteResultMutationConfig);
-
-module UpdateCommunitySettingsMutationConfig = [%graphql
+module UpdateCommunitySettingsMutation = [%graphql
   {|
     mutation updateCommunitySettingsMutation(
       $communityName: String!,
@@ -155,10 +146,7 @@ module UpdateCommunitySettingsMutationConfig = [%graphql
   |}
 ];
 
-module UpdateCommunitySettingsMutation =
-  ReasonApolloHooks.Mutation.Make(UpdateCommunitySettingsMutationConfig);
-
-module CreateCommunitySettingsMutationConfig = [%graphql
+module CreateCommunitySettingsMutation = [%graphql
   {|
     mutation createCommunitySettingsMutation(
       $communityName: String!,
@@ -190,6 +178,3 @@ module CreateCommunitySettingsMutationConfig = [%graphql
       }
   |}
 ];
-
-module CreateCommunitySettingsMutation =
-  ReasonApolloHooks.Mutation.Make(CreateCommunitySettingsMutationConfig);
