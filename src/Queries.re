@@ -1,3 +1,5 @@
+open Types;
+
 external castToString: Js.Json.t => string = "%identity";
 
 let dateToString = (dateString: Js.Json.t) =>
@@ -41,6 +43,30 @@ module AllResultsQuery = [%graphql
     }
   |}
 ];
+
+type playerWithTypeName = {
+  id: int,
+  name: string,
+  __typename: string,
+};
+
+type resultWithTypeName = {
+  player1: playerWithTypeName,
+  player2: playerWithTypeName,
+  player1Goals: int,
+  player2Goals: int,
+  extratime: bool,
+  id: int,
+  __typename: string,
+};
+
+type allResults = {results: array(resultWithTypeName)};
+type subscriptionData = {newest_result: array(resultWithTypeName)};
+
+external allResultsToJson: allResults => Js.Json.t = "%identity";
+external toAllResults: Js.Json.t => Js.Nullable.t(allResults) = "%identity";
+external toSubscriptionData: Js.Json.t => Js.Nullable.t(subscriptionData) =
+  "%identity";
 
 module HeadToHeadQuery = [%graphql
   {|
@@ -143,7 +169,6 @@ module PlayerResultsQuery = [%graphql
   |}
 ];
 
-open Types;
 let toListOfResults = (res): list(matchResult) =>
   res
   ->Belt.Array.map(r =>

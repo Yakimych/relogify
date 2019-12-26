@@ -21,7 +21,7 @@ let make = (~communityName: string) => {
 
   let newResultSubscription = NewResultSubscription.make(~communityName, ());
   let newResultDocument = ApolloClient.gql(. newResultSubscription##query);
-  let newResultRef = React.useRef(None);
+  let (newResult, setNewResult) = React.useState(_ => None);
 
   React.useEffect1(
     () => {
@@ -29,24 +29,30 @@ let make = (~communityName: string) => {
         fullResultsQuery.subscribeToMore(
           ~document=newResultDocument,
           ~variables=newResultSubscription##variables,
-          // TODO: Rewrite this in pure Reason
-          ~updateQuery=[%bs.raw
-            {|
-            function(prev, { subscriptionData }) {
-              if (!prev || subscriptionData.data.newest_result.length === 0) {
-                return prev;
-              }
+          ~updateQuery=
+            (prev, subscriptionDataParent) => {
+              let maybePrevResults =
+                prev |> toAllResults |> Js.Nullable.toOption;
+              let maybeNewestResults =
+                subscriptionDataParent##subscriptionData##data
+                ->toSubscriptionData
+                ->Js.Nullable.toOption
+                ->Belt.Option.map(s => s.newest_result);
 
-              const newestResult = subscriptionData.data.newest_result[0];
-              const alreadyInList = prev.results.filter(r => r.id === newestResult.id)[0];
-              newResultRef.current = alreadyInList ? undefined : newestResult.id;
-
-              return {
-                results: [...(alreadyInList ? [] : [newestResult]), ...prev.results]
+              switch (maybePrevResults, maybeNewestResults) {
+              | (Some(prevResults), Some([|newResult|]))
+                  when
+                    prevResults.results
+                    ->Belt.Array.every(r => r.id !== newResult.id) =>
+                setNewResult(_ => Some(newResult.id));
+                {
+                  results:
+                    prevResults.results->Belt.Array.concat([|newResult|]),
+                }
+                ->allResultsToJson;
+              | _ => prev
               };
-            }
-          |}
-          ],
+            },
           (),
         );
       Some(unsubscribe);
@@ -61,10 +67,8 @@ let make = (~communityName: string) => {
   | Data(data) =>
     let results = data##results |> toListOfResults;
     let resultsWithRatingMap = results |> attachRatings;
-
     let resultIdsToHighlight =
-      React.Ref.current(newResultRef)
-      ->Belt.Option.mapWithDefault([], v => [v]);
+      newResult->Belt.Option.mapWithDefault([], v => [v]);
 
     <>
       <Header page={TopX(communityName)} />
