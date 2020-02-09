@@ -7,29 +7,39 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   switch (url.path->Belt.List.map(Js.Global.decodeURI)) {
-  | [] => <Container maxWidth="sm"> <IntroPage /> </Container>
-  | ["new"] => <Container maxWidth="sm"> <CreateCommunityPage /> </Container>
+  | [] =>
+    <MaterialUi_Container maxWidth=`Sm> <IntroPage /> </MaterialUi_Container>
+  | ["new"] =>
+    <MaterialUi_Container maxWidth=`Sm>
+      <CreateCommunityPage />
+    </MaterialUi_Container>
   | [communityName] =>
-    <Container maxWidth="sm"> <CommunityStartPage communityName /> </Container>
+    <MaterialUi_Container maxWidth=`Sm>
+      <CommunityStartPage communityName />
+    </MaterialUi_Container>
   | [communityName, "admin", ...subRoute] =>
-    <Container maxWidth="lg">
+    <MaterialUi_Container maxWidth=`Lg>
       <CommunityAdminPage communityName subRoute />
-    </Container>
+    </MaterialUi_Container>
   | [communityName, "top"] =>
-    <Container maxWidth="lg"> <TopBoard communityName /> </Container>
+    <MaterialUi_Container maxWidth=`Lg>
+      <TopBoard communityName />
+    </MaterialUi_Container>
   | [communityName, "history"] =>
-    <Container maxWidth="sm"> <ResultHistory communityName /> </Container>
+    <MaterialUi_Container maxWidth=`Sm>
+      <ResultHistory communityName />
+    </MaterialUi_Container>
   | [communityName, playerName] =>
-    <Container maxWidth="sm">
+    <MaterialUi_Container maxWidth=`Sm>
       <PlayerResults communityName playerName />
-    </Container>
+    </MaterialUi_Container>
   | [communityName, player1Name, player2Name] =>
-    <Container maxWidth="sm">
+    <MaterialUi_Container maxWidth=`Sm>
       <HeadToHeadPage communityName player1Name player2Name />
-    </Container>
+    </MaterialUi_Container>
   | _ =>
-    <Container maxWidth="sm">
+    <MaterialUi_Container maxWidth=`Sm>
       <div> {text("Invalid route")} </div>
-    </Container>
+    </MaterialUi_Container>
   };
 };
