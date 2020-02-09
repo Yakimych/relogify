@@ -23,7 +23,7 @@ let make = (~playerName: string, ~communityName: string) => {
     <Header page={PlayerHome(communityName, playerName)} />
     {switch (playerResultsQuery, settingsQuery) {
      | (Loading, _)
-     | (_, Loading) => <CircularProgress />
+     | (_, Loading) => <MaterialUi_CircularProgress />
      | (NoData, _)
      | (_, NoData)
      | (Error(_), _)

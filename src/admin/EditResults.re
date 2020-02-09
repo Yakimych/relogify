@@ -26,7 +26,7 @@ let make =
   <>
     <Header page={AdminResultsPage(communityName)} />
     {switch (resultsQuery) {
-     | Loading => <CircularProgress />
+     | Loading => <MaterialUi_CircularProgress />
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>

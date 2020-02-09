@@ -22,7 +22,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
   <>
     <Header page={HeadToHead(communityName, player1Name, player2Name)} />
     {switch (headToHeadQuery) {
-     | Loading => <CircularProgress />
+     | Loading => <MaterialUi_CircularProgress />
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>

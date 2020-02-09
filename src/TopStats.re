@@ -87,7 +87,7 @@ let make =
         );
 
     switch (settingsQuery) {
-    | Loading => <CircularProgress />
+    | Loading => <MaterialUi_CircularProgress />
     | NoData
     | Error(_) => <span> {text("Error")} </span>
     | Data(communitySettings) =>

@@ -116,7 +116,7 @@ let make =
   };
 
   switch (settingsQuery) {
-  | Loading => <CircularProgress />
+  | Loading => <MaterialUi_CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
@@ -192,7 +192,8 @@ let make =
                   | Updating(id) =>
                     <>
                       <TableCell>
-                        {id === result.id ? <CircularProgress /> : React.null}
+                        {id === result.id
+                           ? <MaterialUi_CircularProgress /> : React.null}
                       </TableCell>
                       <ResultTableRow result />
                     </>
