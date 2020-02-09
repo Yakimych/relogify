@@ -3,7 +3,7 @@ open Utils;
 
 [@react.component]
 let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
-  <Paper
+  <MaterialUi_Paper
     style={ReactDOMRe.Style.make(~marginTop="10px", ~marginBottom="6px", ())}>
     <Typography>
       {text(streakName ++ ": ")}
@@ -33,4 +33,4 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
               )}
          </Typography>
        )}
-  </Paper>;
+  </MaterialUi_Paper>;

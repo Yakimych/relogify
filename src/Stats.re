@@ -113,7 +113,7 @@ let make =
 
        leaderboardRows->Belt.List.length === 0
          ? React.null
-         : <Paper>
+         : <MaterialUi_Paper>
              <div className="title">
                <Typography variant="h6">
                  {text(title->Belt.Option.getWithDefault("Stats"))}
@@ -299,7 +299,7 @@ let make =
                   ->React.array}
                </TableBody>
              </Table>
-           </Paper>;
+           </MaterialUi_Paper>;
      }}
   </>;
 };

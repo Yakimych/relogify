@@ -120,7 +120,7 @@ let make =
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <Paper>
+    <MaterialUi_Paper>
       <div className="title">
         <Typography variant="h6"> {text("Results")} </Typography>
       </div>
@@ -203,6 +203,6 @@ let make =
            ->React.array}
         </TableBody>
       </Table>
-    </Paper>
+    </MaterialUi_Paper>
   };
 };
