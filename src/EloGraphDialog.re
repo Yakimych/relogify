@@ -11,10 +11,10 @@ let make =
     ) =>
   <Dialog onClose _open=isOpen>
     <DialogTitle id="customized-dialog-title" onClose>
-      <Chip
+      <MaterialUi_Chip
         style={ReactDOMRe.Style.make(~marginRight="10px", ())}
-        label="BETA"
-        color="primary"
+        label={React.string("BETA")}
+        color=`Primary
       />
       {text("Rating graph: " ++ playerName)}
     </DialogTitle>
