@@ -157,7 +157,7 @@ let make = (~communityName: string, ~onResultAdded) => {
           {text("Submit")}
         </MaterialUi_Button>
         {communitySettings.includeExtraTime
-           ? <FormControlLabel
+           ? <MaterialUi_FormControlLabel
                control={
                  <MaterialUi_Checkbox
                    disabled=isAddingResult
@@ -166,7 +166,7 @@ let make = (~communityName: string, ~onResultAdded) => {
                    onChange={_ => toggleExtraTime()}
                  />
                }
-               label="Extra Time"
+               label={React.string("Extra Time")}
              />
            : React.null}
         <TextField

@@ -120,7 +120,7 @@ let make = (~communityName: string) => {
       <Header page={AdminSettingsPage(communityName)} />
       <MaterialUi_Container maxWidth=`Lg>
         <div className="admin-settings">
-          <FormControlLabel
+          <MaterialUi_FormControlLabel
             control={
               <MaterialUi_Checkbox
                 color=`Default
@@ -128,9 +128,9 @@ let make = (~communityName: string) => {
                 onChange={_ => dispatch(ToggleAllowDraws)}
               />
             }
-            label="Allow draws"
+            label={React.string("Allow draws")}
           />
-          <FormControlLabel
+          <MaterialUi_FormControlLabel
             control={
               <MaterialUi_Checkbox
                 color=`Default
@@ -138,7 +138,7 @@ let make = (~communityName: string) => {
                 onChange={_ => dispatch(ToggleIncludeExtraTime)}
               />
             }
-            label="Include Extra Time"
+            label={React.string("Include Extra Time")}
           />
           <TextField
             _type="number"
