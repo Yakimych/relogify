@@ -34,12 +34,12 @@ let make = (~page: page) => {
                <MyPlayerHeaderLink communityName />
              </div>
              <div className="app-header-grow" />
-             <Fab
+             <MaterialUi_Fab
                onClick={_ => setAddResultIsOpen(oldIsOpen => !oldIsOpen)}
-               color="secondary"
+               color=`Secondary
                className="add-result-button">
                {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
-             </Fab>
+             </MaterialUi_Fab>
              <div className="add-result">
                <ExpansionPanel expanded=addResultIsOpen>
                  <span />

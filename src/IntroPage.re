@@ -26,7 +26,7 @@ let make = () => {
         </Button>
       </RouteLink>
     </div>
-    <Card className="intro-card">
+    <MaterialUi_Card className="intro-card">
       <CardContent>
         <Typography variant="h6"> {text("Feature list")} </Typography>
         <Typography>
@@ -44,7 +44,7 @@ let make = () => {
           <span> {text("All-time history and Elo ratings")} </span>
         </Typography>
       </CardContent>
-    </Card>
+    </MaterialUi_Card>
     <Typography component="p">
       <span>
         {text("Found a bug or missing a feature? File an issue in this ")}
