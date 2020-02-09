@@ -35,11 +35,11 @@ let make =
        results->Belt.List.length === 0
          ? <MaterialUi_Card className="no-result-info">
              <MaterialUi_CardContent>
-               <Typography variant="h6">
+               <MaterialUi_Typography variant=`H6>
                  {React.string(
                     "No results reported during the selected time period",
                   )}
-               </Typography>
+               </MaterialUi_Typography>
              </MaterialUi_CardContent>
            </MaterialUi_Card>
          : <EditResultsTable

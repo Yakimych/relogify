@@ -32,9 +32,9 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
 
        <>
          <Box textAlign="center">
-           <Typography variant="h4">
+           <MaterialUi_Typography variant=`H4>
              {text(player1Name ++ " vs " ++ player2Name)}
-           </Typography>
+           </MaterialUi_Typography>
            <div>
              <span className="stats-player-goals">
                {text("(" ++ string_of_int(stats.goalsScored) ++ ")")}

@@ -95,7 +95,9 @@ let make =
 
       <MaterialUi_Paper>
         <div className="title">
-          <Typography variant="h6"> {text(title)} </Typography>
+          <MaterialUi_Typography variant=`H6>
+            {text(title)}
+          </MaterialUi_Typography>
         </div>
         <div className="top-stats-container">
           <SingleStatCard

@@ -12,7 +12,9 @@ let numberCellStyle =
 let make = (~playersWithStat: list((string, string)), ~statName) => {
   <MaterialUi_Card raised=true>
     <MaterialUi_CardContent>
-      <Typography gutterBottom=true> {text(statName)} </Typography>
+      <MaterialUi_Typography gutterBottom=true>
+        {text(statName)}
+      </MaterialUi_Typography>
       <MaterialUi_Table size=`Small>
         <MaterialUi_TableBody>
           {playersWithStat

@@ -122,7 +122,9 @@ let make =
   | Data(communitySettings) =>
     <MaterialUi_Paper>
       <div className="title">
-        <Typography variant="h6"> {text("Results")} </Typography>
+        <MaterialUi_Typography variant=`H6>
+          {text("Results")}
+        </MaterialUi_Typography>
       </div>
       <MaterialUi_Table size=`Small>
         <MaterialUi_TableHead>

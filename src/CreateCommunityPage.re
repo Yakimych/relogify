@@ -22,9 +22,9 @@ let make = () => {
     <Header page=CreateCommunityPage />
     <MaterialUi_Paper>
       <div className="title">
-        <Typography variant="h6">
+        <MaterialUi_Typography variant=`H6>
           {React.string("Check availability and create")}
-        </Typography>
+        </MaterialUi_Typography>
       </div>
       <div className="panel-content">
         <div className="row">

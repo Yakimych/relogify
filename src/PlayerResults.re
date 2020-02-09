@@ -39,56 +39,58 @@ let make = (~playerName: string, ~communityName: string) => {
 
        <>
          <Box textAlign="center">
-           <Typography variant="h4"> {text(playerName)} </Typography>
-           <Typography>
+           <MaterialUi_Typography variant=`H4>
+             {text(playerName)}
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text("Total wins: " ++ string_of_int(playerStats.matchesWon))}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 "Total losses: " ++ string_of_int(playerStats.matchesLost),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 "Win/Loss ratio: "
                 ++ formatPercentage(playerStats |> matchesWonPerPlayed),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 texts.totalPointsWon
                 ++ ": "
                 ++ string_of_int(playerStats.goalsScored),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 texts.totalPointsLost
                 ++ ": "
                 ++ string_of_int(playerStats.goalsConceded),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 texts.allTimePointDiff
                 ++ ": "
                 ++ (playerStats |> goalDiff |> formatDiff),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 texts.totalPointsWonPerMatch
                 ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsScoredPerMatch),
               )}
-           </Typography>
-           <Typography>
+           </MaterialUi_Typography>
+           <MaterialUi_Typography>
              {text(
                 texts.totalPointsLostPerMatch
                 ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsConcededPerMatch),
               )}
-           </Typography>
+           </MaterialUi_Typography>
            {streaks
             ->getLongestStreak
             ->Belt.Option.mapWithDefault(React.null, streak =>
