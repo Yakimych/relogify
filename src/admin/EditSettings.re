@@ -128,7 +128,7 @@ let make = (~communityName: string) => {
                 onChange={_ => dispatch(ToggleAllowDraws)}
               />
             }
-            label={React.string("Allow draws")}
+            label={text("Allow draws")}
           />
           <MaterialUi_FormControlLabel
             control={
@@ -138,7 +138,7 @@ let make = (~communityName: string) => {
                 onChange={_ => dispatch(ToggleIncludeExtraTime)}
               />
             }
-            label={React.string("Include Extra Time")}
+            label={text("Include Extra Time")}
           />
           <MaterialUi_TextField
             type_="number"
@@ -150,7 +150,7 @@ let make = (~communityName: string) => {
               (),
             )}
             value={`Int(state.maxSelectablePoints)}
-            label={React.string("Max selectable points")}
+            label={text("Max selectable points")}
             onChange={e => {
               let selectablePointsString = ReactEvent.Form.target(e)##value;
               dispatch(

@@ -142,8 +142,10 @@ let make =
             </MaterialUi_TableCell>
             <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
             <MaterialUi_TableCell style=extraTimeStyle align=`Right>
-              //TODO: title="Extra time">
-               {text("E")} </MaterialUi_TableCell>
+              <MaterialUi_Tooltip title={text("Extra time")} placement=`Top>
+                {text("E")}
+              </MaterialUi_Tooltip>
+            </MaterialUi_TableCell>
             <MaterialUi_TableCell style=dateStyle>
               {text("Date")}
             </MaterialUi_TableCell>
