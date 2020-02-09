@@ -113,9 +113,9 @@ let make =
          ? React.null
          : <MaterialUi_Paper>
              <div className="title">
-               <Typography variant="h6">
+               <MaterialUi_Typography variant=`H6>
                  {text(title->Belt.Option.getWithDefault("Stats"))}
-               </Typography>
+               </MaterialUi_Typography>
              </div>
              <MaterialUi_Table size=`Small>
                <MaterialUi_TableHead>
