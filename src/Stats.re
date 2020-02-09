@@ -125,7 +125,9 @@ let make =
                    <TableCell align="right"> {text("Player")} </TableCell>
                    {showEloRatings && isWide
                       ? <>
-                          <Badge badgeContent="BETA" color="primary">
+                          <MaterialUi_Badge
+                            badgeContent={React.string("BETA")}
+                            color=`Primary>
                             <TableCell
                               style=numberCellStyle title="Elo Rating">
                               <TableSortLabel
@@ -144,7 +146,7 @@ let make =
                                 {text("Elo")}
                               </TableSortLabel>
                             </TableCell>
-                          </Badge>
+                          </MaterialUi_Badge>
                         </>
                       : React.null}
                    <TableCell style=numberCellStyle title="Win Percentage">
