@@ -13,7 +13,7 @@ let make =
     <MaterialUi_DialogTitle>
       <MaterialUi_Chip
         style={ReactDOMRe.Style.make(~marginRight="10px", ())}
-        label={React.string("BETA")}
+        label={text("BETA")}
         color=`Primary
       />
       {text("Rating graph: " ++ playerName)}

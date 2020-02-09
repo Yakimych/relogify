@@ -141,7 +141,7 @@ let make = (~communityName: string) => {
               onChange={_ => toggleExtraTime()}
             />
           }
-          label={React.string("Extra Time")}
+          label={text("Extra Time")}
         />
       </MaterialUi_TableCell>
       <MaterialUi_TableCell>

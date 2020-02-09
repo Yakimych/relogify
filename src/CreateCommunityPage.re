@@ -23,7 +23,7 @@ let make = () => {
     <MaterialUi_Paper>
       <div className="title">
         <MaterialUi_Typography variant=`H6>
-          {React.string("Check availability and create")}
+          {text("Check availability and create")}
         </MaterialUi_Typography>
       </div>
       <div className="panel-content">

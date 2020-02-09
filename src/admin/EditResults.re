@@ -36,9 +36,7 @@ let make =
          ? <MaterialUi_Card className="no-result-info">
              <MaterialUi_CardContent>
                <MaterialUi_Typography variant=`H6>
-                 {React.string(
-                    "No results reported during the selected time period",
-                  )}
+                 {text("No results reported during the selected time period")}
                </MaterialUi_Typography>
              </MaterialUi_CardContent>
            </MaterialUi_Card>

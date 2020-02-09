@@ -166,7 +166,7 @@ let make = (~communityName: string, ~onResultAdded) => {
                    onChange={_ => toggleExtraTime()}
                  />
                }
-               label={React.string("Extra Time")}
+               label={text("Extra Time")}
              />
            : React.null}
         <MaterialUi_TextField

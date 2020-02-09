@@ -22,7 +22,7 @@ let make = () => {
         className="button-link create-community-button"
         toPage=CreateCommunityPage>
         <MaterialUi_Button variant=`Contained color=`Primary>
-          {ReasonReact.string("Create Community")}
+          {text("Create Community")}
         </MaterialUi_Button>
       </RouteLink>
     </div>

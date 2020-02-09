@@ -53,7 +53,7 @@ let make =
       ? <MaterialUi_Card className="no-result-info">
           <MaterialUi_CardContent>
             <MaterialUi_Typography variant=`H6>
-              {React.string(
+              {text(
                  noResultsText->Belt.Option.getWithDefault(
                    "No results reported this week",
                  ),

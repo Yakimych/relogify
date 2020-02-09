@@ -95,8 +95,11 @@ let make =
             <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
             {isWide && communitySettings.includeExtraTime
                ? <MaterialUi_TableCell style=extraTimeStyle align=`Right>
-                   // TODO: title="Extra time"
-                    {text("E")} </MaterialUi_TableCell>
+                   <MaterialUi_Tooltip
+                     title={text("Extra time")} placement=`Top>
+                     <span> {text("E")} </span>
+                   </MaterialUi_Tooltip>
+                 </MaterialUi_TableCell>
                : React.null}
             {isWide
                ? <MaterialUi_TableCell style=dateStyle>
