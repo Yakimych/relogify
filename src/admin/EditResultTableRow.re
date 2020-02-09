@@ -44,21 +44,21 @@ let make =
     React.useReducer(editResultReducer, initialValuesToEdit);
 
   <>
-    <TableCell>
+    <MaterialUi_TableCell>
       <button onClick={_ => onSave(id, valuesUnderEdit)}>
         {text("Save")}
       </button>
       <button onClick=onCancel> {text("Cancel")} </button>
-    </TableCell>
-    <TableCell align="right">
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell align=`Right>
       <ExistingPlayerPicker
         disabled
         communityName
         selectedPlayerId={valuesUnderEdit.player1Id}
         onChange={id => dispatch(SetPlayer1Id(id))}
       />
-    </TableCell>
-    <TableCell style=numberCellStyle>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=numberCellStyle>
       <GoalsPicker
         disabled
         selectedGoals={valuesUnderEdit.player1Goals}
@@ -66,9 +66,11 @@ let make =
         maxSelectablePoints={communitySettings.maxSelectablePoints}
         scoreType={communitySettings.scoreType}
       />
-    </TableCell>
-    <TableCell style=colonStyle> {text(":")} </TableCell>
-    <TableCell style=numberCellStyle>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=colonStyle>
+      {text(":")}
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=numberCellStyle>
       <GoalsPicker
         disabled
         selectedGoals={valuesUnderEdit.player2Goals}
@@ -76,24 +78,24 @@ let make =
         maxSelectablePoints={communitySettings.maxSelectablePoints}
         scoreType={communitySettings.scoreType}
       />
-    </TableCell>
-    <TableCell>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell>
       <ExistingPlayerPicker
         disabled
         communityName
         selectedPlayerId={valuesUnderEdit.player2Id}
         onChange={id => dispatch(SetPlayer2Id(id))}
       />
-    </TableCell>
-    <TableCell style=extraTimeStyle align="right">
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=extraTimeStyle align=`Right>
       <MaterialUi_Checkbox
         disabled
         color=`Default
         checked={valuesUnderEdit.extraTime}
         onChange={_ => dispatch(ToggleExtraTime)}
       />
-    </TableCell>
-    <TableCell>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell>
       <TextField
         disabled
         _type="date"
@@ -103,6 +105,6 @@ let make =
           dispatch(SetDate(dateString));
         }}
       />
-    </TableCell>
+    </MaterialUi_TableCell>
   </>;
 };

@@ -74,31 +74,36 @@ let make =
       <div className="title">
         <Typography variant="h6"> {text("Results")} </Typography>
       </div>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell style=headToHeadStyle> {text("H2H")} </TableCell>
-            <TableCell align="right"> {text("Player1")} </TableCell>
-            <TableCell style=numberCellStyle>
+      <MaterialUi_Table size=`Small>
+        <MaterialUi_TableHead>
+          <MaterialUi_TableRow>
+            <MaterialUi_TableCell style=headToHeadStyle>
+              {text("H2H")}
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell align=`Right>
+              {text("Player1")}
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=numberCellStyle>
               {text(texts.pointsPlayerShort ++ "1")}
-            </TableCell>
-            <TableCell style=colonStyle />
-            <TableCell style=numberCellStyle>
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=colonStyle />
+            <MaterialUi_TableCell style=numberCellStyle>
               {text(texts.pointsPlayerShort ++ "2")}
-            </TableCell>
-            <TableCell> {text("Player2")} </TableCell>
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
             {isWide && communitySettings.includeExtraTime
-               ? <TableCell
-                   style=extraTimeStyle align="right" title="Extra time">
-                   {text("E")}
-                 </TableCell>
+               ? <MaterialUi_TableCell style=extraTimeStyle align=`Right>
+                   // TODO: title="Extra time"
+                    {text("E")} </MaterialUi_TableCell>
                : React.null}
             {isWide
-               ? <TableCell style=dateStyle> {text("Date")} </TableCell>
+               ? <MaterialUi_TableCell style=dateStyle>
+                   {text("Date")}
+                 </MaterialUi_TableCell>
                : React.null}
-          </TableRow>
-        </TableHead>
-        <TableBody>
+          </MaterialUi_TableRow>
+        </MaterialUi_TableHead>
+        <MaterialUi_TableBody>
           {results
            ->Belt.List.map(resultWithRatings => {
                let result = resultWithRatings.result;
@@ -107,14 +112,14 @@ let make =
                let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
                let formattedDate = formatDate(result.date);
 
-               <TableRow
+               <MaterialUi_TableRow
                  key={string_of_int(result.id)}
                  className={
                    getHighlightedClassName(resultIdsToHighlight, result)
                    ++ " "
                    ++ getWinningLosingRowClassName(mainPlayerWon)
                  }>
-                 <TableCell style=headToHeadStyle>
+                 <MaterialUi_TableCell style=headToHeadStyle>
                    <RouteLink
                      toPage={
                        HeadToHead(
@@ -125,8 +130,9 @@ let make =
                      }>
                      {text("H2H")}
                    </RouteLink>
-                 </TableCell>
-                 <TableCell style={getPlayerStyle(player1Won)} align="right">
+                 </MaterialUi_TableCell>
+                 <MaterialUi_TableCell
+                   style={getPlayerStyle(player1Won)} align=`Right>
                    <RouteLink
                      toPage={PlayerHome(communityName, result.player1.name)}
                      style=playerLinkStyle>
@@ -141,15 +147,17 @@ let make =
                           ratingAfter={resultWithRatings.player1RatingAfter}
                         />
                       : React.null}
-                 </TableCell>
-                 <TableCell style=numberCellStyle>
+                 </MaterialUi_TableCell>
+                 <MaterialUi_TableCell style=numberCellStyle>
                    {text(string_of_int(result.player1goals))}
-                 </TableCell>
-                 <TableCell style=colonStyle> {text(":")} </TableCell>
-                 <TableCell style=numberCellStyle>
+                 </MaterialUi_TableCell>
+                 <MaterialUi_TableCell style=colonStyle>
+                   {text(":")}
+                 </MaterialUi_TableCell>
+                 <MaterialUi_TableCell style=numberCellStyle>
                    {text(string_of_int(result.player2goals))}
-                 </TableCell>
-                 <TableCell style={getPlayerStyle(player2Won)}>
+                 </MaterialUi_TableCell>
+                 <MaterialUi_TableCell style={getPlayerStyle(player2Won)}>
                    <RouteLink
                      toPage={PlayerHome(communityName, result.player2.name)}
                      style=playerLinkStyle>
@@ -164,21 +172,23 @@ let make =
                           ratingAfter={resultWithRatings.player2RatingAfter}
                         />
                       : React.null}
-                 </TableCell>
+                 </MaterialUi_TableCell>
                  {isWide && communitySettings.includeExtraTime
-                    ? <TableCell style=extraTimeStyle align="right">
+                    ? <MaterialUi_TableCell style=extraTimeStyle align=`Right>
                         {text(result.extratime ? "X" : "")}
-                      </TableCell>
+                      </MaterialUi_TableCell>
                     : React.null}
                  {isWide
-                    ? <TableCell> {text(formattedDate)} </TableCell>
+                    ? <MaterialUi_TableCell>
+                        {text(formattedDate)}
+                      </MaterialUi_TableCell>
                     : React.null}
-               </TableRow>;
+               </MaterialUi_TableRow>;
              })
            ->Array.of_list
            ->React.array}
-        </TableBody>
-      </Table>
+        </MaterialUi_TableBody>
+      </MaterialUi_Table>
       {graphIsShownForPlayer->Belt.Option.mapWithDefault(
          React.null, playerName =>
          <EloGraphDialog

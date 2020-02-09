@@ -124,31 +124,39 @@ let make =
       <div className="title">
         <Typography variant="h6"> {text("Results")} </Typography>
       </div>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell> {text("Edit")} </TableCell>
-            <TableCell align="right"> {text("Player1")} </TableCell>
-            <TableCell style=numberCellStyle> {text("G1")} </TableCell>
-            <TableCell style=colonStyle />
-            <TableCell style=numberCellStyle> {text("G2")} </TableCell>
-            <TableCell> {text("Player2")} </TableCell>
-            <TableCell style=extraTimeStyle align="right" title="Extra time">
-              {text("E")}
-            </TableCell>
-            <TableCell style=dateStyle> {text("Date")} </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+      <MaterialUi_Table size=`Small>
+        <MaterialUi_TableHead>
+          <MaterialUi_TableRow>
+            <MaterialUi_TableCell> {text("Edit")} </MaterialUi_TableCell>
+            <MaterialUi_TableCell align=`Right>
+              {text("Player1")}
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=numberCellStyle>
+              {text("G1")}
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=colonStyle />
+            <MaterialUi_TableCell style=numberCellStyle>
+              {text("G2")}
+            </MaterialUi_TableCell>
+            <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=extraTimeStyle align=`Right>
+              //TODO: title="Extra time">
+               {text("E")} </MaterialUi_TableCell>
+            <MaterialUi_TableCell style=dateStyle>
+              {text("Date")}
+            </MaterialUi_TableCell>
+          </MaterialUi_TableRow>
+        </MaterialUi_TableHead>
+        <MaterialUi_TableBody>
           <AddResultTableRow communityName />
           {results
            ->Belt.List.map(result =>
-               <TableRow key={string_of_int(result.id)}>
+               <MaterialUi_TableRow key={string_of_int(result.id)}>
                  {switch (state) {
                   | DeleteConfirmationPending(resultToDeleteId)
                       when result.id === resultToDeleteId =>
                     <>
-                      <TableCell>
+                      <MaterialUi_TableCell>
                         <span> {text("Are you sure?")} </span>
                         <button onClick={_ => deleteResult()}>
                           {text("Yes")}
@@ -156,7 +164,7 @@ let make =
                         <button onClick={_ => dispatch(StopDeleting)}>
                           {text("No")}
                         </button>
-                      </TableCell>
+                      </MaterialUi_TableCell>
                       <ResultTableRow result />
                     </>
                   | Editing(id, editedValues) when result.id === id =>
@@ -173,7 +181,7 @@ let make =
                     />
                   | Idle =>
                     <>
-                      <TableCell>
+                      <MaterialUi_TableCell>
                         <button
                           onClick={_ => dispatch(StartEditing(result))}>
                           {text("Edit")}
@@ -182,28 +190,28 @@ let make =
                           onClick={_ => dispatch(DeleteRequested(result.id))}>
                           {text("Delete")}
                         </button>
-                      </TableCell>
+                      </MaterialUi_TableCell>
                       <ResultTableRow result />
                     </>
                   | DeleteConfirmationPending(_)
                   | Editing(_) =>
-                    <> <TableCell /> <ResultTableRow result /> </>
+                    <> <MaterialUi_TableCell /> <ResultTableRow result /> </>
                   | Deleting(id)
                   | Updating(id) =>
                     <>
-                      <TableCell>
+                      <MaterialUi_TableCell>
                         {id === result.id
                            ? <MaterialUi_CircularProgress /> : React.null}
-                      </TableCell>
+                      </MaterialUi_TableCell>
                       <ResultTableRow result />
                     </>
                   }}
-               </TableRow>
+               </MaterialUi_TableRow>
              )
            ->Array.of_list
            ->React.array}
-        </TableBody>
-      </Table>
+        </MaterialUi_TableBody>
+      </MaterialUi_Table>
     </MaterialUi_Paper>
   };
 };
