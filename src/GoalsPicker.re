@@ -40,7 +40,7 @@ let make =
            }}
          />
        : <span>
-           <NativeSelect
+           <MaterialUi_NativeSelect
              disabled
              value={string_of_int(selectedGoals)}
              onChange={e => {
@@ -68,7 +68,7 @@ let make =
              <option key="more_goals" value=moreGoalsValue>
                {text(scoreTypeTexts.morePoints)}
              </option>
-           </NativeSelect>
+           </MaterialUi_NativeSelect>
          </span>}
   </>;
 };

@@ -21,7 +21,7 @@ let make =
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    <NativeSelect
+    <MaterialUi_NativeSelect
       disabled
       style={ReactDOMRe.Style.make(~width="200px", ())}
       onChange={e => {
@@ -42,6 +42,6 @@ let make =
            </option>
          )
        ->React.array}
-    </NativeSelect>
+    </MaterialUi_NativeSelect>
   };
 };

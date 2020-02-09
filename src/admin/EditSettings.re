@@ -162,7 +162,7 @@ let make = (~communityName: string) => {
           />
           {text("Score type: ")}
           // TODO: Style this without inline styles
-          <NativeSelect
+          <MaterialUi_NativeSelect
             value={state.scoreType |> scoreTypeToString}
             style={ReactDOMRe.Style.make(
               ~width="200px",
@@ -185,7 +185,7 @@ let make = (~communityName: string) => {
                </option>
              )
              |> React.array}
-          </NativeSelect>
+          </MaterialUi_NativeSelect>
           <MaterialUi_Button
             variant=`Contained
             color=`Primary
