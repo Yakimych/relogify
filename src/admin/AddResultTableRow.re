@@ -145,10 +145,10 @@ let make = (~communityName: string) => {
         />
       </MaterialUi_TableCell>
       <MaterialUi_TableCell>
-        <TextField
+        <MaterialUi_TextField
           disabled=isAddingResult
-          _type="date"
-          value={formatDate(date)}
+          type_="date"
+          value={`String(formatDate(date))}
           onChange={e => {
             let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
             if (DateFns.isValid(date)) {

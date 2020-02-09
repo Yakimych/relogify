@@ -140,17 +140,17 @@ let make = (~communityName: string) => {
             }
             label={React.string("Include Extra Time")}
           />
-          <TextField
-            _type="number"
-            variant="outlined"
+          <MaterialUi_TextField
+            type_="number"
+            variant=`Outlined
             style={ReactDOMRe.Style.make(
               ~width="200px",
               ~marginTop="10px",
               ~marginBottom="10px",
               (),
             )}
-            value={string_of_int(state.maxSelectablePoints)}
-            label="Max selectable points"
+            value={`Int(state.maxSelectablePoints)}
+            label={React.string("Max selectable points")}
             onChange={e => {
               let selectablePointsString = ReactEvent.Form.target(e)##value;
               dispatch(

@@ -25,14 +25,14 @@ let make =
   let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
   <>
     {isInCustomMode
-       ? <TextField
+       ? <MaterialUi_TextField
            disabled
            className="highlighted"
            autoFocus=true
-           _type="number"
+           type_="number"
            style={ReactDOMRe.Style.make(~width=isWide ? "100px" : "80px", ())}
-           variant="outlined"
-           value={string_of_int(selectedGoals)}
+           variant=`Outlined
+           value={`Int(selectedGoals)}
            onChange={e => {
              let newGoalsValue =
                ReactEvent.Form.target(e)##value |> validNumberOfGoals;

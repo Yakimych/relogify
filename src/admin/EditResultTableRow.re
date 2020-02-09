@@ -96,10 +96,10 @@ let make =
       />
     </MaterialUi_TableCell>
     <MaterialUi_TableCell>
-      <TextField
+      <MaterialUi_TextField
         disabled
-        _type="date"
-        value={formatDate(valuesUnderEdit.date)}
+        type_="date"
+        value={`String(formatDate(valuesUnderEdit.date))}
         onChange={e => {
           let dateString = ReactEvent.Form.target(e)##value;
           dispatch(SetDate(dateString));
