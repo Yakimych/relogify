@@ -93,7 +93,7 @@ let make =
     | Data(communitySettings) =>
       let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
-      <Paper>
+      <MaterialUi_Paper>
         <div className="title">
           <Typography variant="h6"> {text(title)} </Typography>
         </div>
@@ -115,7 +115,7 @@ let make =
             statName="Elo Difference"
           />
         </div>
-      </Paper>;
+      </MaterialUi_Paper>;
     };
   };
 };

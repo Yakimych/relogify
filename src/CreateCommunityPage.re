@@ -20,7 +20,7 @@ let make = () => {
 
   <>
     <Header page=CreateCommunityPage />
-    <Paper>
+    <MaterialUi_Paper>
       <div className="title">
         <Typography variant="h6">
           {React.string("Check availability and create")}
@@ -40,21 +40,21 @@ let make = () => {
           />
           <div>
             <div className="availability-indicator">
-              <Zoom
-                _in={nameIsAvailable()->Belt.Option.getWithDefault(false)}>
+              <MaterialUi_Zoom
+                in_={nameIsAvailable()->Belt.Option.getWithDefault(false)}>
                 <div> <CheckCircle fontSize="large" htmlColor="green" /> </div>
-              </Zoom>
+              </MaterialUi_Zoom>
             </div>
             <div className="availability-indicator">
-              <Zoom
-                _in={!nameIsAvailable()->Belt.Option.getWithDefault(true)}>
+              <MaterialUi_Zoom
+                in_={!nameIsAvailable()->Belt.Option.getWithDefault(true)}>
                 <NotAvailable fontSize="large" htmlColor="red" />
-              </Zoom>
+              </MaterialUi_Zoom>
             </div>
           </div>
         </div>
       </div>
-    </Paper>
+    </MaterialUi_Paper>
     <RouteLink toPage={CommunityStart(communityName)} className="button-link">
       <Button
         variant="contained"

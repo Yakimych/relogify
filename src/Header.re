@@ -17,11 +17,11 @@ let make = (~page: page) => {
       );
 
   <>
-    <AppBar
-      position="fixed"
-      color={isAdmin ? "secondary" : "primary"}
+    <MaterialUi_AppBar
+      position=`Fixed
+      color={isAdmin ? `Secondary : `Primary}
       className="app-header">
-      <Toolbar>
+      <MaterialUi_Toolbar>
         {switch (page) {
          | Home => <div> {text("Relogify")} </div>
          | CreateCommunityPage => <div> {text("Create new community")} </div>
@@ -185,8 +185,8 @@ let make = (~page: page) => {
              <div className="app-header-item"> {text("History")} </div>
            </>
          }}
-      </Toolbar>
-    </AppBar>
-    <Toolbar />
+      </MaterialUi_Toolbar>
+    </MaterialUi_AppBar>
+    <MaterialUi_Toolbar />
   </>;
 };

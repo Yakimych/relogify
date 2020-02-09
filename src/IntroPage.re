@@ -2,7 +2,7 @@ open Utils;
 
 [@react.component]
 let make = () => {
-  <Paper
+  <MaterialUi_Paper
     style={ReactDOMRe.Style.make(
       ~margin="24px 16px",
       ~padding="24px 16px",
@@ -54,5 +54,5 @@ let make = () => {
       </a>
       <span> {text(".")} </span>
     </Typography>
-  </Paper>;
+  </MaterialUi_Paper>;
 };

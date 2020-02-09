@@ -70,7 +70,7 @@ let make =
   | Data(communitySettings) =>
     let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
-    <Paper>
+    <MaterialUi_Paper>
       <div className="title">
         <Typography variant="h6"> {text("Results")} </Typography>
       </div>
@@ -188,6 +188,6 @@ let make =
            resultsWithRatings=results
          />
        )}
-    </Paper>;
+    </MaterialUi_Paper>;
   };
 };

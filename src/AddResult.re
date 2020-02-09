@@ -105,8 +105,8 @@ let make = (~communityName: string, ~onResultAdded) => {
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <Paper
-      elevation=6
+    <MaterialUi_Paper
+      elevation={`Int(6)}
       style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
       <div
         style={ReactDOMRe.Style.make(
@@ -181,6 +181,6 @@ let make = (~communityName: string, ~onResultAdded) => {
           }}
         />
       </div>
-    </Paper>
+    </MaterialUi_Paper>
   };
 };
