@@ -27,7 +27,7 @@ let make = () => {
       </RouteLink>
     </div>
     <MaterialUi_Card className="intro-card">
-      <CardContent>
+      <MaterialUi_CardContent>
         <Typography variant="h6"> {text("Feature list")} </Typography>
         <Typography>
           <span> {text("Weekly Results and Leaderboards")} </span>
@@ -43,7 +43,7 @@ let make = () => {
         <Typography>
           <span> {text("All-time history and Elo ratings")} </span>
         </Typography>
-      </CardContent>
+      </MaterialUi_CardContent>
     </MaterialUi_Card>
     <Typography component="p">
       <span>
