@@ -186,13 +186,13 @@ let make = (~communityName: string) => {
              )
              |> React.array}
           </NativeSelect>
-          <Button
-            variant="contained"
-            color="primary"
+          <MaterialUi_Button
+            variant=`Contained
+            color=`Primary
             style={ReactDOMRe.Style.make(~width="100px", ())}
             onClick={_ => saveCommunitySettings()}>
             {text("Save")}
-          </Button>
+          </MaterialUi_Button>
         </div>
       </Container>
     </>
