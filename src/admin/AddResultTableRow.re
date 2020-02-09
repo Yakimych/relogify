@@ -130,7 +130,7 @@ let make = (~communityName: string) => {
         />
       </TableCell>
       <TableCell>
-        <FormControlLabel
+        <MaterialUi_FormControlLabel
           control={
             <MaterialUi_Checkbox
               disabled=isAddingResult
@@ -139,7 +139,7 @@ let make = (~communityName: string) => {
               onChange={_ => toggleExtraTime()}
             />
           }
-          label="Extra Time"
+          label={React.string("Extra Time")}
         />
       </TableCell>
       <TableCell>
