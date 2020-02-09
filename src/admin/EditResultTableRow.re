@@ -86,11 +86,11 @@ let make =
       />
     </TableCell>
     <TableCell style=extraTimeStyle align="right">
-      <Checkbox
+      <MaterialUi_Checkbox
         disabled
-        color="default"
+        color=`Default
         checked={valuesUnderEdit.extraTime}
-        onClick={_ => dispatch(ToggleExtraTime)}
+        onChange={_ => dispatch(ToggleExtraTime)}
       />
     </TableCell>
     <TableCell>

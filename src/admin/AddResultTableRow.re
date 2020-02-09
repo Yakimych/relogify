@@ -132,11 +132,11 @@ let make = (~communityName: string) => {
       <TableCell>
         <FormControlLabel
           control={
-            <Checkbox
+            <MaterialUi_Checkbox
               disabled=isAddingResult
-              color="default"
+              color=`Default
               checked=extraTime
-              onClick=toggleExtraTime
+              onChange={_ => toggleExtraTime()}
             />
           }
           label="Extra Time"

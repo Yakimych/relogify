@@ -122,20 +122,20 @@ let make = (~communityName: string) => {
         <div className="admin-settings">
           <FormControlLabel
             control={
-              <Checkbox
-                color="default"
+              <MaterialUi_Checkbox
+                color=`Default
                 checked={state.allowDraws}
-                onClick={_ => dispatch(ToggleAllowDraws)}
+                onChange={_ => dispatch(ToggleAllowDraws)}
               />
             }
             label="Allow draws"
           />
           <FormControlLabel
             control={
-              <Checkbox
-                color="default"
+              <MaterialUi_Checkbox
+                color=`Default
                 checked={state.includeExtraTime}
-                onClick={_ => dispatch(ToggleIncludeExtraTime)}
+                onChange={_ => dispatch(ToggleIncludeExtraTime)}
               />
             }
             label="Include Extra Time"
