@@ -48,14 +48,14 @@ let make =
     let playerNames = data##players->Belt.Array.map(p => p##name);
 
     isInCustomMode || Belt.Array.length(playerNames) === 0
-      ? <TextField
+      ? <MaterialUi_TextField
           disabled
           className="highlighted"
           autoFocus=true
           style={ReactDOMRe.Style.make(~width="200px", ())}
-          variant="outlined"
+          variant=`Outlined
           inputProps={"maxLength": 20}
-          value={selectedPlayerName->Belt.Option.getWithDefault("")}
+          value={`String(selectedPlayerName->Belt.Option.getWithDefault(""))}
           onChange={e => {
             let newName = ReactEvent.Form.target(e)##value;
             onChange(newName);

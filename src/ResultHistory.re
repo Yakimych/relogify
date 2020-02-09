@@ -52,9 +52,9 @@ let make = (~communityName: string) => {
         style=nextPrevWeekButtonStyle variant=`Contained onClick=decrementWeek>
         {text("<<")}
       </MaterialUi_Button>
-      <TextField
-        _type="date"
-        value={dateFrom->Belt.Option.mapWithDefault("", formatDate)}
+      <MaterialUi_TextField
+        type_="date"
+        value={`String(dateFrom->Belt.Option.mapWithDefault("", formatDate))}
         onChange={e => {
           let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
           if (DateFns.isValid(date)) {
@@ -62,9 +62,9 @@ let make = (~communityName: string) => {
           };
         }}
       />
-      <TextField
-        _type="date"
-        value={dateTo->Belt.Option.mapWithDefault("", formatDate)}
+      <MaterialUi_TextField
+        type_="date"
+        value={`String(dateTo->Belt.Option.mapWithDefault("", formatDate))}
         onChange={e => {
           let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
           if (DateFns.isValid(date)) {

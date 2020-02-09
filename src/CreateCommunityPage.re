@@ -28,9 +28,9 @@ let make = () => {
       </div>
       <div className="panel-content">
         <div className="row">
-          <TextField
+          <MaterialUi_TextField
             style={ReactDOMRe.Style.make(~width="250px", ())}
-            value=communityName
+            value={`String(communityName)}
             placeholder="Choose a name"
             inputProps={"maxLength": 20}
             onChange={e => {
