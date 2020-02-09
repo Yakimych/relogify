@@ -33,7 +33,7 @@ let make =
        let results = data##results |> toListOfResults;
 
        results->Belt.List.length === 0
-         ? <Card className="no-result-info">
+         ? <MaterialUi_Card className="no-result-info">
              <CardContent>
                <Typography variant="h6">
                  {React.string(
@@ -41,7 +41,7 @@ let make =
                   )}
                </Typography>
              </CardContent>
-           </Card>
+           </MaterialUi_Card>
          : <EditResultsTable
              communityName
              results
