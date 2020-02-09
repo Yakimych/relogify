@@ -5,20 +5,26 @@ open Styles;
 [@react.component]
 let make = (~result) => {
   <>
-    <TableCell align="right">
+    <MaterialUi_TableCell align=`Right>
       <span> {text(result.player1.name)} </span>
-    </TableCell>
-    <TableCell style=adminPlayer1PointsCellStyle>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=adminPlayer1PointsCellStyle>
       {text(string_of_int(result.player1goals))}
-    </TableCell>
-    <TableCell style=colonStyle> {text(":")} </TableCell>
-    <TableCell style=numberCellStyle>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=colonStyle>
+      {text(":")}
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=numberCellStyle>
       {text(string_of_int(result.player2goals))}
-    </TableCell>
-    <TableCell> <span> {text(result.player2.name)} </span> </TableCell>
-    <TableCell style=extraTimeStyle align="right">
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell>
+      <span> {text(result.player2.name)} </span>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell style=extraTimeStyle align=`Right>
       {text(result.extratime ? "X" : "")}
-    </TableCell>
-    <TableCell> {text(formatDate(result.date))} </TableCell>
+    </MaterialUi_TableCell>
+    <MaterialUi_TableCell>
+      {text(formatDate(result.date))}
+    </MaterialUi_TableCell>
   </>;
 };

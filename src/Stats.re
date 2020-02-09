@@ -42,9 +42,9 @@ let getSortFunc =
   let valueFromRow2ToCompare = getValueToCompare(row2);
 
   if (valueFromRow1ToCompare > valueFromRow2ToCompare) {
-    sortDirection === Asc ? 1 : (-1);
+    sortDirection === `Asc ? 1 : (-1);
   } else if (valueFromRow1ToCompare < valueFromRow2ToCompare) {
-    sortDirection === Asc ? (-1) : 1;
+    sortDirection === `Asc ? (-1) : 1;
   } else {
     0;
   };
@@ -74,13 +74,11 @@ let make =
   let settingsQuery = useCommunitySettings(communityName);
 
   let (sortBy, setSortBy) = React.useState(_ => WinsPerMatch);
-  let (sortDirection, setSortDirection) = React.useState(_ => Desc);
+  let (sortDirection, setSortDirection) = React.useState(_ => `Desc);
 
   let requestSort = (columnType: columnType) => {
     setSortBy(_ => columnType);
-    setSortDirection(currentDirection =>
-      currentDirection === Asc ? Desc : Asc
-    );
+    setSortDirection(currentDirection => currentDirection);
   };
 
   let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
@@ -119,134 +117,142 @@ let make =
                  {text(title->Belt.Option.getWithDefault("Stats"))}
                </Typography>
              </div>
-             <Table size="small">
-               <TableHead>
-                 <TableRow>
-                   <TableCell align="right"> {text("Player")} </TableCell>
+             <MaterialUi_Table size=`Small>
+               <MaterialUi_TableHead>
+                 <MaterialUi_TableRow>
+                   <MaterialUi_TableCell align=`Right>
+                     {text("Player")}
+                   </MaterialUi_TableCell>
                    {showEloRatings && isWide
                       ? <>
                           <MaterialUi_Badge
                             badgeContent={React.string("BETA")}
                             color=`Primary>
-                            <TableCell
-                              style=numberCellStyle title="Elo Rating">
-                              <TableSortLabel
-                                active={
-                                  sortBy
-                                  == EloRating(resultsWithRatings.ratingMap)
-                                }
-                                direction={
-                                  sortDirection === Asc ? "asc" : "desc"
-                                }
-                                onClick={_ =>
-                                  requestSort(
-                                    EloRating(resultsWithRatings.ratingMap),
-                                  )
-                                }>
-                                {text("Elo")}
-                              </TableSortLabel>
-                            </TableCell>
+                            <MaterialUi_TableCell style=numberCellStyle>
+                              //  TODO: title="Elo Rating"
+
+                                <MaterialUi_TableSortLabel
+                                  active={
+                                    sortBy
+                                    == EloRating(resultsWithRatings.ratingMap)
+                                  }
+                                  direction=sortDirection
+                                  onClick={_ =>
+                                    requestSort(
+                                      EloRating(resultsWithRatings.ratingMap),
+                                    )
+                                  }>
+                                  {text("Elo")}
+                                </MaterialUi_TableSortLabel>
+                              </MaterialUi_TableCell>
                           </MaterialUi_Badge>
                         </>
                       : React.null}
-                   <TableCell style=numberCellStyle title="Win Percentage">
-                     <TableSortLabel
-                       active={sortBy === WinsPerMatch}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(WinsPerMatch)}>
-                       {text("W%")}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell style=numberCellStyle title="Number of wins">
-                     <TableSortLabel
-                       active={sortBy === MatchesWon}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(MatchesWon)}>
-                       {text("W")}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell style=numberCellStyle title="Number of losses">
-                     <TableSortLabel
-                       active={sortBy === MatchesLost}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(MatchesLost)}>
-                       {text("L")}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell style=numberCellStyle title={texts.pointsWon}>
-                     <TableSortLabel
-                       active={sortBy === GoalsScored}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(GoalsScored)}>
-                       {text(texts.pointsWonShort)}
-                     </TableSortLabel>
-                   </TableCell>
-                   <TableCell style=numberCellStyle title={texts.pointsLost}>
-                     <TableSortLabel
-                       active={sortBy === GoalsConceded}
-                       direction={sortDirection === Asc ? "asc" : "desc"}
-                       onClick={_ => requestSort(GoalsConceded)}>
-                       {text(texts.pointsLostShort)}
-                     </TableSortLabel>
-                   </TableCell>
+                   <MaterialUi_TableCell style=numberCellStyle>
+                     // TODO:  title="Win Percentage">
+
+                       <MaterialUi_TableSortLabel
+                         active={sortBy === WinsPerMatch}
+                         direction=sortDirection
+                         onClick={_ => requestSort(WinsPerMatch)}>
+                         {text("W%")}
+                       </MaterialUi_TableSortLabel>
+                     </MaterialUi_TableCell>
+                   <MaterialUi_TableCell style=numberCellStyle>
+                     //  TODO: title="Number of wins">
+
+                       <MaterialUi_TableSortLabel
+                         active={sortBy === MatchesWon}
+                         direction=sortDirection
+                         onClick={_ => requestSort(MatchesWon)}>
+                         {text("W")}
+                       </MaterialUi_TableSortLabel>
+                     </MaterialUi_TableCell>
+                   <MaterialUi_TableCell style=numberCellStyle>
+                     // TODO:  title="Number of losses">
+
+                       <MaterialUi_TableSortLabel
+                         active={sortBy === MatchesLost}
+                         direction=sortDirection
+                         onClick={_ => requestSort(MatchesLost)}>
+                         {text("L")}
+                       </MaterialUi_TableSortLabel>
+                     </MaterialUi_TableCell>
+                   <MaterialUi_TableCell style=numberCellStyle>
+                     // TODO: title={texts.pointsWon}>
+
+                       <MaterialUi_TableSortLabel
+                         active={sortBy === GoalsScored}
+                         direction=sortDirection
+                         onClick={_ => requestSort(GoalsScored)}>
+                         {text(texts.pointsWonShort)}
+                       </MaterialUi_TableSortLabel>
+                     </MaterialUi_TableCell>
+                   <MaterialUi_TableCell style=numberCellStyle>
+                     // TODO: title={texts.pointsLost}>
+
+                       <MaterialUi_TableSortLabel
+                         active={sortBy === GoalsConceded}
+                         direction=sortDirection
+                         onClick={_ => requestSort(GoalsConceded)}>
+                         {text(texts.pointsLostShort)}
+                       </MaterialUi_TableSortLabel>
+                     </MaterialUi_TableCell>
                    {isWide
                       ? <>
-                          <TableCell
-                            style=numberCellStyle title={texts.pointDiff}>
-                            <TableSortLabel
-                              active={sortBy === GoalDiff}
-                              direction={
-                                sortDirection === Asc ? "asc" : "desc"
-                              }
-                              onClick={_ => requestSort(GoalDiff)}>
-                              {text("+/-")}
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell
-                            style=numberCellStyle
-                            title={texts.pointsWonPerMatch}>
-                            <TableSortLabel
-                              active={sortBy === GoalsScoredPerMatch}
-                              direction={
-                                sortDirection === Asc ? "asc" : "desc"
-                              }
-                              onClick={_ => requestSort(GoalsScoredPerMatch)}>
-                              {text(texts.pointsWonPerMatchShort)}
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell
-                            style=numberCellStyle
-                            title={texts.pointsLostPerMatch}>
-                            <TableSortLabel
-                              active={sortBy === GoalsConcededPerMatch}
-                              direction={
-                                sortDirection === Asc ? "asc" : "desc"
-                              }
-                              onClick={_ =>
-                                requestSort(GoalsConcededPerMatch)
-                              }>
-                              {text(texts.pointsLostPerMatchShort)}
-                            </TableSortLabel>
-                          </TableCell>
+                          <MaterialUi_TableCell style=numberCellStyle>
+                            // TODO: title={texts.pointDiff}>
+
+                              <MaterialUi_TableSortLabel
+                                active={sortBy === GoalDiff}
+                                direction=sortDirection
+                                onClick={_ => requestSort(GoalDiff)}>
+                                {text("+/-")}
+                              </MaterialUi_TableSortLabel>
+                            </MaterialUi_TableCell>
+                          <MaterialUi_TableCell style=numberCellStyle>
+                            // TODO: title={texts.pointsWonPerMatch}>
+
+                              <MaterialUi_TableSortLabel
+                                active={sortBy === GoalsScoredPerMatch}
+                                direction=sortDirection
+                                onClick={_ =>
+                                  requestSort(GoalsScoredPerMatch)
+                                }>
+                                {text(texts.pointsWonPerMatchShort)}
+                              </MaterialUi_TableSortLabel>
+                            </MaterialUi_TableCell>
+                          <MaterialUi_TableCell style=numberCellStyle>
+                            // TODO: title={texts.pointsLostPerMatch}>
+
+                              <MaterialUi_TableSortLabel
+                                active={sortBy === GoalsConcededPerMatch}
+                                direction=sortDirection
+                                onClick={_ =>
+                                  requestSort(GoalsConcededPerMatch)
+                                }>
+                                {text(texts.pointsLostPerMatchShort)}
+                              </MaterialUi_TableSortLabel>
+                            </MaterialUi_TableCell>
                         </>
                       : React.null}
-                 </TableRow>
-               </TableHead>
-               <TableBody>
+                 </MaterialUi_TableRow>
+               </MaterialUi_TableHead>
+               <MaterialUi_TableBody>
                  {leaderboardRows
                   ->Belt.List.take(maxNumberOfRowsToShow)
                   ->Belt.Option.getWithDefault(leaderboardRows)
                   ->Belt.List.map(r =>
-                      <TableRow key={r.playerName}>
-                        <TableCell align="right">
+                      <MaterialUi_TableRow key={r.playerName}>
+                        <MaterialUi_TableCell align=`Right>
                           <RouteLink
                             toPage={PlayerHome(communityName, r.playerName)}
                             style=playerLinkStyle>
                             {text(r.playerName)}
                           </RouteLink>
-                        </TableCell>
+                        </MaterialUi_TableCell>
                         {showEloRatings && isWide
-                           ? <TableCell style=numberCellStyle>
+                           ? <MaterialUi_TableCell style=numberCellStyle>
                                {text(
                                   resultsWithRatings.ratingMap
                                   ->Belt_MapString.getWithDefault(
@@ -257,50 +263,50 @@ let make =
                                   |> int_of_float
                                   |> string_of_int,
                                 )}
-                             </TableCell>
+                             </MaterialUi_TableCell>
                            : React.null}
-                        <TableCell style=numberCellStyle>
+                        <MaterialUi_TableCell style=numberCellStyle>
                           {text(formatPercentage(r |> matchesWonPerPlayed))}
-                        </TableCell>
-                        <TableCell style=numberCellStyle>
+                        </MaterialUi_TableCell>
+                        <MaterialUi_TableCell style=numberCellStyle>
                           {text(string_of_int(r.matchesWon))}
-                        </TableCell>
-                        <TableCell style=numberCellStyle>
+                        </MaterialUi_TableCell>
+                        <MaterialUi_TableCell style=numberCellStyle>
                           {text(string_of_int(r.matchesLost))}
-                        </TableCell>
-                        <TableCell style=numberCellStyle>
+                        </MaterialUi_TableCell>
+                        <MaterialUi_TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsScored))}
-                        </TableCell>
-                        <TableCell style=numberCellStyle>
+                        </MaterialUi_TableCell>
+                        <MaterialUi_TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsConceded))}
-                        </TableCell>
+                        </MaterialUi_TableCell>
                         {isWide
                            ? <>
-                               <TableCell style=numberCellStyle>
+                               <MaterialUi_TableCell style=numberCellStyle>
                                  {text(r |> goalDiff |> formatDiff)}
-                               </TableCell>
-                               <TableCell style=numberCellStyle>
+                               </MaterialUi_TableCell>
+                               <MaterialUi_TableCell style=numberCellStyle>
                                  {text(
                                     formatGoalsPerMatch(
                                       r |> goalsScoredPerMatch,
                                     ),
                                   )}
-                               </TableCell>
-                               <TableCell style=numberCellStyle>
+                               </MaterialUi_TableCell>
+                               <MaterialUi_TableCell style=numberCellStyle>
                                  {text(
                                     formatGoalsPerMatch(
                                       r |> goalsConcededPerMatch,
                                     ),
                                   )}
-                               </TableCell>
+                               </MaterialUi_TableCell>
                              </>
                            : React.null}
-                      </TableRow>
+                      </MaterialUi_TableRow>
                     )
                   ->Array.of_list
                   ->React.array}
-               </TableBody>
-             </Table>
+               </MaterialUi_TableBody>
+             </MaterialUi_Table>
            </MaterialUi_Paper>;
      }}
   </>;

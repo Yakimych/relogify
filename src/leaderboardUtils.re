@@ -12,9 +12,7 @@ type columnType =
   | GoalsScoredPerMatch
   | GoalsConcededPerMatch;
 
-type sortDirection =
-  | Asc
-  | Desc;
+type sortDirection = [ | `Asc | `Desc];
 
 let sortCompare = (a, b) =>
   if (a > b) {

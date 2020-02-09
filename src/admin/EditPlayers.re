@@ -19,20 +19,24 @@ let make = (~communityName: string) => {
     <>
       <Header page={AdminPlayersPage(communityName)} />
       <MaterialUi_Container maxWidth=`Sm>
-        <Table size="small">
-          <TableHead>
-            <TableRow> <TableCell> {text("Player")} </TableCell> </TableRow>
-          </TableHead>
-          <TableBody>
+        <MaterialUi_Table size=`Small>
+          <MaterialUi_TableHead>
+            <MaterialUi_TableRow>
+              <MaterialUi_TableCell> {text("Player")} </MaterialUi_TableCell>
+            </MaterialUi_TableRow>
+          </MaterialUi_TableHead>
+          <MaterialUi_TableBody>
             {data##players
              ->Belt.Array.map(p =>
-                 <TableRow key={string_of_int(p##id)}>
-                   <TableCell> {text(p##name)} </TableCell>
-                 </TableRow>
+                 <MaterialUi_TableRow key={string_of_int(p##id)}>
+                   <MaterialUi_TableCell>
+                     {text(p##name)}
+                   </MaterialUi_TableCell>
+                 </MaterialUi_TableRow>
                )
              |> React.array}
-          </TableBody>
-        </Table>
+          </MaterialUi_TableBody>
+        </MaterialUi_Table>
       </MaterialUi_Container>
     </>
   };
