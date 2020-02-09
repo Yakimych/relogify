@@ -48,8 +48,8 @@ let make =
                handleSelectChange(newGoalsValue);
              }}
              input={
-               <OutlinedInput
-                 labelWidth=0
+               <MaterialUi_OutlinedInput
+                 labelWidth={`Int(0)}
                  style={ReactDOMRe.Style.make(
                    ~width=isWide ? "64px" : "60px",
                    (),
