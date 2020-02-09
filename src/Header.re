@@ -41,13 +41,13 @@ let make = (~page: page) => {
                {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
              </MaterialUi_Fab>
              <div className="add-result">
-               <ExpansionPanel expanded=addResultIsOpen>
+               <MaterialUi_ExpansionPanel expanded=addResultIsOpen>
                  <span />
                  <AddResult
                    communityName
                    onResultAdded={_ => setAddResultIsOpen(_ => false)}
                  />
-               </ExpansionPanel>
+               </MaterialUi_ExpansionPanel>
              </div>
              <RouteLink
                className="app-header-item" toPage={History(communityName)}>
