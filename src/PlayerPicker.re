@@ -70,9 +70,9 @@ let make =
           }}
           value={selectedPlayerName->Belt.Option.getWithDefault("")}
           input={
-            <OutlinedInput
+            <MaterialUi_OutlinedInput
               style={ReactDOMRe.Style.make(~width="60px", ())}
-              labelWidth=0
+              labelWidth={`Int(0)}
             />
           }>
           <option key="empty" value="" disabled=true>

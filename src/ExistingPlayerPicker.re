@@ -30,9 +30,9 @@ let make =
       }}
       value={string_of_int(selectedPlayerId)}
       input={
-        <OutlinedInput
+        <MaterialUi_OutlinedInput
           style={ReactDOMRe.Style.make(~width="60px", ())}
-          labelWidth=0
+          labelWidth={`Int(0)}
         />
       }>
       {data##players

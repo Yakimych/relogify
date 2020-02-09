@@ -174,8 +174,8 @@ let make = (~communityName: string) => {
               dispatch(SetScoreType(scoreTypeString |> toScoreType));
             }}
             input={
-              <OutlinedInput
-                labelWidth=0
+              <MaterialUi_OutlinedInput
+                labelWidth={`Int(0)}
                 style={ReactDOMRe.Style.make(~width="150px", ())}
               />
             }>
