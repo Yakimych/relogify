@@ -41,19 +41,17 @@ let make = (~communityName: string) => {
     <Header page={History(communityName)} />
     <Box margin="10px" textAlign="center">
       <Box margin="10px" textAlign="center">
-        <Button variant="contained" onClick=setAllTime>
+        <MaterialUi_Button variant=`Contained onClick=setAllTime>
           {text("All time")}
-        </Button>
-        <Button variant="contained" onClick=setToday>
+        </MaterialUi_Button>
+        <MaterialUi_Button variant=`Contained onClick=setToday>
           {text("This week")}
-        </Button>
+        </MaterialUi_Button>
       </Box>
-      <Button
-        style=nextPrevWeekButtonStyle
-        variant="contained"
-        onClick=decrementWeek>
+      <MaterialUi_Button
+        style=nextPrevWeekButtonStyle variant=`Contained onClick=decrementWeek>
         {text("<<")}
-      </Button>
+      </MaterialUi_Button>
       <TextField
         _type="date"
         value={dateFrom->Belt.Option.mapWithDefault("", formatDate)}
@@ -74,12 +72,10 @@ let make = (~communityName: string) => {
           };
         }}
       />
-      <Button
-        style=nextPrevWeekButtonStyle
-        variant="contained"
-        onClick=incrementWeek>
+      <MaterialUi_Button
+        style=nextPrevWeekButtonStyle variant=`Contained onClick=incrementWeek>
         {text(">>")}
-      </Button>
+      </MaterialUi_Button>
     </Box>
     <Stats communityName ?dateFrom ?dateTo />
     <Results

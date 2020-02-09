@@ -149,13 +149,13 @@ let make = (~communityName: string, ~onResultAdded) => {
           ~justifyContent="space-between",
           (),
         )}>
-        <Button
+        <MaterialUi_Button
           disabled=isAddingResult
-          variant="contained"
-          color="primary"
+          variant=`Contained
+          color=`Primary
           onClick={_ => addResult(communitySettings.allowDraws)}>
           {text("Submit")}
-        </Button>
+        </MaterialUi_Button>
         {communitySettings.includeExtraTime
            ? <FormControlLabel
                control={

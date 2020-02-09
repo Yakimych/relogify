@@ -56,13 +56,13 @@ let make = () => {
       </div>
     </MaterialUi_Paper>
     <RouteLink toPage={CommunityStart(communityName)} className="button-link">
-      <Button
-        variant="contained"
-        color="primary"
+      <MaterialUi_Button
+        variant=`Contained
+        color=`Primary
         disabled={!nameIsAvailable()->Belt.Option.getWithDefault(false)}
         style={ReactDOMRe.Style.make(~marginTop="10px", ())}>
         {text("Take me there!")}
-      </Button>
+      </MaterialUi_Button>
     </RouteLink>
   </>;
 };

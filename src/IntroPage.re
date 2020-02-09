@@ -21,9 +21,9 @@ let make = () => {
       <RouteLink
         className="button-link create-community-button"
         toPage=CreateCommunityPage>
-        <Button variant="contained" color="primary">
+        <MaterialUi_Button variant=`Contained color=`Primary>
           {ReasonReact.string("Create Community")}
-        </Button>
+        </MaterialUi_Button>
       </RouteLink>
     </div>
     <MaterialUi_Card className="intro-card">

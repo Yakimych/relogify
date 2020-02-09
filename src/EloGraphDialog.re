@@ -20,6 +20,8 @@ let make =
     </DialogTitle>
     <DialogContent> <EloGraph playerName resultsWithRatings /> </DialogContent>
     <DialogActions>
-      <Button onClick=onClose color="primary"> {text("Close")} </Button>
+      <MaterialUi_Button onClick={_ => onClose()} color=`Primary>
+        {text("Close")}
+      </MaterialUi_Button>
     </DialogActions>
   </Dialog>;
