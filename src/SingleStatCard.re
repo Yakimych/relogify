@@ -11,7 +11,7 @@ let numberCellStyle =
 [@react.component]
 let make = (~playersWithStat: list((string, string)), ~statName) => {
   <MaterialUi_Card raised=true>
-    <CardContent>
+    <MaterialUi_CardContent>
       <Typography gutterBottom=true> {text(statName)} </Typography>
       <Table size="small">
         <TableBody>
@@ -27,6 +27,6 @@ let make = (~playersWithStat: list((string, string)), ~statName) => {
            ->React.array}
         </TableBody>
       </Table>
-    </CardContent>
+    </MaterialUi_CardContent>
   </MaterialUi_Card>;
 };

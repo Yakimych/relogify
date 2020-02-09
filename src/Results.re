@@ -51,7 +51,7 @@ let make =
 
     newlyFetchedResults->Belt.List.length === 0
       ? <MaterialUi_Card className="no-result-info">
-          <CardContent>
+          <MaterialUi_CardContent>
             <Typography variant="h6">
               {React.string(
                  noResultsText->Belt.Option.getWithDefault(
@@ -59,7 +59,7 @@ let make =
                  ),
                )}
             </Typography>
-          </CardContent>
+          </MaterialUi_CardContent>
         </MaterialUi_Card>
       : <ResultsTable
           communityName
