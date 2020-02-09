@@ -101,7 +101,7 @@ let make = (~communityName: string, ~onResultAdded) => {
   };
 
   switch (settingsQuery) {
-  | Loading => <CircularProgress />
+  | Loading => <MaterialUi_CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>

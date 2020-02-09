@@ -87,7 +87,7 @@ let make =
   <>
     {switch (resultsQuery, settingsQuery) {
      | (_, Loading)
-     | (Loading, _) => <CircularProgress />
+     | (Loading, _) => <MaterialUi_CircularProgress />
      | (NoData, _)
      | (_, NoData)
      | (Error(_), _)
