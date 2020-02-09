@@ -118,7 +118,7 @@ let make = (~communityName: string) => {
   | Some(_) =>
     <>
       <Header page={AdminSettingsPage(communityName)} />
-      <Container maxWidth="lg">
+      <MaterialUi_Container maxWidth=`Lg>
         <div className="admin-settings">
           <FormControlLabel
             control={
@@ -194,7 +194,7 @@ let make = (~communityName: string) => {
             {text("Save")}
           </MaterialUi_Button>
         </div>
-      </Container>
+      </MaterialUi_Container>
     </>
   };
 };

@@ -18,7 +18,7 @@ let make = (~communityName: string) => {
   | Data(data) =>
     <>
       <Header page={AdminPlayersPage(communityName)} />
-      <Container maxWidth="sm">
+      <MaterialUi_Container maxWidth=`Sm>
         <Table size="small">
           <TableHead>
             <TableRow> <TableCell> {text("Player")} </TableCell> </TableRow>
@@ -33,7 +33,7 @@ let make = (~communityName: string) => {
              |> React.array}
           </TableBody>
         </Table>
-      </Container>
+      </MaterialUi_Container>
     </>
   };
 };
