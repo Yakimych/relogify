@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const outputDir = path.join(__dirname, "build/");
 
 const isProd = process.env.NODE_ENV === "production";
@@ -12,13 +13,21 @@ module.exports = {
   mode: isProd ? "production" : "development",
   output: {
     path: outputDir,
+    publicPath: "/",
     filename: "Index.js"
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
       favicon: "src/favicon.ico",
-      inject: false
+      inject: true
+    }),
+    new FaviconsWebpackPlugin({
+      favicons: {
+        icons: {
+          favicons: false
+        }
+      }
     }),
     new Dotenv({ systemvars: true })
   ],
