@@ -39,3 +39,21 @@ let getPlayerStats =
     emptyPlayerStats(playerName),
     playerStatsReducer(playerName),
   );
+
+let hasPlayer1Won = (result: matchResult) =>
+  result.player1goals > result.player2goals;
+
+let hasPlayer2Won = (result: matchResult) =>
+  result.player2goals > result.player1goals;
+
+let hasMainPlayerWon = (mainPlayerName: option(string), result: matchResult) => {
+  let player1Won = hasPlayer1Won(result);
+  let player2Won = hasPlayer2Won(result);
+  let mainPlayerWon =
+    player1Won
+    && mainPlayerName === Some(result.player1.name)
+    || player2Won
+    && mainPlayerName === Some(result.player2.name);
+
+  mainPlayerWon;
+};

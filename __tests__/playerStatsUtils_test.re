@@ -254,3 +254,154 @@ describe("getLeaderboard", () => {
     expect(playerStats) |> toEqual(expectedPlayerStatsForAbc);
   });
 });
+
+let testPlayer1: player = {id: 1, name: "Player1"};
+let testPlayer2: player = {id: 2, name: "Player2"};
+
+let testMatchResult: matchResult = {
+  id: 1,
+  player1: testPlayer1,
+  player2: testPlayer2,
+  player1goals: 0,
+  player2goals: 0,
+  date: Js.Date.fromString("2019-01-01"),
+  extratime: false,
+};
+
+describe("hasPlayer1Won", () => {
+  test("should return true when player1 has more points than player2", () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 2,
+      player2goals: 1,
+    };
+    expect(hasPlayer1Won(result)) |> toBe(true);
+  });
+
+  test(
+    "should return false when player1 has the same number of points as player2",
+    () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 2,
+      player2goals: 2,
+    };
+    expect(hasPlayer1Won(result)) |> toBe(false);
+  });
+
+  test("should return false when player1 has fewer points than player2", () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 1,
+      player2goals: 2,
+    };
+    expect(hasPlayer1Won(result)) |> toBe(false);
+  });
+});
+
+describe("hasPlayer2Won", () => {
+  test("should return true when player2 has more points than player1", () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 0,
+      player2goals: 5,
+    };
+    expect(hasPlayer2Won(result)) |> toBe(true);
+  });
+
+  test(
+    "should return false when player2 has the same number of points as player1",
+    () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 0,
+      player2goals: 0,
+    };
+    expect(hasPlayer2Won(result)) |> toBe(false);
+  });
+
+  test("should return false when player2 has fewer points than player1", () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 3,
+      player2goals: 1,
+    };
+    expect(hasPlayer2Won(result)) |> toBe(false);
+  });
+});
+
+describe("hasMainPlayerWon", () => {
+  test(
+    "should return true when player1 is main player and has more points than player2",
+    () => {
+      let result: matchResult = {
+        ...testMatchResult,
+        player1goals: 1,
+        player2goals: 0,
+      };
+      expect(hasMainPlayerWon(Some(testPlayer1.name), result))
+      |> toBe(true);
+    },
+  );
+
+  test(
+    "should return false when player1 has the same number of points as player2",
+    () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 5,
+      player2goals: 5,
+    };
+    expect(hasMainPlayerWon(Some(testPlayer1.name), result)) |> toBe(false);
+  });
+
+  test(
+    "should return false when player1 is the main player and has fewer points than player2",
+    () => {
+      let result: matchResult = {
+        ...testMatchResult,
+        player1goals: 1,
+        player2goals: 4,
+      };
+      expect(hasMainPlayerWon(Some(testPlayer1.name), result))
+      |> toBe(false);
+    },
+  );
+
+  test(
+    "should return true when player2 is main player and has more points than player1",
+    () => {
+      let result: matchResult = {
+        ...testMatchResult,
+        player1goals: 1,
+        player2goals: 2,
+      };
+      expect(hasMainPlayerWon(Some(testPlayer2.name), result))
+      |> toBe(true);
+    },
+  );
+
+  test(
+    "should return false when player2 has the same number of points as player1",
+    () => {
+    let result: matchResult = {
+      ...testMatchResult,
+      player1goals: 3,
+      player2goals: 3,
+    };
+    expect(hasMainPlayerWon(Some(testPlayer2.name), result)) |> toBe(false);
+  });
+
+  test(
+    "should return false when player2 is the main player and has fewer points than player1",
+    () => {
+      let result: matchResult = {
+        ...testMatchResult,
+        player1goals: 2,
+        player2goals: 0,
+      };
+      expect(hasMainPlayerWon(Some(testPlayer2.name), result))
+      |> toBe(false);
+    },
+  );
+});

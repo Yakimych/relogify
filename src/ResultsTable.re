@@ -3,6 +3,7 @@ open Utils;
 open Types;
 open EloUtils;
 open UseCommunitySettings;
+open PlayerStatsUtils;
 
 let getPlayerStyle = (isWinningPlayer: bool) =>
   ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());
@@ -101,13 +102,9 @@ let make =
           {results
            ->Belt.List.map(resultWithRatings => {
                let result = resultWithRatings.result;
-               let player1Won = result.player1goals > result.player2goals;
-               let player2Won = !player1Won;
-               let mainPlayerWon =
-                 player1Won
-                 && mainPlayerName === Some(result.player1.name)
-                 || player2Won
-                 && mainPlayerName === Some(result.player2.name);
+               let player1Won = hasPlayer1Won(result);
+               let player2Won = hasPlayer2Won(result);
+               let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
                let formattedDate = formatDate(result.date);
 
                <TableRow
