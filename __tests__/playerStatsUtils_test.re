@@ -190,6 +190,7 @@ let expectedPlayerStatsForAbc: playerStats = {
   playerName: "Abc",
   matchesWon: 4,
   matchesLost: 2,
+  matchesDrawn: 0,
   goalsScored: 15,
   goalsConceded: 19,
 };
@@ -200,6 +201,7 @@ let emptyPlayerStats = (playerName: string) => {
   goalsConceded: 0,
   matchesWon: 0,
   matchesLost: 0,
+  matchesDrawn: 0,
 };
 
 let singleResult = {
@@ -228,6 +230,7 @@ describe("getLeaderboard", () => {
       playerName: "Alice",
       matchesWon: 1,
       matchesLost: 0,
+      matchesDrawn: 0,
       goalsScored: 3,
       goalsConceded: 2,
     };
@@ -241,6 +244,7 @@ describe("getLeaderboard", () => {
       playerName: "Bob",
       matchesWon: 0,
       matchesLost: 1,
+      matchesDrawn: 0,
       goalsScored: 2,
       goalsConceded: 3,
     };

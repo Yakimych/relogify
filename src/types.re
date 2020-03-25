@@ -30,6 +30,7 @@ type playerStats = {
   playerName: string,
   matchesWon: int,
   matchesLost: int,
+  matchesDrawn: int,
   goalsScored: int,
   goalsConceded: int,
 };
