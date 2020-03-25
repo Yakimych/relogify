@@ -6,6 +6,7 @@ let emptyPlayerStats = (playerName: string) => {
   goalsConceded: 0,
   matchesWon: 0,
   matchesLost: 0,
+  matchesDrawn: 0,
 };
 
 let playerStatsReducer =
@@ -21,7 +22,7 @@ let playerStatsReducer =
         ? result.player2goals : result.player1goals;
 
     {
-      ...stats,
+      playerName: stats.playerName,
       goalsScored: stats.goalsScored + goalsScoredThisMatch,
       goalsConceded: stats.goalsConceded + goalsConcededThisMatch,
       matchesWon:
@@ -29,7 +30,10 @@ let playerStatsReducer =
         + (goalsScoredThisMatch > goalsConcededThisMatch ? 1 : 0),
       matchesLost:
         stats.matchesLost
-        + (goalsScoredThisMatch > goalsConcededThisMatch ? 0 : 1),
+        + (goalsScoredThisMatch < goalsConcededThisMatch ? 1 : 0),
+      matchesDrawn:
+        stats.matchesDrawn
+        + (goalsScoredThisMatch === goalsConcededThisMatch ? 1 : 0),
     };
   };
 

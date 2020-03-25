@@ -63,6 +63,7 @@ let emptyRow = (playerName: string) => {
   playerName,
   matchesWon: 0,
   matchesLost: 0,
+  matchesDrawn: 0,
   goalsScored: 0,
   goalsConceded: 0,
 };
