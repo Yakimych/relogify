@@ -9,6 +9,10 @@ let emptyPlayerStats = (playerName: string) => {
   matchesDrawn: 0,
 };
 
+let isWin = (goalsScored, goalsConceded) => goalsScored > goalsConceded;
+let isLoss = (goalsScored, goalsConceded) => goalsScored < goalsConceded;
+let isDraw = (goalsScored, goalsConceded) => goalsScored === goalsConceded;
+
 let playerStatsReducer =
     (playerName: string, stats: playerStats, result: matchResult): playerStats =>
   if (result.player1.name !== playerName && result.player2.name !== playerName) {
@@ -27,13 +31,13 @@ let playerStatsReducer =
       goalsConceded: stats.goalsConceded + goalsConcededThisMatch,
       matchesWon:
         stats.matchesWon
-        + (goalsScoredThisMatch > goalsConcededThisMatch ? 1 : 0),
+        + (isWin(goalsScoredThisMatch, goalsConcededThisMatch) ? 1 : 0),
       matchesLost:
         stats.matchesLost
-        + (goalsScoredThisMatch < goalsConcededThisMatch ? 1 : 0),
+        + (isLoss(goalsScoredThisMatch, goalsConcededThisMatch) ? 1 : 0),
       matchesDrawn:
         stats.matchesDrawn
-        + (goalsScoredThisMatch === goalsConcededThisMatch ? 1 : 0),
+        + (isDraw(goalsScoredThisMatch, goalsConcededThisMatch) ? 1 : 0),
     };
   };
 
@@ -45,10 +49,10 @@ let getPlayerStats =
   );
 
 let hasPlayer1Won = (result: matchResult) =>
-  result.player1goals > result.player2goals;
+  isWin(result.player1goals, result.player2goals);
 
 let hasPlayer2Won = (result: matchResult) =>
-  result.player2goals > result.player1goals;
+  isWin(result.player2goals, result.player1goals);
 
 let hasMainPlayerWon = (mainPlayerName: option(string), result: matchResult) => {
   let player1Won = hasPlayer1Won(result);
