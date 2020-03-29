@@ -36,6 +36,21 @@ let testResults: list(matchResult) = [
   },
   {
     player1: {
+      id: 1,
+      name: "Qwe",
+    },
+    player2: {
+      id: 2,
+      name: "Abc",
+    },
+    player2goals: 3,
+    player1goals: 3,
+    extratime: false,
+    date: Js.Date.fromString("2019-07-27T07:26:20.42+00:00"),
+    id: 115,
+  },
+  {
+    player1: {
       id: 2,
       name: "Abc",
     },
@@ -207,9 +222,9 @@ let expectedLeaderboard: list(playerStats) = [
     playerName: "Abc",
     matchesWon: 4,
     matchesLost: 2,
-    matchesDrawn: 0,
-    goalsScored: 15,
-    goalsConceded: 19,
+    matchesDrawn: 1,
+    goalsScored: 18,
+    goalsConceded: 22,
   },
   {
     playerName: "Yet another one",
@@ -223,9 +238,9 @@ let expectedLeaderboard: list(playerStats) = [
     playerName: "Qwe",
     matchesWon: 2,
     matchesLost: 2,
-    matchesDrawn: 0,
-    goalsScored: 6,
-    goalsConceded: 8,
+    matchesDrawn: 1,
+    goalsScored: 9,
+    goalsConceded: 11,
   },
   {
     playerName: "Another new player",

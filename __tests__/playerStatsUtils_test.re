@@ -36,6 +36,21 @@ let testResults: list(matchResult) = [
   },
   {
     player1: {
+      id: 1,
+      name: "Qwe",
+    },
+    player2: {
+      id: 2,
+      name: "Abc",
+    },
+    player2goals: 0,
+    player1goals: 0,
+    extratime: false,
+    date: Js.Date.fromString("2019-07-27T07:26:20.42+00:00"),
+    id: 115,
+  },
+  {
+    player1: {
       id: 2,
       name: "Abc",
     },
@@ -190,7 +205,7 @@ let expectedPlayerStatsForAbc: playerStats = {
   playerName: "Abc",
   matchesWon: 4,
   matchesLost: 2,
-  matchesDrawn: 0,
+  matchesDrawn: 1,
   goalsScored: 15,
   goalsConceded: 19,
 };
@@ -251,6 +266,50 @@ describe("getLeaderboard", () => {
 
     let playerStats = getPlayerStats("Bob", [singleResult]);
     expect(playerStats) |> toEqual(expectedPlayerStats);
+  });
+
+  let singleDrawnResult = {
+    id: 0,
+    player1: {
+      id: 1,
+      name: "Bob",
+    },
+    player2: {
+      id: 2,
+      name: "Alice",
+    },
+    player1goals: 5,
+    player2goals: 5,
+    extratime: false,
+    date: Js.Date.fromString("2019-07-27T07:26:31.667+00:00"),
+  };
+
+  test("should return expected player1 stats for a drawn result", () => {
+    let expectedPlayer1Stats = {
+      playerName: "Bob",
+      matchesWon: 0,
+      matchesLost: 0,
+      matchesDrawn: 1,
+      goalsScored: 5,
+      goalsConceded: 5,
+    };
+
+    let player1Stats = getPlayerStats("Bob", [singleDrawnResult]);
+    expect(player1Stats) |> toEqual(expectedPlayer1Stats);
+  });
+
+  test("should return expected player2 stats for a drawn result", () => {
+    let expectedPlayer2Stats = {
+      playerName: "Alice",
+      matchesWon: 0,
+      matchesLost: 0,
+      matchesDrawn: 1,
+      goalsScored: 5,
+      goalsConceded: 5,
+    };
+
+    let player2Stats = getPlayerStats("Alice", [singleDrawnResult]);
+    expect(player2Stats) |> toEqual(expectedPlayer2Stats);
   });
 
   test("should return expected leaderboard for result list", () => {
