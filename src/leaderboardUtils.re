@@ -70,11 +70,14 @@ let emptyRow = (playerName: string) => {
 
 let updateRow = (row: playerStats, goalsScored: int, goalsConceded: int) => {
   let isWin = goalsScored > goalsConceded;
+  let isLoss = goalsScored < goalsConceded;
+  let isDraw = goalsScored === goalsConceded;
 
   {
     ...row,
     matchesWon: row.matchesWon + (isWin ? 1 : 0),
-    matchesLost: row.matchesLost + (isWin ? 0 : 1),
+    matchesLost: row.matchesLost + (isLoss ? 1 : 0),
+    matchesDrawn: row.matchesDrawn + (isDraw ? 1 : 0),
     goalsScored: row.goalsScored + goalsScored,
     goalsConceded: row.goalsConceded + goalsConceded,
   };
