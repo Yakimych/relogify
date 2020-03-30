@@ -290,7 +290,7 @@ describe("getLeaderboard", () => {
     expect(leaderboard) |> toBe([]);
   });
 
-  test("should return leaderboard with two entrues for single result", () => {
+  test("should return leaderboard with two entries for single result", () => {
     let singleResult = {
       id: 0,
       player1: {
