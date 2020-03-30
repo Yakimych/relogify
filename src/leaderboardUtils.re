@@ -33,9 +33,13 @@ let byName = (a, b) => String.compare(a.playerName, b.playerName);
 
 let goalDiff = (row: playerStats) => row.goalsScored - row.goalsConceded;
 
+let totalMatchesPlayed = (row: playerStats) =>
+  row.matchesWon + row.matchesLost + row.matchesDrawn;
+
 let minMatchesForStats = 0;
+
 let includedInStats = (stats: playerStats) =>
-  stats.matchesWon + stats.matchesLost >= minMatchesForStats;
+  totalMatchesPlayed(stats) >= minMatchesForStats;
 
 let formatPercentage = (value: float) =>
   (value |> int_of_float |> string_of_int) ++ "%";
@@ -48,17 +52,15 @@ let formatGoalsPerMatch = (goals: float) =>
 let matchesWonPerPlayed = (row: playerStats) =>
   Js.Math.round(
     float_of_int(row.matchesWon)
-    /. float_of_int(row.matchesWon + row.matchesLost)
+    /. float_of_int(row |> totalMatchesPlayed)
     *. 100.0,
   );
 
 let goalsScoredPerMatch = (row: playerStats) =>
-  float_of_int(row.goalsScored)
-  /. float_of_int(row.matchesWon + row.matchesLost);
+  float_of_int(row.goalsScored) /. float_of_int(row |> totalMatchesPlayed);
 
 let goalsConcededPerMatch = (row: playerStats) =>
-  float_of_int(row.goalsConceded)
-  /. float_of_int(row.matchesWon + row.matchesLost);
+  float_of_int(row.goalsConceded) /. float_of_int(row |> totalMatchesPlayed);
 
 let emptyRow = (playerName: string) => {
   playerName,
@@ -70,7 +72,7 @@ let emptyRow = (playerName: string) => {
 };
 
 let updateRow = (row: playerStats, goalsScored: int, goalsConceded: int) => {
-  ...row,
+  playerName: row.playerName,
   matchesWon: row.matchesWon + (isWin(goalsScored, goalsConceded) ? 1 : 0),
   matchesLost: row.matchesLost + (isLoss(goalsScored, goalsConceded) ? 1 : 0),
   matchesDrawn:
