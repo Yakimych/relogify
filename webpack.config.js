@@ -14,35 +14,39 @@ module.exports = {
   output: {
     path: outputDir,
     publicPath: "/",
-    filename: "Index.js"
+    filename: "Index.js",
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
       favicon: "src/favicon.ico",
-      inject: true
+      inject: true,
     }),
     new FaviconsWebpackPlugin({
       favicons: {
+        appName: "Relogify",
+        appDescription:
+          "Relogify is a web application for collecting and analyzing sports statistics.",
+        developerName: "Relogify AB",
         icons: {
-          favicons: false
-        }
-      }
+          favicons: false,
+        },
+      },
     }),
-    new Dotenv({ systemvars: true })
+    new Dotenv({ systemvars: true }),
   ],
   devServer: {
     compress: true,
     contentBase: outputDir,
     port: process.env.PORT || 8000,
-    historyApiFallback: true
+    historyApiFallback: true,
   },
   module: {
     rules: [
       {
         test: cssRegex,
-        use: ["style-loader", "css-loader"]
-      }
-    ]
-  }
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
 };
