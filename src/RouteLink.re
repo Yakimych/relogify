@@ -24,8 +24,10 @@ let getUrl = (page: page): string =>
 let make =
     (
       ~toPage: page,
-      ~className: string=?,
-      ~style: ReactDOMRe.Style.t=?,
+      ~className: option(string)=?,
+      ~style: option(ReactDOMRe.Style.t)=?,
       ~children: React.element,
     ) =>
-  <Link className url={getUrl(toPage)} style> children </Link>;
+  <MaterialUi.Link ?className href={getUrl(toPage)} ?style>
+    children
+  </MaterialUi.Link>;

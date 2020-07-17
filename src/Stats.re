@@ -81,7 +81,7 @@ let make =
     setSortDirection(currentDirection => currentDirection);
   };
 
-  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
+  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
   <>
     {switch (resultsQuery, settingsQuery) {
      | (_, Loading)

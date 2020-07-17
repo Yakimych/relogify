@@ -9,17 +9,22 @@ let httpLink = ApolloLinks.createHttpLink(~uri="https://" ++ apiBaseUrl, ());
 
 /* WebSocket client */
 let webSocketLink =
-  ApolloLinks.webSocketLink(~uri="wss://" ++ apiBaseUrl, ~reconnect=true, ());
+  ApolloLinks.webSocketLink({
+    uri: "wss://" ++ apiBaseUrl,
+    options: {
+      reconnect: true,
+      connectionParams: None,
+    },
+  });
 
 /* based on test, execute left or right */
 let webSocketHttpLink =
   ApolloLinks.split(
     operation => {
       let operationDefition =
-        ApolloUtilities.getMainDefinition(operation##query);
-      operationDefition##kind == "OperationDefinition"
-      &&
-      operationDefition##operation == "subscription";
+        ApolloUtilities.getMainDefinition(operation.query);
+      operationDefition.kind == "OperationDefinition"
+      && operationDefition.operation == "subscription";
     },
     webSocketLink,
     httpLink,

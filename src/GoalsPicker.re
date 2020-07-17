@@ -22,7 +22,7 @@ let make =
       onChange(int_of_string(value));
     };
 
-  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
+  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
   <>
     {isInCustomMode
        ? <MaterialUi_TextField
