@@ -62,9 +62,10 @@ let make = (~communityName: string) => {
           )##variables,
         (),
       )
-      |> then_(result =>
-           switch (result) {
-           | Mutation.Data(d) =>
+      |> then_(((executionResult, _)) => {
+           switch (executionResult) {
+           | ApolloHooks.Mutation.Errors(_) => resolve() // TODO: Handle errors
+           | Data(d) =>
              // TODO: Simplify as soon as upsert is available on the backend
              let settingsUpdated =
                d##update_community_settings
@@ -90,7 +91,7 @@ let make = (~communityName: string) => {
              |> resolve;
            | _ => () |> resolve // TODO: Reject?
            }
-         )
+         })
       |> then_(_ => alert("Settings saved") |> resolve)
       |> catch(e => {
            Js.Console.error2("Error when saving: ", e);

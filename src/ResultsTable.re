@@ -61,7 +61,7 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  let isWide = MaterialUi.useMediaQuery("(min-width: 600px)");
+  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
 
   switch (settingsQuery) {
   | Loading => <MaterialUi_CircularProgress />
