@@ -72,7 +72,7 @@ let make = (~communityName: string) => {
 
     <>
       <Header page={TopX(communityName)} />
-      <Box margin="10px" textAlign="center">
+      <MaterialUi.Box margin="10px" textAlign="center">
         <TopStats
           communityName
           title="This Week"
@@ -104,7 +104,7 @@ let make = (~communityName: string) => {
              temp_showRatings=true
            />
          }}
-      </Box>
+      </MaterialUi.Box>
     </>;
   };
 };

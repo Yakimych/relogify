@@ -31,7 +31,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
        let resultsWithRatings = results |> attachRatings;
 
        <>
-         <Box textAlign="center">
+         <MaterialUi.Box textAlign="center">
            <MaterialUi_Typography variant=`H4>
              {text(player1Name ++ " vs " ++ player2Name)}
            </MaterialUi_Typography>
@@ -52,7 +52,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
                {text("(" ++ string_of_int(stats.goalsConceded) ++ ")")}
              </span>
            </div>
-         </Box>
+         </MaterialUi.Box>
          <ReactMinimalPieChart
            data=[|
              {

@@ -38,7 +38,7 @@ let make = (~playerName: string, ~communityName: string) => {
        let state = results |> attachRatings;
 
        <>
-         <Box textAlign="center">
+         <MaterialUi.Box textAlign="center">
            <MaterialUi_Typography variant=`H4>
              {text(playerName)}
            </MaterialUi_Typography>
@@ -109,7 +109,7 @@ let make = (~playerName: string, ~communityName: string) => {
                   playerName
                 />
               )}
-         </Box>
+         </MaterialUi.Box>
          <ResultsTable
            results={state.resultsWithRatings}
            mainPlayerName=playerName
