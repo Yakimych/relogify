@@ -12,11 +12,11 @@ let getCurrentWeek = () => {
 let resultsByDate = (first: matchResult, second: matchResult) =>
   DateFns.compareAsc(first.date, second.date);
 
-let formatDate = (date: Js.Date.t) => date->DateFns.format("YYYY-MM-DD");
+let formatDate = (date: Js.Date.t) => date->DateFns.format("yyyy-MM-dd");
 let formatDateTime = (date: Js.Date.t) =>
-  date->DateFns.format("YYYY-MM-DD HH:mm");
+  date->DateFns.format("yyyy-MM-dd HH:mm");
 let formatDateTimeSeconds = (date: Js.Date.t) =>
-  date->DateFns.format("YYYY-MM-DD HH:mm:ss");
+  date->DateFns.format("yyyy-MM-dd HH:mm:ss");
 
 let withCurrentTime = (date: Js.Date.t, now: Js.Date.t) =>
   date
