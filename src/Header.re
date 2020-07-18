@@ -38,7 +38,9 @@ let make = (~page: page) => {
                onClick={_ => setAddResultIsOpen(oldIsOpen => !oldIsOpen)}
                color=`Secondary
                className="add-result-button">
-               {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
+               {addResultIsOpen
+                  ? <MscharleyBsMaterialUiIcons.ArrowDropUp.Filled />
+                  : <MscharleyBsMaterialUiIcons.Add.Filled />}
              </MaterialUi.Fab>
              <div className="add-result">
                <MaterialUi.ExpansionPanel expanded=addResultIsOpen>

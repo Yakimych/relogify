@@ -28,7 +28,8 @@
     "@ahrefs/bs-recharts",
     "@glennsl/bs-json",
     "bs-react-netlify-identity",
-    "@jsiebern/bs-material-ui"
+    "@jsiebern/bs-material-ui",
+    "@mscharley/bs-material-ui-icons"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
