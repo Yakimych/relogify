@@ -1,11 +1,12 @@
 open Types;
-open DateFns;
 
 let text = React.string;
 
 let getCurrentWeek = () => {
-  let startDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
-  (startDate, startDate->addWeeks(1.0));
+  let startDate =
+    Js.Date.make()
+    ->DateFns.startOfWeekOpt({locale: None, weekStartsOn: Some(1)});
+  (startDate, startDate->DateFns.addWeeks(1));
 };
 
 let resultsByDate = (first: matchResult, second: matchResult) =>

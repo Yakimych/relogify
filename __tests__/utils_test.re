@@ -57,7 +57,10 @@ Belt.List.forEach(
   date =>
   describe("a suite", () =>
     test(formatDate(date) ++ "|> startOfWeek() should return a Monday", () =>
-      expect(startOfWeek(date, {"weekStartsOn": 1}) |> isMonday)
+      expect(
+        DateFns.startOfWeekOpt(date, {locale: None, weekStartsOn: Some(1)})
+        |> isMonday,
+      )
       |> toBe(true)
     )
   )
