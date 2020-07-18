@@ -11,15 +11,17 @@ let nextPrevWeekButtonStyle =
 
 [@react.component]
 let make = (~communityName: string) => {
-  let weekStartDate = Js.Date.make()->startOfWeek({"weekStartsOn": 1});
+  let weekStartDate =
+    Js.Date.make()
+    ->DateFns.startOfWeekOpt({locale: None, weekStartsOn: Some(1)});
 
   let (dateFrom, setDateFrom) = React.useState(_ => Some(weekStartDate));
   let (dateTo, setDateTo) =
-    React.useState(_ => Some(weekStartDate->addWeeks(1.0)));
+    React.useState(_ => Some(weekStartDate->DateFns.addWeeks(1)));
 
   let setToday = _ => {
     setDateFrom(_ => Some(weekStartDate));
-    setDateTo(_ => Some(weekStartDate->addWeeks(1.0)));
+    setDateTo(_ => Some(weekStartDate->DateFns.addWeeks(1)));
   };
 
   let setAllTime = _ => {
@@ -28,13 +30,13 @@ let make = (~communityName: string) => {
   };
 
   let incrementWeek = _ => {
-    setDateFrom(df => df->Belt.Option.map(d => d->addWeeks(1.0)));
-    setDateTo(dt => dt->Belt.Option.map(d => d->addWeeks(1.0)));
+    setDateFrom(df => df->Belt.Option.map(d => d->DateFns.addWeeks(1)));
+    setDateTo(dt => dt->Belt.Option.map(d => d->DateFns.addWeeks(1)));
   };
 
   let decrementWeek = _ => {
-    setDateFrom(df => df->Belt.Option.map(d => d->addWeeks(-1.0)));
-    setDateTo(dt => dt->Belt.Option.map(d => d->addWeeks(-1.0)));
+    setDateFrom(df => df->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
+    setDateTo(dt => dt->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
   };
 
   <>

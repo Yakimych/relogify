@@ -9,7 +9,8 @@ open ApolloHooks;
 let make = (~communityName: string) => {
   let now = Js.Date.make();
   let startOfDay = now->startOfDay;
-  let weekStartDate = now->startOfWeek({"weekStartsOn": 1});
+  let weekStartDate =
+    now->DateFns.startOfWeekOpt({locale: None, weekStartsOn: Some(1)});
   let monthStartDate = now->startOfMonth;
   let yearStartDate = now->startOfYear;
 
