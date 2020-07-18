@@ -20,15 +20,15 @@ let make = () => {
 
   <>
     <Header page=CreateCommunityPage />
-    <MaterialUi_Paper>
+    <MaterialUi.Paper>
       <div className="title">
-        <MaterialUi_Typography variant=`H6>
+        <MaterialUi.Typography variant=`H6>
           {text("Check availability and create")}
-        </MaterialUi_Typography>
+        </MaterialUi.Typography>
       </div>
       <div className="panel-content">
         <div className="row">
-          <MaterialUi_TextField
+          <MaterialUi.TextField
             style={ReactDOMRe.Style.make(~width="250px", ())}
             value={`String(communityName)}
             placeholder="Choose a name"
@@ -40,29 +40,29 @@ let make = () => {
           />
           <div>
             <div className="availability-indicator">
-              <MaterialUi_Zoom
+              <MaterialUi.Zoom
                 in_={nameIsAvailable()->Belt.Option.getWithDefault(false)}>
                 <div> <CheckCircle fontSize="large" htmlColor="green" /> </div>
-              </MaterialUi_Zoom>
+              </MaterialUi.Zoom>
             </div>
             <div className="availability-indicator">
-              <MaterialUi_Zoom
+              <MaterialUi.Zoom
                 in_={!nameIsAvailable()->Belt.Option.getWithDefault(true)}>
                 <NotAvailable fontSize="large" htmlColor="red" />
-              </MaterialUi_Zoom>
+              </MaterialUi.Zoom>
             </div>
           </div>
         </div>
       </div>
-    </MaterialUi_Paper>
+    </MaterialUi.Paper>
     <RouteLink toPage={CommunityStart(communityName)} className="button-link">
-      <MaterialUi_Button
+      <MaterialUi.Button
         variant=`Contained
         color=`Primary
         disabled={!nameIsAvailable()->Belt.Option.getWithDefault(false)}
         style={ReactDOMRe.Style.make(~marginTop="10px", ())}>
         {text("Take me there!")}
-      </MaterialUi_Button>
+      </MaterialUi.Button>
     </RouteLink>
   </>;
 };

@@ -9,21 +9,21 @@ let make =
       ~playerName: string,
       ~resultsWithRatings: list(resultWithRatings),
     ) =>
-  <MaterialUi_Dialog onClose={(_, _) => onClose()} open_=isOpen>
-    <MaterialUi_DialogTitle>
-      <MaterialUi_Chip
+  <MaterialUi.Dialog onClose={(_, _) => onClose()} open_=isOpen>
+    <MaterialUi.DialogTitle>
+      <MaterialUi.Chip
         style={ReactDOMRe.Style.make(~marginRight="10px", ())}
         label={text("BETA")}
         color=`Primary
       />
       {text("Rating graph: " ++ playerName)}
-    </MaterialUi_DialogTitle>
-    <MaterialUi_DialogContent>
+    </MaterialUi.DialogTitle>
+    <MaterialUi.DialogContent>
       <EloGraph playerName resultsWithRatings />
-    </MaterialUi_DialogContent>
-    <MaterialUi_DialogActions>
-      <MaterialUi_Button onClick={_ => onClose()} color=`Primary>
+    </MaterialUi.DialogContent>
+    <MaterialUi.DialogActions>
+      <MaterialUi.Button onClick={_ => onClose()} color=`Primary>
         {text("Close")}
-      </MaterialUi_Button>
-    </MaterialUi_DialogActions>
-  </MaterialUi_Dialog>;
+      </MaterialUi.Button>
+    </MaterialUi.DialogActions>
+  </MaterialUi.Dialog>;

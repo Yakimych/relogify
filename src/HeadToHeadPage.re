@@ -22,7 +22,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
   <>
     <Header page={HeadToHead(communityName, player1Name, player2Name)} />
     {switch (headToHeadQuery) {
-     | Loading => <MaterialUi_CircularProgress />
+     | Loading => <MaterialUi.CircularProgress />
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
@@ -32,9 +32,9 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
 
        <>
          <MaterialUi.Box textAlign="center">
-           <MaterialUi_Typography variant=`H4>
+           <MaterialUi.Typography variant=`H4>
              {text(player1Name ++ " vs " ++ player2Name)}
-           </MaterialUi_Typography>
+           </MaterialUi.Typography>
            <div>
              <span className="stats-player-goals">
                {text("(" ++ string_of_int(stats.goalsScored) ++ ")")}

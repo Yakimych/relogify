@@ -22,10 +22,10 @@ let make =
       onChange(int_of_string(value));
     };
 
-  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
+  let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   <>
     {isInCustomMode
-       ? <MaterialUi_TextField
+       ? <MaterialUi.TextField
            disabled
            className="highlighted"
            autoFocus=true
@@ -40,7 +40,7 @@ let make =
            }}
          />
        : <span>
-           <MaterialUi_NativeSelect
+           <MaterialUi.NativeSelect
              disabled
              value={string_of_int(selectedGoals)}
              onChange={e => {
@@ -48,7 +48,7 @@ let make =
                handleSelectChange(newGoalsValue);
              }}
              input={
-               <MaterialUi_OutlinedInput
+               <MaterialUi.OutlinedInput
                  labelWidth={`Int(0)}
                  style={ReactDOMRe.Style.make(
                    ~width=isWide ? "64px" : "60px",
@@ -68,7 +68,7 @@ let make =
              <option key="more_goals" value=moreGoalsValue>
                {text(scoreTypeTexts.morePoints)}
              </option>
-           </MaterialUi_NativeSelect>
+           </MaterialUi.NativeSelect>
          </span>}
   </>;
 };

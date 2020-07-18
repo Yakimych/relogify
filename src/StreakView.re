@@ -3,24 +3,24 @@ open Utils;
 
 [@react.component]
 let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
-  <MaterialUi_Paper
+  <MaterialUi.Paper
     style={ReactDOMRe.Style.make(~marginTop="10px", ~marginBottom="6px", ())}>
-    <MaterialUi_Typography>
+    <MaterialUi.Typography>
       {text(streakName ++ ": ")}
       <span className="marked">
         {text(string_of_int(streak |> numberOfMatches) ++ " match(es)")}
       </span>
-    </MaterialUi_Typography>
-    <MaterialUi_Typography>
+    </MaterialUi.Typography>
+    <MaterialUi.Typography>
       {text("Started ")}
       <span className="date-time">
         {text(formatDateTime(streak |> startedAt))}
       </span>
-    </MaterialUi_Typography>
+    </MaterialUi.Typography>
     {streak
      ->endedAt
      ->Belt.Option.mapWithDefault(React.null, date =>
-         <MaterialUi_Typography>
+         <MaterialUi.Typography>
            {text("Ended ")}
            <span className="date-time"> {text(formatDateTime(date))} </span>
            {streak
@@ -31,6 +31,6 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
                   <span className="marked"> {text(player.name)} </span>
                 </>
               )}
-         </MaterialUi_Typography>
+         </MaterialUi.Typography>
        )}
-  </MaterialUi_Paper>;
+  </MaterialUi.Paper>;

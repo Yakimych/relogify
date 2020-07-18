@@ -80,19 +80,19 @@ let make = (~communityName: string) => {
   };
 
   switch (settingsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <MaterialUi_TableRow>
-      <MaterialUi_TableCell>
+    <MaterialUi.TableRow>
+      <MaterialUi.TableCell>
         <button
           disabled=isAddingResult
           onClick={_ => addResult(communitySettings.allowDraws)}>
           {text("Add")}
         </button>
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player1"
@@ -100,8 +100,8 @@ let make = (~communityName: string) => {
           selectedPlayerName=maybePlayer1Name
           onChange={v => setMaybePlayer1Name(_ => Some(v))}
         />
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals1
@@ -109,11 +109,11 @@ let make = (~communityName: string) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell style=colonStyle>
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell style=colonStyle>
         {text(":")}
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
         <GoalsPicker
           disabled=isAddingResult
           selectedGoals=goals2
@@ -121,8 +121,8 @@ let make = (~communityName: string) => {
           scoreType={communitySettings.scoreType}
           maxSelectablePoints={communitySettings.maxSelectablePoints}
         />
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
         <PlayerPicker
           disabled=isAddingResult
           placeholderText="Player2"
@@ -130,11 +130,11 @@ let make = (~communityName: string) => {
           selectedPlayerName=maybePlayer2Name
           onChange={v => setMaybePlayer2Name(_ => Some(v))}
         />
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
-        <MaterialUi_FormControlLabel
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
+        <MaterialUi.FormControlLabel
           control={
-            <MaterialUi_Checkbox
+            <MaterialUi.Checkbox
               disabled=isAddingResult
               color=`Default
               checked=extraTime
@@ -143,9 +143,9 @@ let make = (~communityName: string) => {
           }
           label={text("Extra Time")}
         />
-      </MaterialUi_TableCell>
-      <MaterialUi_TableCell>
-        <MaterialUi_TextField
+      </MaterialUi.TableCell>
+      <MaterialUi.TableCell>
+        <MaterialUi.TextField
           disabled=isAddingResult
           type_="date"
           value={`String(formatDate(date))}
@@ -156,7 +156,7 @@ let make = (~communityName: string) => {
             };
           }}
         />
-      </MaterialUi_TableCell>
-    </MaterialUi_TableRow>
+      </MaterialUi.TableCell>
+    </MaterialUi.TableRow>
   };
 };

@@ -17,11 +17,11 @@ let make = (~page: page) => {
       );
 
   <>
-    <MaterialUi_AppBar
+    <MaterialUi.AppBar
       position=`Fixed
       color={isAdmin ? `Secondary : `Primary}
       className="app-header">
-      <MaterialUi_Toolbar>
+      <MaterialUi.Toolbar>
         {switch (page) {
          | Home => <div> {text("Relogify")} </div>
          | CreateCommunityPage => <div> {text("Create new community")} </div>
@@ -34,20 +34,20 @@ let make = (~page: page) => {
                <MyPlayerHeaderLink communityName />
              </div>
              <div className="app-header-grow" />
-             <MaterialUi_Fab
+             <MaterialUi.Fab
                onClick={_ => setAddResultIsOpen(oldIsOpen => !oldIsOpen)}
                color=`Secondary
                className="add-result-button">
                {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
-             </MaterialUi_Fab>
+             </MaterialUi.Fab>
              <div className="add-result">
-               <MaterialUi_ExpansionPanel expanded=addResultIsOpen>
+               <MaterialUi.ExpansionPanel expanded=addResultIsOpen>
                  <span />
                  <AddResult
                    communityName
                    onResultAdded={_ => setAddResultIsOpen(_ => false)}
                  />
-               </MaterialUi_ExpansionPanel>
+               </MaterialUi.ExpansionPanel>
              </div>
              <RouteLink
                className="app-header-item" toPage={History(communityName)}>
@@ -185,8 +185,8 @@ let make = (~page: page) => {
              <div className="app-header-item"> {text("History")} </div>
            </>
          }}
-      </MaterialUi_Toolbar>
-    </MaterialUi_AppBar>
-    <MaterialUi_Toolbar />
+      </MaterialUi.Toolbar>
+    </MaterialUi.AppBar>
+    <MaterialUi.Toolbar />
   </>;
 };

@@ -81,11 +81,11 @@ let make =
     setSortDirection(currentDirection => currentDirection);
   };
 
-  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
+  let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   <>
     {switch (resultsQuery, settingsQuery) {
      | (_, Loading)
-     | (Loading, _) => <MaterialUi_CircularProgress />
+     | (Loading, _) => <MaterialUi.CircularProgress />
      | (NoData, _)
      | (_, NoData)
      | (Error(_), _)
@@ -111,26 +111,26 @@ let make =
 
        leaderboardRows->Belt.List.length === 0
          ? React.null
-         : <MaterialUi_Paper>
+         : <MaterialUi.Paper>
              <div className="title">
-               <MaterialUi_Typography variant=`H6>
+               <MaterialUi.Typography variant=`H6>
                  {text(title->Belt.Option.getWithDefault("Stats"))}
-               </MaterialUi_Typography>
+               </MaterialUi.Typography>
              </div>
-             <MaterialUi_Table size=`Small>
-               <MaterialUi_TableHead>
-                 <MaterialUi_TableRow>
-                   <MaterialUi_TableCell align=`Right>
+             <MaterialUi.Table size=`Small>
+               <MaterialUi.TableHead>
+                 <MaterialUi.TableRow>
+                   <MaterialUi.TableCell align=`Right>
                      {text("Player")}
-                   </MaterialUi_TableCell>
+                   </MaterialUi.TableCell>
                    {showEloRatings && isWide
                       ? <>
-                          <MaterialUi_Badge
+                          <MaterialUi.Badge
                             badgeContent={text("BETA")} color=`Primary>
-                            <MaterialUi_TableCell style=numberCellStyle>
-                              <MaterialUi_Tooltip
+                            <MaterialUi.TableCell style=numberCellStyle>
+                              <MaterialUi.Tooltip
                                 title={text("Elo Rating")} placement=`Top>
-                                <MaterialUi_TableSortLabel
+                                <MaterialUi.TableSortLabel
                                   active={
                                     sortBy
                                     == EloRating(resultsWithRatings.ratingMap)
@@ -142,127 +142,127 @@ let make =
                                     )
                                   }>
                                   {text("Elo")}
-                                </MaterialUi_TableSortLabel>
-                              </MaterialUi_Tooltip>
-                            </MaterialUi_TableCell>
-                          </MaterialUi_Badge>
+                                </MaterialUi.TableSortLabel>
+                              </MaterialUi.Tooltip>
+                            </MaterialUi.TableCell>
+                          </MaterialUi.Badge>
                         </>
                       : React.null}
-                   <MaterialUi_TableCell style=numberCellStyle>
-                     <MaterialUi_Tooltip
+                   <MaterialUi.TableCell style=numberCellStyle>
+                     <MaterialUi.Tooltip
                        placement=`Top title={text("Win Percentage")}>
-                       <MaterialUi_TableSortLabel
+                       <MaterialUi.TableSortLabel
                          active={sortBy === WinsPerMatch}
                          direction=sortDirection
                          onClick={_ => requestSort(WinsPerMatch)}>
                          {text("W%")}
-                       </MaterialUi_TableSortLabel>
-                     </MaterialUi_Tooltip>
-                   </MaterialUi_TableCell>
-                   <MaterialUi_TableCell style=numberCellStyle>
-                     <MaterialUi_Tooltip
+                       </MaterialUi.TableSortLabel>
+                     </MaterialUi.Tooltip>
+                   </MaterialUi.TableCell>
+                   <MaterialUi.TableCell style=numberCellStyle>
+                     <MaterialUi.Tooltip
                        placement=`Top title={text("Number of wins")}>
-                       <MaterialUi_TableSortLabel
+                       <MaterialUi.TableSortLabel
                          active={sortBy === MatchesWon}
                          direction=sortDirection
                          onClick={_ => requestSort(MatchesWon)}>
                          {text("W")}
-                       </MaterialUi_TableSortLabel>
-                     </MaterialUi_Tooltip>
-                   </MaterialUi_TableCell>
-                   <MaterialUi_TableCell style=numberCellStyle>
-                     <MaterialUi_Tooltip
+                       </MaterialUi.TableSortLabel>
+                     </MaterialUi.Tooltip>
+                   </MaterialUi.TableCell>
+                   <MaterialUi.TableCell style=numberCellStyle>
+                     <MaterialUi.Tooltip
                        placement=`Top title={text("Number of losses")}>
-                       <MaterialUi_TableSortLabel
+                       <MaterialUi.TableSortLabel
                          active={sortBy === MatchesLost}
                          direction=sortDirection
                          onClick={_ => requestSort(MatchesLost)}>
                          {text("L")}
-                       </MaterialUi_TableSortLabel>
-                     </MaterialUi_Tooltip>
-                   </MaterialUi_TableCell>
-                   <MaterialUi_TableCell style=numberCellStyle>
-                     <MaterialUi_Tooltip
+                       </MaterialUi.TableSortLabel>
+                     </MaterialUi.Tooltip>
+                   </MaterialUi.TableCell>
+                   <MaterialUi.TableCell style=numberCellStyle>
+                     <MaterialUi.Tooltip
                        placement=`Top title={text(texts.pointsWon)}>
-                       <MaterialUi_TableSortLabel
+                       <MaterialUi.TableSortLabel
                          active={sortBy === GoalsScored}
                          direction=sortDirection
                          onClick={_ => requestSort(GoalsScored)}>
                          {text(texts.pointsWonShort)}
-                       </MaterialUi_TableSortLabel>
-                     </MaterialUi_Tooltip>
-                   </MaterialUi_TableCell>
-                   <MaterialUi_TableCell style=numberCellStyle>
-                     <MaterialUi_Tooltip
+                       </MaterialUi.TableSortLabel>
+                     </MaterialUi.Tooltip>
+                   </MaterialUi.TableCell>
+                   <MaterialUi.TableCell style=numberCellStyle>
+                     <MaterialUi.Tooltip
                        placement=`Top title={text(texts.pointsLost)}>
-                       <MaterialUi_TableSortLabel
+                       <MaterialUi.TableSortLabel
                          active={sortBy === GoalsConceded}
                          direction=sortDirection
                          onClick={_ => requestSort(GoalsConceded)}>
                          {text(texts.pointsLostShort)}
-                       </MaterialUi_TableSortLabel>
-                     </MaterialUi_Tooltip>
-                   </MaterialUi_TableCell>
+                       </MaterialUi.TableSortLabel>
+                     </MaterialUi.Tooltip>
+                   </MaterialUi.TableCell>
                    {isWide
                       ? <>
-                          <MaterialUi_TableCell style=numberCellStyle>
-                            <MaterialUi_Tooltip
+                          <MaterialUi.TableCell style=numberCellStyle>
+                            <MaterialUi.Tooltip
                               placement=`Top title={text(texts.pointDiff)}>
-                              <MaterialUi_TableSortLabel
+                              <MaterialUi.TableSortLabel
                                 active={sortBy === GoalDiff}
                                 direction=sortDirection
                                 onClick={_ => requestSort(GoalDiff)}>
                                 {text("+/-")}
-                              </MaterialUi_TableSortLabel>
-                            </MaterialUi_Tooltip>
-                          </MaterialUi_TableCell>
-                          <MaterialUi_TableCell style=numberCellStyle>
-                            <MaterialUi_Tooltip
+                              </MaterialUi.TableSortLabel>
+                            </MaterialUi.Tooltip>
+                          </MaterialUi.TableCell>
+                          <MaterialUi.TableCell style=numberCellStyle>
+                            <MaterialUi.Tooltip
                               placement=`Top
                               title={text(texts.pointsWonPerMatch)}>
-                              <MaterialUi_TableSortLabel
+                              <MaterialUi.TableSortLabel
                                 active={sortBy === GoalsScoredPerMatch}
                                 direction=sortDirection
                                 onClick={_ =>
                                   requestSort(GoalsScoredPerMatch)
                                 }>
                                 {text(texts.pointsWonPerMatchShort)}
-                              </MaterialUi_TableSortLabel>
-                            </MaterialUi_Tooltip>
-                          </MaterialUi_TableCell>
-                          <MaterialUi_TableCell style=numberCellStyle>
-                            <MaterialUi_Tooltip
+                              </MaterialUi.TableSortLabel>
+                            </MaterialUi.Tooltip>
+                          </MaterialUi.TableCell>
+                          <MaterialUi.TableCell style=numberCellStyle>
+                            <MaterialUi.Tooltip
                               placement=`Top
                               title={text(texts.pointsLostPerMatch)}>
-                              <MaterialUi_TableSortLabel
+                              <MaterialUi.TableSortLabel
                                 active={sortBy === GoalsConcededPerMatch}
                                 direction=sortDirection
                                 onClick={_ =>
                                   requestSort(GoalsConcededPerMatch)
                                 }>
                                 {text(texts.pointsLostPerMatchShort)}
-                              </MaterialUi_TableSortLabel>
-                            </MaterialUi_Tooltip>
-                          </MaterialUi_TableCell>
+                              </MaterialUi.TableSortLabel>
+                            </MaterialUi.Tooltip>
+                          </MaterialUi.TableCell>
                         </>
                       : React.null}
-                 </MaterialUi_TableRow>
-               </MaterialUi_TableHead>
-               <MaterialUi_TableBody>
+                 </MaterialUi.TableRow>
+               </MaterialUi.TableHead>
+               <MaterialUi.TableBody>
                  {leaderboardRows
                   ->Belt.List.take(maxNumberOfRowsToShow)
                   ->Belt.Option.getWithDefault(leaderboardRows)
                   ->Belt.List.map(r =>
-                      <MaterialUi_TableRow key={r.playerName}>
-                        <MaterialUi_TableCell align=`Right>
+                      <MaterialUi.TableRow key={r.playerName}>
+                        <MaterialUi.TableCell align=`Right>
                           <RouteLink
                             toPage={PlayerHome(communityName, r.playerName)}
                             style=playerLinkStyle>
                             {text(r.playerName)}
                           </RouteLink>
-                        </MaterialUi_TableCell>
+                        </MaterialUi.TableCell>
                         {showEloRatings && isWide
-                           ? <MaterialUi_TableCell style=numberCellStyle>
+                           ? <MaterialUi.TableCell style=numberCellStyle>
                                {text(
                                   resultsWithRatings.ratingMap
                                   ->Belt_MapString.getWithDefault(
@@ -273,51 +273,51 @@ let make =
                                   |> int_of_float
                                   |> string_of_int,
                                 )}
-                             </MaterialUi_TableCell>
+                             </MaterialUi.TableCell>
                            : React.null}
-                        <MaterialUi_TableCell style=numberCellStyle>
+                        <MaterialUi.TableCell style=numberCellStyle>
                           {text(formatPercentage(r |> matchesWonPerPlayed))}
-                        </MaterialUi_TableCell>
-                        <MaterialUi_TableCell style=numberCellStyle>
+                        </MaterialUi.TableCell>
+                        <MaterialUi.TableCell style=numberCellStyle>
                           {text(string_of_int(r.matchesWon))}
-                        </MaterialUi_TableCell>
-                        <MaterialUi_TableCell style=numberCellStyle>
+                        </MaterialUi.TableCell>
+                        <MaterialUi.TableCell style=numberCellStyle>
                           {text(string_of_int(r.matchesLost))}
-                        </MaterialUi_TableCell>
-                        <MaterialUi_TableCell style=numberCellStyle>
+                        </MaterialUi.TableCell>
+                        <MaterialUi.TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsScored))}
-                        </MaterialUi_TableCell>
-                        <MaterialUi_TableCell style=numberCellStyle>
+                        </MaterialUi.TableCell>
+                        <MaterialUi.TableCell style=numberCellStyle>
                           {text(string_of_int(r.goalsConceded))}
-                        </MaterialUi_TableCell>
+                        </MaterialUi.TableCell>
                         {isWide
                            ? <>
-                               <MaterialUi_TableCell style=numberCellStyle>
+                               <MaterialUi.TableCell style=numberCellStyle>
                                  {text(r |> goalDiff |> formatDiff)}
-                               </MaterialUi_TableCell>
-                               <MaterialUi_TableCell style=numberCellStyle>
+                               </MaterialUi.TableCell>
+                               <MaterialUi.TableCell style=numberCellStyle>
                                  {text(
                                     formatGoalsPerMatch(
                                       r |> goalsScoredPerMatch,
                                     ),
                                   )}
-                               </MaterialUi_TableCell>
-                               <MaterialUi_TableCell style=numberCellStyle>
+                               </MaterialUi.TableCell>
+                               <MaterialUi.TableCell style=numberCellStyle>
                                  {text(
                                     formatGoalsPerMatch(
                                       r |> goalsConcededPerMatch,
                                     ),
                                   )}
-                               </MaterialUi_TableCell>
+                               </MaterialUi.TableCell>
                              </>
                            : React.null}
-                      </MaterialUi_TableRow>
+                      </MaterialUi.TableRow>
                     )
                   ->Array.of_list
                   ->React.array}
-               </MaterialUi_TableBody>
-             </MaterialUi_Table>
-           </MaterialUi_Paper>;
+               </MaterialUi.TableBody>
+             </MaterialUi.Table>
+           </MaterialUi.Paper>;
      }}
   </>;
 };

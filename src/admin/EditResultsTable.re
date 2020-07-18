@@ -116,51 +116,51 @@ let make =
   };
 
   switch (settingsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <MaterialUi_Paper>
+    <MaterialUi.Paper>
       <div className="title">
-        <MaterialUi_Typography variant=`H6>
+        <MaterialUi.Typography variant=`H6>
           {text("Results")}
-        </MaterialUi_Typography>
+        </MaterialUi.Typography>
       </div>
-      <MaterialUi_Table size=`Small>
-        <MaterialUi_TableHead>
-          <MaterialUi_TableRow>
-            <MaterialUi_TableCell> {text("Edit")} </MaterialUi_TableCell>
-            <MaterialUi_TableCell align=`Right>
+      <MaterialUi.Table size=`Small>
+        <MaterialUi.TableHead>
+          <MaterialUi.TableRow>
+            <MaterialUi.TableCell> {text("Edit")} </MaterialUi.TableCell>
+            <MaterialUi.TableCell align=`Right>
               {text("Player1")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=numberCellStyle>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=numberCellStyle>
               {text("G1")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=colonStyle />
-            <MaterialUi_TableCell style=numberCellStyle>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=colonStyle />
+            <MaterialUi.TableCell style=numberCellStyle>
               {text("G2")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=extraTimeStyle align=`Right>
-              <MaterialUi_Tooltip title={text("Extra time")} placement=`Top>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=extraTimeStyle align=`Right>
+              <MaterialUi.Tooltip title={text("Extra time")} placement=`Top>
                 {text("E")}
-              </MaterialUi_Tooltip>
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=dateStyle>
+              </MaterialUi.Tooltip>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=dateStyle>
               {text("Date")}
-            </MaterialUi_TableCell>
-          </MaterialUi_TableRow>
-        </MaterialUi_TableHead>
-        <MaterialUi_TableBody>
+            </MaterialUi.TableCell>
+          </MaterialUi.TableRow>
+        </MaterialUi.TableHead>
+        <MaterialUi.TableBody>
           <AddResultTableRow communityName />
           {results
            ->Belt.List.map(result =>
-               <MaterialUi_TableRow key={string_of_int(result.id)}>
+               <MaterialUi.TableRow key={string_of_int(result.id)}>
                  {switch (state) {
                   | DeleteConfirmationPending(resultToDeleteId)
                       when result.id === resultToDeleteId =>
                     <>
-                      <MaterialUi_TableCell>
+                      <MaterialUi.TableCell>
                         <span> {text("Are you sure?")} </span>
                         <button onClick={_ => deleteResult()}>
                           {text("Yes")}
@@ -168,7 +168,7 @@ let make =
                         <button onClick={_ => dispatch(StopDeleting)}>
                           {text("No")}
                         </button>
-                      </MaterialUi_TableCell>
+                      </MaterialUi.TableCell>
                       <ResultTableRow result />
                     </>
                   | Editing(id, editedValues) when result.id === id =>
@@ -185,7 +185,7 @@ let make =
                     />
                   | Idle =>
                     <>
-                      <MaterialUi_TableCell>
+                      <MaterialUi.TableCell>
                         <button
                           onClick={_ => dispatch(StartEditing(result))}>
                           {text("Edit")}
@@ -194,28 +194,28 @@ let make =
                           onClick={_ => dispatch(DeleteRequested(result.id))}>
                           {text("Delete")}
                         </button>
-                      </MaterialUi_TableCell>
+                      </MaterialUi.TableCell>
                       <ResultTableRow result />
                     </>
                   | DeleteConfirmationPending(_)
                   | Editing(_) =>
-                    <> <MaterialUi_TableCell /> <ResultTableRow result /> </>
+                    <> <MaterialUi.TableCell /> <ResultTableRow result /> </>
                   | Deleting(id)
                   | Updating(id) =>
                     <>
-                      <MaterialUi_TableCell>
+                      <MaterialUi.TableCell>
                         {id === result.id
-                           ? <MaterialUi_CircularProgress /> : React.null}
-                      </MaterialUi_TableCell>
+                           ? <MaterialUi.CircularProgress /> : React.null}
+                      </MaterialUi.TableCell>
                       <ResultTableRow result />
                     </>
                   }}
-               </MaterialUi_TableRow>
+               </MaterialUi.TableRow>
              )
            ->Array.of_list
            ->React.array}
-        </MaterialUi_TableBody>
-      </MaterialUi_Table>
-    </MaterialUi_Paper>
+        </MaterialUi.TableBody>
+      </MaterialUi.Table>
+    </MaterialUi.Paper>
   };
 };

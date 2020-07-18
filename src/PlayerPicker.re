@@ -41,14 +41,14 @@ let make =
   );
 
   switch (playersQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
     let playerNames = data##players->Belt.Array.map(p => p##name);
 
     isInCustomMode || Belt.Array.length(playerNames) === 0
-      ? <MaterialUi_TextField
+      ? <MaterialUi.TextField
           disabled
           className="highlighted"
           autoFocus=true
@@ -61,7 +61,7 @@ let make =
             onChange(newName);
           }}
         />
-      : <MaterialUi_NativeSelect
+      : <MaterialUi.NativeSelect
           disabled
           style={ReactDOMRe.Style.make(~width="200px", ())}
           onChange={e => {
@@ -70,7 +70,7 @@ let make =
           }}
           value={selectedPlayerName->Belt.Option.getWithDefault("")}
           input={
-            <MaterialUi_OutlinedInput
+            <MaterialUi.OutlinedInput
               style={ReactDOMRe.Style.make(~width="60px", ())}
               labelWidth={`Int(0)}
             />
@@ -88,6 +88,6 @@ let make =
                  {text("+ Add new player")}
                </option>
              : React.null}
-        </MaterialUi_NativeSelect>;
+        </MaterialUi.NativeSelect>;
   };
 };

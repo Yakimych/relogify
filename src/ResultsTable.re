@@ -61,54 +61,54 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  let isWide = MaterialUi_Core.useMediaQueryString("(min-width: 600px)");
+  let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 
   switch (settingsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
     let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
-    <MaterialUi_Paper>
+    <MaterialUi.Paper>
       <div className="title">
-        <MaterialUi_Typography variant=`H6>
+        <MaterialUi.Typography variant=`H6>
           {text("Results")}
-        </MaterialUi_Typography>
+        </MaterialUi.Typography>
       </div>
-      <MaterialUi_Table size=`Small>
-        <MaterialUi_TableHead>
-          <MaterialUi_TableRow>
-            <MaterialUi_TableCell style=headToHeadStyle>
+      <MaterialUi.Table size=`Small>
+        <MaterialUi.TableHead>
+          <MaterialUi.TableRow>
+            <MaterialUi.TableCell style=headToHeadStyle>
               {text("H2H")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell align=`Right>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell align=`Right>
               {text("Player1")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=numberCellStyle>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=numberCellStyle>
               {text(texts.pointsPlayerShort ++ "1")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell style=colonStyle />
-            <MaterialUi_TableCell style=numberCellStyle>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell style=colonStyle />
+            <MaterialUi.TableCell style=numberCellStyle>
               {text(texts.pointsPlayerShort ++ "2")}
-            </MaterialUi_TableCell>
-            <MaterialUi_TableCell> {text("Player2")} </MaterialUi_TableCell>
+            </MaterialUi.TableCell>
+            <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
             {isWide && communitySettings.includeExtraTime
-               ? <MaterialUi_TableCell style=extraTimeStyle align=`Right>
-                   <MaterialUi_Tooltip
+               ? <MaterialUi.TableCell style=extraTimeStyle align=`Right>
+                   <MaterialUi.Tooltip
                      title={text("Extra time")} placement=`Top>
                      <span> {text("E")} </span>
-                   </MaterialUi_Tooltip>
-                 </MaterialUi_TableCell>
+                   </MaterialUi.Tooltip>
+                 </MaterialUi.TableCell>
                : React.null}
             {isWide
-               ? <MaterialUi_TableCell style=dateStyle>
+               ? <MaterialUi.TableCell style=dateStyle>
                    {text("Date")}
-                 </MaterialUi_TableCell>
+                 </MaterialUi.TableCell>
                : React.null}
-          </MaterialUi_TableRow>
-        </MaterialUi_TableHead>
-        <MaterialUi_TableBody>
+          </MaterialUi.TableRow>
+        </MaterialUi.TableHead>
+        <MaterialUi.TableBody>
           {results
            ->Belt.List.map(resultWithRatings => {
                let result = resultWithRatings.result;
@@ -117,14 +117,14 @@ let make =
                let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
                let formattedDate = formatDate(result.date);
 
-               <MaterialUi_TableRow
+               <MaterialUi.TableRow
                  key={string_of_int(result.id)}
                  className={
                    getHighlightedClassName(resultIdsToHighlight, result)
                    ++ " "
                    ++ getWinningLosingRowClassName(mainPlayerWon)
                  }>
-                 <MaterialUi_TableCell style=headToHeadStyle>
+                 <MaterialUi.TableCell style=headToHeadStyle>
                    <RouteLink
                      toPage={
                        HeadToHead(
@@ -135,8 +135,8 @@ let make =
                      }>
                      {text("H2H")}
                    </RouteLink>
-                 </MaterialUi_TableCell>
-                 <MaterialUi_TableCell
+                 </MaterialUi.TableCell>
+                 <MaterialUi.TableCell
                    style={getPlayerStyle(player1Won)} align=`Right>
                    <RouteLink
                      toPage={PlayerHome(communityName, result.player1.name)}
@@ -152,17 +152,17 @@ let make =
                           ratingAfter={resultWithRatings.player1RatingAfter}
                         />
                       : React.null}
-                 </MaterialUi_TableCell>
-                 <MaterialUi_TableCell style=numberCellStyle>
+                 </MaterialUi.TableCell>
+                 <MaterialUi.TableCell style=numberCellStyle>
                    {text(string_of_int(result.player1goals))}
-                 </MaterialUi_TableCell>
-                 <MaterialUi_TableCell style=colonStyle>
+                 </MaterialUi.TableCell>
+                 <MaterialUi.TableCell style=colonStyle>
                    {text(":")}
-                 </MaterialUi_TableCell>
-                 <MaterialUi_TableCell style=numberCellStyle>
+                 </MaterialUi.TableCell>
+                 <MaterialUi.TableCell style=numberCellStyle>
                    {text(string_of_int(result.player2goals))}
-                 </MaterialUi_TableCell>
-                 <MaterialUi_TableCell style={getPlayerStyle(player2Won)}>
+                 </MaterialUi.TableCell>
+                 <MaterialUi.TableCell style={getPlayerStyle(player2Won)}>
                    <RouteLink
                      toPage={PlayerHome(communityName, result.player2.name)}
                      style=playerLinkStyle>
@@ -177,23 +177,23 @@ let make =
                           ratingAfter={resultWithRatings.player2RatingAfter}
                         />
                       : React.null}
-                 </MaterialUi_TableCell>
+                 </MaterialUi.TableCell>
                  {isWide && communitySettings.includeExtraTime
-                    ? <MaterialUi_TableCell style=extraTimeStyle align=`Right>
+                    ? <MaterialUi.TableCell style=extraTimeStyle align=`Right>
                         {text(result.extratime ? "X" : "")}
-                      </MaterialUi_TableCell>
+                      </MaterialUi.TableCell>
                     : React.null}
                  {isWide
-                    ? <MaterialUi_TableCell>
+                    ? <MaterialUi.TableCell>
                         {text(formattedDate)}
-                      </MaterialUi_TableCell>
+                      </MaterialUi.TableCell>
                     : React.null}
-               </MaterialUi_TableRow>;
+               </MaterialUi.TableRow>;
              })
            ->Array.of_list
            ->React.array}
-        </MaterialUi_TableBody>
-      </MaterialUi_Table>
+        </MaterialUi.TableBody>
+      </MaterialUi.Table>
       {graphIsShownForPlayer->Belt.Option.mapWithDefault(
          React.null, playerName =>
          <EloGraphDialog
@@ -203,6 +203,6 @@ let make =
            resultsWithRatings=results
          />
        )}
-    </MaterialUi_Paper>;
+    </MaterialUi.Paper>;
   };
 };
