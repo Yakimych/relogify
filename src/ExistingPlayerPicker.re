@@ -17,11 +17,11 @@ let make =
     );
 
   switch (playersQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
-    <MaterialUi_NativeSelect
+    <MaterialUi.NativeSelect
       disabled
       style={ReactDOMRe.Style.make(~width="200px", ())}
       onChange={e => {
@@ -30,7 +30,7 @@ let make =
       }}
       value={string_of_int(selectedPlayerId)}
       input={
-        <MaterialUi_OutlinedInput
+        <MaterialUi.OutlinedInput
           style={ReactDOMRe.Style.make(~width="60px", ())}
           labelWidth={`Int(0)}
         />
@@ -42,6 +42,6 @@ let make =
            </option>
          )
        ->React.array}
-    </MaterialUi_NativeSelect>
+    </MaterialUi.NativeSelect>
   };
 };

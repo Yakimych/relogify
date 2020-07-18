@@ -23,13 +23,13 @@ let make = (~communityName, ~subRoute) => {
      | (true, false, _) =>
        <span> {text("Access denied to admin content")} </span>
      | (false, _, _) =>
-       <MaterialUi_Button
+       <MaterialUi.Button
          color=`Primary
          variant=`Outlined
          onClick=handleClick
          style={ReactDOMRe.Style.make(~margin="20px", ())}>
          {text("Login with Google")}
-       </MaterialUi_Button>
+       </MaterialUi.Button>
      }}
   </>;
 };

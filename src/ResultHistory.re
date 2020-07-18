@@ -41,18 +41,18 @@ let make = (~communityName: string) => {
     <Header page={History(communityName)} />
     <MaterialUi.Box margin="10px" textAlign="center">
       <MaterialUi.Box margin="10px" textAlign="center">
-        <MaterialUi_Button variant=`Contained onClick=setAllTime>
+        <MaterialUi.Button variant=`Contained onClick=setAllTime>
           {text("All time")}
-        </MaterialUi_Button>
-        <MaterialUi_Button variant=`Contained onClick=setToday>
+        </MaterialUi.Button>
+        <MaterialUi.Button variant=`Contained onClick=setToday>
           {text("This week")}
-        </MaterialUi_Button>
+        </MaterialUi.Button>
       </MaterialUi.Box>
-      <MaterialUi_Button
+      <MaterialUi.Button
         style=nextPrevWeekButtonStyle variant=`Contained onClick=decrementWeek>
         {text("<<")}
-      </MaterialUi_Button>
-      <MaterialUi_TextField
+      </MaterialUi.Button>
+      <MaterialUi.TextField
         type_="date"
         value={`String(dateFrom->Belt.Option.mapWithDefault("", formatDate))}
         onChange={e => {
@@ -62,7 +62,7 @@ let make = (~communityName: string) => {
           };
         }}
       />
-      <MaterialUi_TextField
+      <MaterialUi.TextField
         type_="date"
         value={`String(dateTo->Belt.Option.mapWithDefault("", formatDate))}
         onChange={e => {
@@ -72,10 +72,10 @@ let make = (~communityName: string) => {
           };
         }}
       />
-      <MaterialUi_Button
+      <MaterialUi.Button
         style=nextPrevWeekButtonStyle variant=`Contained onClick=incrementWeek>
         {text(">>")}
-      </MaterialUi_Button>
+      </MaterialUi.Button>
     </MaterialUi.Box>
     <Stats communityName ?dateFrom ?dateTo />
     <Results

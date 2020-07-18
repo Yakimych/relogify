@@ -61,7 +61,7 @@ let make = (~communityName: string) => {
   );
 
   switch (resultsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>

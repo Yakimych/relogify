@@ -119,11 +119,11 @@ let make = (~communityName: string) => {
   | Some(_) =>
     <>
       <Header page={AdminSettingsPage(communityName)} />
-      <MaterialUi_Container maxWidth=`Lg>
+      <MaterialUi.Container maxWidth=`Lg>
         <div className="admin-settings">
-          <MaterialUi_FormControlLabel
+          <MaterialUi.FormControlLabel
             control={
-              <MaterialUi_Checkbox
+              <MaterialUi.Checkbox
                 color=`Default
                 checked={state.allowDraws}
                 onChange={_ => dispatch(ToggleAllowDraws)}
@@ -131,9 +131,9 @@ let make = (~communityName: string) => {
             }
             label={text("Allow draws")}
           />
-          <MaterialUi_FormControlLabel
+          <MaterialUi.FormControlLabel
             control={
-              <MaterialUi_Checkbox
+              <MaterialUi.Checkbox
                 color=`Default
                 checked={state.includeExtraTime}
                 onChange={_ => dispatch(ToggleIncludeExtraTime)}
@@ -141,7 +141,7 @@ let make = (~communityName: string) => {
             }
             label={text("Include Extra Time")}
           />
-          <MaterialUi_TextField
+          <MaterialUi.TextField
             type_="number"
             variant=`Outlined
             style={ReactDOMRe.Style.make(
@@ -163,7 +163,7 @@ let make = (~communityName: string) => {
           />
           {text("Score type: ")}
           // TODO: Style this without inline styles
-          <MaterialUi_NativeSelect
+          <MaterialUi.NativeSelect
             value={state.scoreType |> scoreTypeToString}
             style={ReactDOMRe.Style.make(
               ~width="200px",
@@ -175,7 +175,7 @@ let make = (~communityName: string) => {
               dispatch(SetScoreType(scoreTypeString |> toScoreType));
             }}
             input={
-              <MaterialUi_OutlinedInput
+              <MaterialUi.OutlinedInput
                 labelWidth={`Int(0)}
                 style={ReactDOMRe.Style.make(~width="150px", ())}
               />
@@ -186,16 +186,16 @@ let make = (~communityName: string) => {
                </option>
              )
              |> React.array}
-          </MaterialUi_NativeSelect>
-          <MaterialUi_Button
+          </MaterialUi.NativeSelect>
+          <MaterialUi.Button
             variant=`Contained
             color=`Primary
             style={ReactDOMRe.Style.make(~width="100px", ())}
             onClick={_ => saveCommunitySettings()}>
             {text("Save")}
-          </MaterialUi_Button>
+          </MaterialUi.Button>
         </div>
-      </MaterialUi_Container>
+      </MaterialUi.Container>
     </>
   };
 };

@@ -12,32 +12,32 @@ let make = (~communityName: string) => {
     );
 
   switch (playersQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
     <>
       <Header page={AdminPlayersPage(communityName)} />
-      <MaterialUi_Container maxWidth=`Sm>
-        <MaterialUi_Table size=`Small>
-          <MaterialUi_TableHead>
-            <MaterialUi_TableRow>
-              <MaterialUi_TableCell> {text("Player")} </MaterialUi_TableCell>
-            </MaterialUi_TableRow>
-          </MaterialUi_TableHead>
-          <MaterialUi_TableBody>
+      <MaterialUi.Container maxWidth=`Sm>
+        <MaterialUi.Table size=`Small>
+          <MaterialUi.TableHead>
+            <MaterialUi.TableRow>
+              <MaterialUi.TableCell> {text("Player")} </MaterialUi.TableCell>
+            </MaterialUi.TableRow>
+          </MaterialUi.TableHead>
+          <MaterialUi.TableBody>
             {data##players
              ->Belt.Array.map(p =>
-                 <MaterialUi_TableRow key={string_of_int(p##id)}>
-                   <MaterialUi_TableCell>
+                 <MaterialUi.TableRow key={string_of_int(p##id)}>
+                   <MaterialUi.TableCell>
                      {text(p##name)}
-                   </MaterialUi_TableCell>
-                 </MaterialUi_TableRow>
+                   </MaterialUi.TableCell>
+                 </MaterialUi.TableRow>
                )
              |> React.array}
-          </MaterialUi_TableBody>
-        </MaterialUi_Table>
-      </MaterialUi_Container>
+          </MaterialUi.TableBody>
+        </MaterialUi.Table>
+      </MaterialUi.Container>
     </>
   };
 };

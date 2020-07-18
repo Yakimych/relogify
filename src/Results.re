@@ -28,7 +28,7 @@ let make =
     );
 
   switch (resultsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(data) =>
@@ -50,17 +50,17 @@ let make =
     );
 
     newlyFetchedResults->Belt.List.length === 0
-      ? <MaterialUi_Card className="no-result-info">
-          <MaterialUi_CardContent>
-            <MaterialUi_Typography variant=`H6>
+      ? <MaterialUi.Card className="no-result-info">
+          <MaterialUi.CardContent>
+            <MaterialUi.Typography variant=`H6>
               {text(
                  noResultsText->Belt.Option.getWithDefault(
                    "No results reported this week",
                  ),
                )}
-            </MaterialUi_Typography>
-          </MaterialUi_CardContent>
-        </MaterialUi_Card>
+            </MaterialUi.Typography>
+          </MaterialUi.CardContent>
+        </MaterialUi.Card>
       : <ResultsTable
           communityName
           results={resultsWithRatingMap.resultsWithRatings}

@@ -23,7 +23,7 @@ let make = (~playerName: string, ~communityName: string) => {
     <Header page={PlayerHome(communityName, playerName)} />
     {switch (playerResultsQuery, settingsQuery) {
      | (Loading, _)
-     | (_, Loading) => <MaterialUi_CircularProgress />
+     | (_, Loading) => <MaterialUi.CircularProgress />
      | (NoData, _)
      | (_, NoData)
      | (Error(_), _)
@@ -39,58 +39,58 @@ let make = (~playerName: string, ~communityName: string) => {
 
        <>
          <MaterialUi.Box textAlign="center">
-           <MaterialUi_Typography variant=`H4>
+           <MaterialUi.Typography variant=`H4>
              {text(playerName)}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text("Total wins: " ++ string_of_int(playerStats.matchesWon))}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 "Total losses: " ++ string_of_int(playerStats.matchesLost),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 "Win/Loss ratio: "
                 ++ formatPercentage(playerStats |> matchesWonPerPlayed),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 texts.totalPointsWon
                 ++ ": "
                 ++ string_of_int(playerStats.goalsScored),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 texts.totalPointsLost
                 ++ ": "
                 ++ string_of_int(playerStats.goalsConceded),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 texts.allTimePointDiff
                 ++ ": "
                 ++ (playerStats |> goalDiff |> formatDiff),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 texts.totalPointsWonPerMatch
                 ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsScoredPerMatch),
               )}
-           </MaterialUi_Typography>
-           <MaterialUi_Typography>
+           </MaterialUi.Typography>
+           <MaterialUi.Typography>
              {text(
                 texts.totalPointsLostPerMatch
                 ++ ": "
                 ++ formatGoalsPerMatch(playerStats |> goalsConcededPerMatch),
               )}
-           </MaterialUi_Typography>
+           </MaterialUi.Typography>
            {streaks
             ->getLongestStreak
             ->Belt.Option.mapWithDefault(React.null, streak =>

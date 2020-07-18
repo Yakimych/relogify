@@ -87,17 +87,17 @@ let make =
         );
 
     switch (settingsQuery) {
-    | Loading => <MaterialUi_CircularProgress />
+    | Loading => <MaterialUi.CircularProgress />
     | NoData
     | Error(_) => <span> {text("Error")} </span>
     | Data(communitySettings) =>
       let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
-      <MaterialUi_Paper>
+      <MaterialUi.Paper>
         <div className="title">
-          <MaterialUi_Typography variant=`H6>
+          <MaterialUi.Typography variant=`H6>
             {text(title)}
-          </MaterialUi_Typography>
+          </MaterialUi.Typography>
         </div>
         <div className="top-stats-container">
           <SingleStatCard
@@ -117,7 +117,7 @@ let make =
             statName="Elo Difference"
           />
         </div>
-      </MaterialUi_Paper>;
+      </MaterialUi.Paper>;
     };
   };
 };

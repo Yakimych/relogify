@@ -101,11 +101,11 @@ let make = (~communityName: string, ~onResultAdded) => {
   };
 
   switch (settingsQuery) {
-  | Loading => <MaterialUi_CircularProgress />
+  | Loading => <MaterialUi.CircularProgress />
   | NoData
   | Error(_) => <span> {text("Error")} </span>
   | Data(communitySettings) =>
-    <MaterialUi_Paper
+    <MaterialUi.Paper
       elevation={`Int(6)}
       style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
       <div
@@ -149,17 +149,17 @@ let make = (~communityName: string, ~onResultAdded) => {
           ~justifyContent="space-between",
           (),
         )}>
-        <MaterialUi_Button
+        <MaterialUi.Button
           disabled=isAddingResult
           variant=`Contained
           color=`Primary
           onClick={_ => addResult(communitySettings.allowDraws)}>
           {text("Submit")}
-        </MaterialUi_Button>
+        </MaterialUi.Button>
         {communitySettings.includeExtraTime
-           ? <MaterialUi_FormControlLabel
+           ? <MaterialUi.FormControlLabel
                control={
-                 <MaterialUi_Checkbox
+                 <MaterialUi.Checkbox
                    disabled=isAddingResult
                    color=`Default
                    checked=extraTime
@@ -169,7 +169,7 @@ let make = (~communityName: string, ~onResultAdded) => {
                label={text("Extra Time")}
              />
            : React.null}
-        <MaterialUi_TextField
+        <MaterialUi.TextField
           disabled=isAddingResult
           type_="date"
           value={`String(formatDate(date))}
@@ -181,6 +181,6 @@ let make = (~communityName: string, ~onResultAdded) => {
           }}
         />
       </div>
-    </MaterialUi_Paper>
+    </MaterialUi.Paper>
   };
 };

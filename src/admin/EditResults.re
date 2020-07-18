@@ -26,20 +26,20 @@ let make =
   <>
     <Header page={AdminResultsPage(communityName)} />
     {switch (resultsQuery) {
-     | Loading => <MaterialUi_CircularProgress />
+     | Loading => <MaterialUi.CircularProgress />
      | NoData
      | Error(_) => <span> {text("Error")} </span>
      | Data(data) =>
        let results = data##results |> toListOfResults;
 
        results->Belt.List.length === 0
-         ? <MaterialUi_Card className="no-result-info">
-             <MaterialUi_CardContent>
-               <MaterialUi_Typography variant=`H6>
+         ? <MaterialUi.Card className="no-result-info">
+             <MaterialUi.CardContent>
+               <MaterialUi.Typography variant=`H6>
                  {text("No results reported during the selected time period")}
-               </MaterialUi_Typography>
-             </MaterialUi_CardContent>
-           </MaterialUi_Card>
+               </MaterialUi.Typography>
+             </MaterialUi.CardContent>
+           </MaterialUi.Card>
          : <EditResultsTable
              communityName
              results
