@@ -36,7 +36,7 @@ let make =
     let resultsWithRatingMap = newlyFetchedResults |> attachRatings;
 
     let newResultIds =
-      React.Ref.current(lastFetchedResultsRef)
+      lastFetchedResultsRef.current
       ->Js.Nullable.toOption
       ->Belt.Option.mapWithDefault([], lastFetchedResults =>
           newlyFetchedResults
@@ -44,10 +44,8 @@ let make =
           ->Belt.List.map(r => r.id)
         );
 
-    React.Ref.setCurrent(
-      lastFetchedResultsRef,
-      Js.Nullable.fromOption(Some(newlyFetchedResults)),
-    );
+    lastFetchedResultsRef.current =
+      Js.Nullable.fromOption(Some(newlyFetchedResults));
 
     newlyFetchedResults->Belt.List.length === 0
       ? <MaterialUi.Card className="no-result-info">
