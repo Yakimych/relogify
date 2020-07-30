@@ -59,9 +59,9 @@ let make = (~communityName: string) => {
         ~refetchQueries=
           _ =>
             [|
-              ApolloHooks.toQueryObj(
-                AllResultsQuery.make(~communityName, ()),
-              ),
+              // ApolloHooks.toQueryObj(
+              //   AllResultsQuery.make(~communityName, ()),
+              // ),
               ApolloHooks.toQueryObj(
                 AllPlayersQuery.make(~communityName, ()),
               ),

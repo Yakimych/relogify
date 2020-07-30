@@ -23,8 +23,9 @@ let make = () => {
     </MaterialUi.Container>
   | [communityName, "top"] =>
     <MaterialUi.Container maxWidth=`Lg>
-      <TopBoard communityName />
+      <div> {text("PLACEHOLDER FOR TOPBOARD: " ++ communityName)} </div>
     </MaterialUi.Container>
+  // <TopBoard communityName />
   | [communityName, "history"] =>
     <MaterialUi.Container maxWidth=`Sm>
       <ResultHistory communityName />

@@ -73,14 +73,14 @@ let make = (~communityName: string, ~onResultAdded) => {
         ~refetchQueries=
           _ =>
             [|
-              ApolloHooks.toQueryObj(
-                AllResultsQuery.make(
-                  ~communityName,
-                  ~dateFrom=startDate |> toJsonDate,
-                  ~dateTo=endDate |> toJsonDate,
-                  (),
-                ),
-              ),
+              // ApolloHooks.toQueryObj(
+              //   AllResultsQuery.make(
+              //     ~communityName,
+              //     ~dateFrom=startDate |> toJsonDate,
+              //     ~dateTo=endDate |> toJsonDate,
+              //     (),
+              //   ),
+              // ),
               ApolloHooks.toQueryObj(
                 AllPlayersQuery.make(~communityName, ()),
               ),

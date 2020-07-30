@@ -5,7 +5,6 @@ open Queries;
 open Styles;
 open EloUtils;
 open UseCommunitySettings;
-open ApolloHooks;
 
 let getValueToCompareFunc = (sortBy: columnType) => {
   switch (sortBy) {
@@ -50,6 +49,38 @@ let getSortFunc =
   };
 };
 
+module Query = [%relay.query
+  {|
+    query StatsQuery($communityName:String!, $dateFrom:timestamptz, $dateTo:timestamptz) {
+      results_connection(
+        where: {
+          community: { name: { _eq: $communityName } }
+          date: { _gte: $dateFrom, _lte: $dateTo }
+        }
+        order_by: { date: desc }
+      ) {
+        edges {
+          node {
+            player1 {
+              id
+              name
+            }
+            player2 {
+              id
+              name
+            }
+            player2goals
+            player1goals
+            extratime
+            date
+            id
+          }
+        }
+      }
+    }
+  |}
+];
+
 [@react.component]
 let make =
     (
@@ -59,16 +90,17 @@ let make =
       ~playerLimit: option(int)=?,
       ~title: option(string)=?,
     ) => {
-  let (resultsQuery, _) =
-    useQuery(
-      ~variables=
-        AllResultsQuery.makeVariables(
-          ~communityName,
-          ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-          ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
-          (),
-        ),
-      AllResultsQuery.definition,
+  let dateFromString = dateFrom->Belt.Option.map(Js.Date.toISOString);
+  let dateToString = dateTo->Belt.Option.map(Js.Date.toISOString);
+
+  let queryData =
+    Query.use(
+      ~variables={
+        communityName,
+        dateFrom: dateFromString,
+        dateTo: dateToString,
+      },
+      (),
     );
 
   let settingsQuery = useCommunitySettings(communityName);
@@ -83,15 +115,12 @@ let make =
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   <>
-    {switch (resultsQuery, settingsQuery) {
-     | (_, Loading)
-     | (Loading, _) => <MaterialUi.CircularProgress />
-     | (NoData, _)
-     | (_, NoData)
-     | (Error(_), _)
-     | (_, Error(_)) => <span> {text("Error")} </span>
-     | (Data(resultsData), Data(communitySettings)) =>
-       let results = resultsData##results |> toListOfResults;
+    {switch (settingsQuery) {
+     | Loading => <MaterialUi.CircularProgress />
+     | NoData
+     | Error(_) => <span> {text("Error")} </span>
+     | Data(communitySettings) =>
+       let results = queryData.results_connection.edges |> toListOfResults4;
        let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
 
        let showEloRatings =

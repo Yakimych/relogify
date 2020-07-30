@@ -50,7 +50,10 @@ let editResultsTableReducer =
 
 [@react.component]
 let make =
-    (~results: list(matchResult), ~communityName: string, ~queryToRefetch) => {
+    (
+      ~results: list(matchResult),
+      ~communityName: string /*, ~queryToRefetch*/,
+    ) => {
   let settingsQuery = useCommunitySettings(communityName);
 
   let (updateResultMutation, _, _) =
@@ -69,7 +72,7 @@ let make =
             ~resultId=resultId |> int_of_string, // TODO: This will fail
             (),
           ),
-        ~refetchQueries=_ => [|queryToRefetch|],
+        // ~refetchQueries=_ => [|queryToRefetch|],
         // TODO: Update local apollo cache manually instead of refetchQueries
         (),
       )
@@ -102,7 +105,7 @@ let make =
             ~date=editedValues.date->toJsonDate,
             (),
           ),
-        ~refetchQueries=_ => [|queryToRefetch|],
+        // ~refetchQueries=_ => [|queryToRefetch|],
         // TODO: Update local apollo cache manually instead of refetchQueries
         (),
       )

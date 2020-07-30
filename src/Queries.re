@@ -17,34 +17,6 @@ module AllPlayersQuery = [%graphql
   |}
 ];
 
-module AllResultsQuery = [%graphql
-  {|
-    query AllResultsQuery($communityName: String!, $dateFrom: timestamptz, $dateTo: timestamptz) {
-      results(
-        where: {
-          community: { name: { _eq: $communityName } }
-          date: { _gte: $dateFrom, _lte: $dateTo }
-        }
-        order_by: { date: desc }
-      ) {
-        player1 {
-          id
-          name
-        }
-        player2 {
-          id
-          name
-        }
-        player2goals
-        player1goals
-        extratime
-        date @bsDecoder (fn: "dateToString")
-        id
-      }
-    }
-  |}
-];
-
 type playerWithTypeName = {
   id: int,
   name: string,
@@ -124,6 +96,85 @@ let toListOfResults2 =
       res:
         array(
           HeadToHeadPageQuery_graphql.Types.response_results_connection_edges,
+        ),
+    )
+    : list(matchResult) =>
+  res
+  ->Belt.Array.map(resultNode => {
+      let r = resultNode.node;
+      {
+        id: r.id,
+        player1: {
+          id: r.player1.id,
+          name: r.player1.name,
+        },
+        player2: {
+          id: r.player2.id,
+          name: r.player2.name,
+        },
+        player1goals: r.player1goals,
+        player2goals: r.player2goals,
+        date: r.date |> Js.Date.fromString,
+        extratime: r.extratime,
+      };
+    })
+  ->Belt.List.fromArray;
+
+let toListOfResults3 =
+    (
+      res: array(ResultsQuery_graphql.Types.response_results_connection_edges),
+    )
+    : list(matchResult) =>
+  res
+  ->Belt.Array.map(resultNode => {
+      let r = resultNode.node;
+      {
+        id: r.id,
+        player1: {
+          id: r.player1.id,
+          name: r.player1.name,
+        },
+        player2: {
+          id: r.player2.id,
+          name: r.player2.name,
+        },
+        player1goals: r.player1goals,
+        player2goals: r.player2goals,
+        date: r.date |> Js.Date.fromString,
+        extratime: r.extratime,
+      };
+    })
+  ->Belt.List.fromArray;
+
+let toListOfResults4 =
+    (res: array(StatsQuery_graphql.Types.response_results_connection_edges))
+    : list(matchResult) =>
+  res
+  ->Belt.Array.map(resultNode => {
+      let r = resultNode.node;
+      {
+        id: r.id,
+        player1: {
+          id: r.player1.id,
+          name: r.player1.name,
+        },
+        player2: {
+          id: r.player2.id,
+          name: r.player2.name,
+        },
+        player1goals: r.player1goals,
+        player2goals: r.player2goals,
+        date: r.date |> Js.Date.fromString,
+        extratime: r.extratime,
+      };
+    })
+  ->Belt.List.fromArray;
+
+let toListOfResults5 =
+    (
+      res:
+        array(
+          EditResultsQuery_graphql.Types.response_results_connection_edges,
         ),
     )
     : list(matchResult) =>
