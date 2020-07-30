@@ -7,5 +7,6 @@ module.exports = {
   // Whenever a custom scalar is encountered, the type emitted will correspond to the definition defined here. You can then deal with the type as needed when accessing the data.
   customScalars: {
     Datetime: "string",
+    timestamptz: "string",
   },
 };

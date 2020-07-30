@@ -29,7 +29,7 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
 
 let getHighlightedClassName =
-    (newResults: option(list(int)), currentResult: matchResult) => {
+    (newResults: option(list(string)), currentResult: matchResult) => {
   let resultIsFresh =
     newResults
     ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResult.id))
@@ -47,7 +47,7 @@ let make =
       ~results: list(resultWithRatings),
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
-      ~resultIdsToHighlight: option(list(int))=?,
+      ~resultIdsToHighlight: option(list(string))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) => {
@@ -117,8 +117,9 @@ let make =
                let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
                let formattedDate = formatDate(result.date);
 
+               //  key={string_of_int(result.id)}
                <MaterialUi.TableRow
-                 key={string_of_int(result.id)}
+                 key={result.id}
                  className={
                    getHighlightedClassName(resultIdsToHighlight, result)
                    ++ " "

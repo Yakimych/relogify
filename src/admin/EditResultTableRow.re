@@ -3,8 +3,8 @@ open Utils;
 open Types;
 
 type editResultAction =
-  | SetPlayer1Id(int)
-  | SetPlayer2Id(int)
+  | SetPlayer1Id(string)
+  | SetPlayer2Id(string)
   | SetPlayer1Goals(int)
   | SetPlayer2Goals(int)
   | ToggleExtraTime

@@ -69,7 +69,7 @@ let make = (~communityName: string) => {
     let results = data##results |> toListOfResults;
     let resultsWithRatingMap = results |> attachRatings;
     let resultIdsToHighlight =
-      newResult->Belt.Option.mapWithDefault([], v => [v]);
+      newResult->Belt.Option.mapWithDefault([], v => [v |> string_of_int]);
 
     <>
       <Header page={TopX(communityName)} />

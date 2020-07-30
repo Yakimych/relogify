@@ -6,9 +6,9 @@ open ApolloHooks;
 let make =
     (
       ~communityName: string,
-      ~selectedPlayerId: int,
+      ~selectedPlayerId: string,
       ~disabled: bool,
-      ~onChange: int => unit,
+      ~onChange: string => unit,
     ) => {
   let (playersQuery, _) =
     useQuery(
@@ -28,7 +28,7 @@ let make =
         let newId = ReactEvent.Form.target(e)##value;
         onChange(newId);
       }}
-      value={string_of_int(selectedPlayerId)}
+      value=selectedPlayerId
       input={
         <MaterialUi.OutlinedInput
           style={ReactDOMRe.Style.make(~width="60px", ())}

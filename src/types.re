@@ -12,12 +12,12 @@ type page =
   | HeadToHead(string, string, string);
 
 type player = {
-  id: int,
+  id: string,
   name: string,
 };
 
 type matchResult = {
-  id: int,
+  id: string,
   player1: player,
   player2: player,
   player1goals: int,
@@ -90,8 +90,8 @@ let defaultCommunitySettings = {
 };
 
 type editableResultValues = {
-  player1Id: int,
-  player2Id: int,
+  player1Id: string,
+  player2Id: string,
   player1Goals: int,
   player2Goals: int,
   extraTime: bool,

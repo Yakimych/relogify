@@ -9,10 +9,10 @@ let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
 
 type editResultsTableState =
   | Idle
-  | Editing(int, editableResultValues)
-  | Updating(int)
-  | DeleteConfirmationPending(int)
-  | Deleting(int);
+  | Editing(string, editableResultValues)
+  | Updating(string)
+  | DeleteConfirmationPending(string)
+  | Deleting(string);
 
 let apiRequestIsInProgress =
   fun
@@ -24,7 +24,7 @@ type editResultsTableAction =
   | StartEditing(matchResult)
   | StopEditing
   | StartUpdating
-  | DeleteRequested(int)
+  | DeleteRequested(string)
   | StopDeleting
   | StartDeleting;
 
@@ -64,7 +64,11 @@ let make =
     | DeleteConfirmationPending(resultId) =>
       dispatch(StartDeleting);
       deleteResultMutation(
-        ~variables=DeleteResultMutation.makeVariables(~resultId, ()),
+        ~variables=
+          DeleteResultMutation.makeVariables(
+            ~resultId=resultId |> int_of_string, // TODO: This will fail
+            (),
+          ),
         ~refetchQueries=_ => [|queryToRefetch|],
         // TODO: Update local apollo cache manually instead of refetchQueries
         (),
@@ -82,16 +86,16 @@ let make =
     };
   };
 
-  let updateResult = (resultId, editedValues: editableResultValues) => {
+  let updateResult = (resultId: string, editedValues: editableResultValues) => {
     switch (state) {
     | Editing(_) =>
       dispatch(StartUpdating);
       updateResultMutation(
         ~variables=
           UpdateResultMutation.makeVariables(
-            ~resultId,
-            ~player1Id=editedValues.player1Id,
-            ~player2Id=editedValues.player2Id,
+            ~resultId=resultId |> int_of_string,
+            ~player1Id=editedValues.player1Id |> int_of_string,
+            ~player2Id=editedValues.player2Id |> int_of_string,
             ~player1Goals=editedValues.player1Goals,
             ~player2Goals=editedValues.player2Goals,
             ~extraTime=editedValues.extraTime,
@@ -155,7 +159,7 @@ let make =
           <AddResultTableRow communityName />
           {results
            ->Belt.List.map(result =>
-               <MaterialUi.TableRow key={string_of_int(result.id)}>
+               <MaterialUi.TableRow key={result.id}>
                  {switch (state) {
                   | DeleteConfirmationPending(resultToDeleteId)
                       when result.id === resultToDeleteId =>

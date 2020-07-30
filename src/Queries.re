@@ -2,6 +2,7 @@ open Types;
 
 external castToString: Js.Json.t => string = "%identity";
 
+// TODO: DateFromString?
 let dateToString = (dateString: Js.Json.t) =>
   dateString |> castToString |> Js.Date.fromString;
 
@@ -68,47 +69,6 @@ external toAllResults: Js.Json.t => Js.Nullable.t(allResults) = "%identity";
 external toSubscriptionData: Js.Json.t => Js.Nullable.t(subscriptionData) =
   "%identity";
 
-module HeadToHeadQuery = [%graphql
-  {|
-    query($communityName: String!, $player1Name: String!, $player2Name: String!) {
-      results(
-        where: {
-          _and: [
-            { community: { name: { _eq: $communityName } } }
-            {
-              _or: [
-                { player1: { name: { _eq: $player1Name } } }
-                { player2: { name: { _eq: $player1Name } } }
-              ]
-            }
-            {
-              _or: [
-                { player1: { name: { _eq: $player2Name } } }
-                { player2: { name: { _eq: $player2Name } } }
-              ]
-            }
-          ]
-        }
-        order_by: { date: desc }
-      ) {
-        id
-        player1 {
-          id
-          name
-        }
-        player1goals
-        player2 {
-          id
-          name
-        }
-        player2goals
-        date @bsDecoder (fn: "dateToString")
-        extratime
-      }
-    }
-  |}
-];
-
 module CommunitySettingsQuery = [%graphql
   {|
     query communitySettings($communityName: String!) {
@@ -159,17 +119,46 @@ module PlayerResultsQuery = [%graphql
   |}
 ];
 
+let toListOfResults2 =
+    (
+      res:
+        array(
+          HeadToHeadPageQuery_graphql.Types.response_results_connection_edges,
+        ),
+    )
+    : list(matchResult) =>
+  res
+  ->Belt.Array.map(resultNode => {
+      let r = resultNode.node;
+      {
+        id: r.id,
+        player1: {
+          id: r.player1.id,
+          name: r.player1.name,
+        },
+        player2: {
+          id: r.player2.id,
+          name: r.player2.name,
+        },
+        player1goals: r.player1goals,
+        player2goals: r.player2goals,
+        date: r.date |> Js.Date.fromString,
+        extratime: r.extratime,
+      };
+    })
+  ->Belt.List.fromArray;
+
 let toListOfResults = (res): list(matchResult) =>
   res
   ->Belt.Array.map(r =>
       {
-        id: r##id,
+        id: r##id |> string_of_int,
         player1: {
-          id: r##player1##id,
+          id: r##player1##id |> string_of_int,
           name: r##player1##name,
         },
         player2: {
-          id: r##player2##id,
+          id: r##player2##id |> string_of_int,
           name: r##player2##name,
         },
         player1goals: r##player1goals,
