@@ -1,21 +1,39 @@
 open Utils;
-open Queries;
-open ApolloHooks;
+
+module Query = [%relay.query
+  {|
+    query CreateCommunityPageQuery {
+      communities_connection {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  |}
+];
 
 [@react.component]
 let make = () => {
   let (communityName, setCommunityName) = React.useState(_ => "");
-  let (allCommunitiesResult, _) = useQuery(AllCommunitiesQuery.definition);
+  let queryData = Query.use(~variables=(), ());
 
   let nameIsAvailable = () =>
-    switch (communityName, allCommunitiesResult) {
-    | ("new", _) => Some(false)
-    | ("", _)
-    | (_, Loading)
-    | (_, NoData)
-    | (_, Error(_)) => None
-    | (_, Data(data)) =>
-      Some(!data##communities->Belt.Array.some(c => c##name == communityName))
+    switch (communityName) {
+    | "" => None
+    | "new" => Some(false)
+    | _ =>
+      Some(
+        queryData.communities_connection.edges
+        |> Array.exists(
+             (
+               communityEdge: CreateCommunityPageQuery_graphql.Types.response_communities_connection_edges,
+             ) =>
+             communityEdge.node.name == communityName
+           )
+        |> (!),
+      )
     };
 
   <>

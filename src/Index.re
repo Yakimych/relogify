@@ -41,7 +41,9 @@ ReactExperimental.renderConcurrentRootAtElementWithId(
   <ReasonRelay.Context.Provider environment=RelayEnv.environment>
     <ApolloHooks.Provider client>
       <ReactNetlifyIdentity.IdentityContextProvider url=identityUrl>
-        <Routing />
+        <React.Suspense fallback={<div> {React.string("Loading...")} </div>}>
+          <Routing />
+        </React.Suspense>
       </ReactNetlifyIdentity.IdentityContextProvider>
     </ApolloHooks.Provider>
   </ReasonRelay.Context.Provider>,

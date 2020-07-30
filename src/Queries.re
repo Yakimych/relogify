@@ -109,16 +109,6 @@ module HeadToHeadQuery = [%graphql
   |}
 ];
 
-module AllCommunitiesQuery = [%graphql
-  {|
-    query communities {
-      communities {
-        name
-      }
-    }
-  |}
-];
-
 module CommunitySettingsQuery = [%graphql
   {|
     query communitySettings($communityName: String!) {
