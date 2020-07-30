@@ -8,11 +8,23 @@ open ApolloHooks;
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
+module AddMutation = [%relay.mutation
+  {|
+    mutation AddResultMutation($input: results_insert_input!) {
+      insert_results_one(
+        object: $input
+      ) {
+        id
+      }
+    }
+  |}
+];
+
 [@react.component]
 let make = (~communityName: string, ~onResultAdded) => {
   let settingsQuery = useCommunitySettings(communityName);
 
-  let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
+  let (mutate, isMutating) = AddMutation.use();
 
   let (getMostUsedPlayer, updateUsedPlayers) =
     useMostUsedPlayer(communityName);
@@ -58,33 +70,57 @@ let make = (~communityName: string, ~onResultAdded) => {
 
       // Will refetch query for current week after adding result
       let (startDate, endDate) = getCurrentWeek();
-      addResultMutation(
-        ~variables=
-          AddResultMutation.makeVariables(
-            ~communityName,
-            ~player1Name,
-            ~player2Name,
-            ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
-            ~player1Goals=goals1,
-            ~player2Goals=goals2,
-            ~extraTime,
-            (),
-          ),
-        ~refetchQueries=
-          _ =>
-            [|
-              // ApolloHooks.toQueryObj(
-              //   AllResultsQuery.make(
-              //     ~communityName,
-              //     ~dateFrom=startDate |> toJsonDate,
-              //     ~dateTo=endDate |> toJsonDate,
-              //     (),
-              //   ),
-              // ),
-              ApolloHooks.toQueryObj(
-                AllPlayersQuery.make(~communityName, ()),
-              ),
-            |],
+      mutate(
+        ~variables={
+          community:
+            Some({
+              data: {
+                community_settings: None,
+                description: None,
+                id: None,
+                name: Some(communityName),
+                players: None,
+                results: None,
+              },
+              on_conflict: None,
+            }),
+
+          player1:
+            Some({
+              data: {
+                community: None,
+                communityId: None,
+                id: None,
+                name: Some(player1Name),
+                resultsAsPlayer1: None,
+                resultsAsPlayer2: None,
+              },
+              on_conflict: None,
+            }),
+
+          player2:
+            Some({
+              data: {
+                community: None,
+                communityId: None,
+                id: None,
+                name: Some(player2Name),
+                resultsAsPlayer1: None,
+                resultsAsPlayer2: None,
+              },
+              on_conflict: None,
+            }),
+
+          comment: None,
+          communityId: None,
+          date: Some("2020-01-01"),
+          extratime: Some(false),
+          id: None,
+          player1Id: None,
+          player1goals: Some(1),
+          player2Id: None,
+          player2goals: Some(2),
+        },
         (),
       )
       |> Js.Promise.then_(_ => {
