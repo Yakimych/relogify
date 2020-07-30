@@ -143,7 +143,7 @@ let make =
             <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
             <MaterialUi.TableCell style=extraTimeStyle align=`Right>
               <MaterialUi.Tooltip title={text("Extra time")} placement=`Top>
-                {text("E")}
+                <div> {text("E")} </div>
               </MaterialUi.Tooltip>
             </MaterialUi.TableCell>
             <MaterialUi.TableCell style=dateStyle>
