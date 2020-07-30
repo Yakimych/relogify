@@ -9,7 +9,9 @@
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
     "watch:jest": "jest --coverage --watchAll",
-    "server": "webpack-dev-server --host 0.0.0.0 --disable-host-check"
+    "server": "webpack-dev-server --host 0.0.0.0 --disable-host-check",
+    "relay": "reason-relay-compiler",
+    "relay:watch": "reason-relay-compiler --watch"
   },
   "keywords": [
     "BuckleScript"
