@@ -199,33 +199,189 @@ let wrap_enum_communities_constraint: enum_communities_constraint => string =
   | `FutureAddedValue(v) => v;
 
 module Types = {
-  type players_obj_rel_insert_input = {
-    data: players_insert_input,
+  [@ocaml.warning "-30"];
+  type response_insert_results_one = {id: string}
+  and results_insert_input = {
+    comment: option(string),
+    community: option(communities_obj_rel_insert_input),
+    communityId: option(int),
+    date: option(string),
+    extratime: option(bool),
+    id: option(int),
+    player1: option(players_obj_rel_insert_input),
+    player1Id: option(int),
+    player1goals: option(int),
+    player2: option(players_obj_rel_insert_input),
+    player2Id: option(int),
+    player2goals: option(int),
+  }
+  and communities_obj_rel_insert_input = {
+    data: communities_insert_input,
+    on_conflict: option(communities_on_conflict),
+  }
+  and communities_insert_input = {
+    community_settings: option(community_settings_arr_rel_insert_input),
+    description: option(string),
+    id: option(int),
+    name: option(string),
+    players: option(players_arr_rel_insert_input),
+    results: option(results_arr_rel_insert_input),
+  }
+  and community_settings_arr_rel_insert_input = {
+    data: array(community_settings_insert_input),
+    on_conflict: option(community_settings_on_conflict),
+  }
+  and community_settings_insert_input = {
+    allow_draws: option(bool),
+    community: option(communities_obj_rel_insert_input),
+    community_id: option(int),
+    include_extra_time: option(bool),
+    max_selectable_points: option(int),
+    score_type: option([ | `Goals | `Points | `FutureAddedValue(string)]),
+    use_dropdown_for_points: option(bool),
+  }
+  and community_settings_on_conflict = {
+    [@bs.as "constraint"]
+    constraint_: [ | `community_settings_pkey | `FutureAddedValue(string)],
+    update_columns:
+      array(
+        [
+          | `allow_draws
+          | `community_id
+          | `include_extra_time
+          | `max_selectable_points
+          | `score_type
+          | `use_dropdown_for_points
+          | `FutureAddedValue(string)
+        ],
+      ),
+    where: option(community_settings_bool_exp),
+  }
+  and community_settings_bool_exp = {
+    _and: option(array(option(community_settings_bool_exp))),
+    _not: option(community_settings_bool_exp),
+    _or: option(array(option(community_settings_bool_exp))),
+    allow_draws: option(boolean_comparison_exp),
+    community: option(communities_bool_exp),
+    community_id: option(int_comparison_exp),
+    include_extra_time: option(boolean_comparison_exp),
+    max_selectable_points: option(int_comparison_exp),
+    score_type: option(score_types_enum_comparison_exp),
+    use_dropdown_for_points: option(boolean_comparison_exp),
+  }
+  and boolean_comparison_exp = {
+    _eq: option(bool),
+    _gt: option(bool),
+    _gte: option(bool),
+    _in: option(array(bool)),
+    _is_null: option(bool),
+    _lt: option(bool),
+    _lte: option(bool),
+    _neq: option(bool),
+    _nin: option(array(bool)),
+  }
+  and communities_bool_exp = {
+    _and: option(array(option(communities_bool_exp))),
+    _not: option(communities_bool_exp),
+    _or: option(array(option(communities_bool_exp))),
+    community_settings: option(community_settings_bool_exp),
+    description: option(string_comparison_exp),
+    id: option(int_comparison_exp),
+    name: option(string_comparison_exp),
+    players: option(players_bool_exp),
+    results: option(results_bool_exp),
+  }
+  and string_comparison_exp = {
+    _eq: option(string),
+    _gt: option(string),
+    _gte: option(string),
+    _ilike: option(string),
+    _in: option(array(string)),
+    _is_null: option(bool),
+    _like: option(string),
+    _lt: option(string),
+    _lte: option(string),
+    _neq: option(string),
+    _nilike: option(string),
+    _nin: option(array(string)),
+    _nlike: option(string),
+    _nsimilar: option(string),
+    _similar: option(string),
+  }
+  and int_comparison_exp = {
+    _eq: option(int),
+    _gt: option(int),
+    _gte: option(int),
+    _in: option(array(int)),
+    _is_null: option(bool),
+    _lt: option(int),
+    _lte: option(int),
+    _neq: option(int),
+    _nin: option(array(int)),
+  }
+  and players_bool_exp = {
+    _and: option(array(option(players_bool_exp))),
+    _not: option(players_bool_exp),
+    _or: option(array(option(players_bool_exp))),
+    community: option(communities_bool_exp),
+    communityId: option(int_comparison_exp),
+    id: option(int_comparison_exp),
+    name: option(string_comparison_exp),
+    resultsAsPlayer1: option(results_bool_exp),
+    resultsAsPlayer2: option(results_bool_exp),
+  }
+  and results_bool_exp = {
+    _and: option(array(option(results_bool_exp))),
+    _not: option(results_bool_exp),
+    _or: option(array(option(results_bool_exp))),
+    comment: option(string_comparison_exp),
+    community: option(communities_bool_exp),
+    communityId: option(int_comparison_exp),
+    date: option(timestamptz_comparison_exp),
+    extratime: option(boolean_comparison_exp),
+    id: option(int_comparison_exp),
+    player1: option(players_bool_exp),
+    player1Id: option(int_comparison_exp),
+    player1goals: option(int_comparison_exp),
+    player2: option(players_bool_exp),
+    player2Id: option(int_comparison_exp),
+    player2goals: option(int_comparison_exp),
+  }
+  and timestamptz_comparison_exp = {
+    _eq: option(string),
+    _gt: option(string),
+    _gte: option(string),
+    _in: option(array(string)),
+    _is_null: option(bool),
+    _lt: option(string),
+    _lte: option(string),
+    _neq: option(string),
+    _nin: option(array(string)),
+  }
+  and score_types_enum_comparison_exp = {
+    _eq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
+    _in: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
+    _is_null: option(bool),
+    _neq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
+    _nin: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
+  }
+  and players_arr_rel_insert_input = {
+    data: array(players_insert_input),
     on_conflict: option(players_on_conflict),
-  };
-  type communities_on_conflict = {
-    [@bs.as "constraint"]
-    constraint_: [
-      | `communities_name_key
-      | `communities_pkey
-      | `FutureAddedValue(string)
-    ],
-    update_columns:
-      array([ | `description | `id | `name | `FutureAddedValue(string)]),
-    where: option(communities_bool_exp),
-  };
-  type players_on_conflict = {
-    [@bs.as "constraint"]
-    constraint_: [
-      | `players_name_communityId_key
-      | `players_pkey
-      | `FutureAddedValue(string)
-    ],
-    update_columns:
-      array([ | `communityId | `id | `name | `FutureAddedValue(string)]),
-    where: option(players_bool_exp),
-  };
-  type results_on_conflict = {
+  }
+  and players_insert_input = {
+    community: option(communities_obj_rel_insert_input),
+    communityId: option(int),
+    id: option(int),
+    name: option(string),
+    resultsAsPlayer1: option(results_arr_rel_insert_input),
+    resultsAsPlayer2: option(results_arr_rel_insert_input),
+  }
+  and results_arr_rel_insert_input = {
+    data: array(results_insert_input),
+    on_conflict: option(results_on_conflict),
+  }
+  and results_on_conflict = {
     [@bs.as "constraint"]
     constraint_: [ | `results_pkey | `FutureAddedValue(string)],
     update_columns:
@@ -244,188 +400,33 @@ module Types = {
         ],
       ),
     where: option(results_bool_exp),
-  };
-  type results_arr_rel_insert_input = {
-    data: array(results_insert_input),
-    on_conflict: option(results_on_conflict),
-  };
-  type players_insert_input = {
-    community: option(communities_obj_rel_insert_input),
-    communityId: option(int),
-    id: option(int),
-    name: option(string),
-    resultsAsPlayer1: option(results_arr_rel_insert_input),
-    resultsAsPlayer2: option(results_arr_rel_insert_input),
-  };
-  type players_arr_rel_insert_input = {
-    data: array(players_insert_input),
+  }
+  and players_on_conflict = {
+    [@bs.as "constraint"]
+    constraint_: [
+      | `players_name_communityId_key
+      | `players_pkey
+      | `FutureAddedValue(string)
+    ],
+    update_columns:
+      array([ | `communityId | `id | `name | `FutureAddedValue(string)]),
+    where: option(players_bool_exp),
+  }
+  and communities_on_conflict = {
+    [@bs.as "constraint"]
+    constraint_: [
+      | `communities_name_key
+      | `communities_pkey
+      | `FutureAddedValue(string)
+    ],
+    update_columns:
+      array([ | `description | `id | `name | `FutureAddedValue(string)]),
+    where: option(communities_bool_exp),
+  }
+  and players_obj_rel_insert_input = {
+    data: players_insert_input,
     on_conflict: option(players_on_conflict),
   };
-  type score_types_enum_comparison_exp = {
-    _eq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
-    _in: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
-    _is_null: option(bool),
-    _neq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
-    _nin: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
-  };
-  type timestamptz_comparison_exp = {
-    _eq: option(string),
-    _gt: option(string),
-    _gte: option(string),
-    _in: option(array(string)),
-    _is_null: option(bool),
-    _lt: option(string),
-    _lte: option(string),
-    _neq: option(string),
-    _nin: option(array(string)),
-  };
-  type results_bool_exp = {
-    _and: option(array(option(results_bool_exp))),
-    _not: option(results_bool_exp),
-    _or: option(array(option(results_bool_exp))),
-    comment: option(string_comparison_exp),
-    community: option(communities_bool_exp),
-    communityId: option(int_comparison_exp),
-    date: option(timestamptz_comparison_exp),
-    extratime: option(boolean_comparison_exp),
-    id: option(int_comparison_exp),
-    player1: option(players_bool_exp),
-    player1Id: option(int_comparison_exp),
-    player1goals: option(int_comparison_exp),
-    player2: option(players_bool_exp),
-    player2Id: option(int_comparison_exp),
-    player2goals: option(int_comparison_exp),
-  };
-  type players_bool_exp = {
-    _and: option(array(option(players_bool_exp))),
-    _not: option(players_bool_exp),
-    _or: option(array(option(players_bool_exp))),
-    community: option(communities_bool_exp),
-    communityId: option(int_comparison_exp),
-    id: option(int_comparison_exp),
-    name: option(string_comparison_exp),
-    resultsAsPlayer1: option(results_bool_exp),
-    resultsAsPlayer2: option(results_bool_exp),
-  };
-  type int_comparison_exp = {
-    _eq: option(int),
-    _gt: option(int),
-    _gte: option(int),
-    _in: option(array(int)),
-    _is_null: option(bool),
-    _lt: option(int),
-    _lte: option(int),
-    _neq: option(int),
-    _nin: option(array(int)),
-  };
-  type string_comparison_exp = {
-    _eq: option(string),
-    _gt: option(string),
-    _gte: option(string),
-    _ilike: option(string),
-    _in: option(array(string)),
-    _is_null: option(bool),
-    _like: option(string),
-    _lt: option(string),
-    _lte: option(string),
-    _neq: option(string),
-    _nilike: option(string),
-    _nin: option(array(string)),
-    _nlike: option(string),
-    _nsimilar: option(string),
-    _similar: option(string),
-  };
-  type communities_bool_exp = {
-    _and: option(array(option(communities_bool_exp))),
-    _not: option(communities_bool_exp),
-    _or: option(array(option(communities_bool_exp))),
-    community_settings: option(community_settings_bool_exp),
-    description: option(string_comparison_exp),
-    id: option(int_comparison_exp),
-    name: option(string_comparison_exp),
-    players: option(players_bool_exp),
-    results: option(results_bool_exp),
-  };
-  type boolean_comparison_exp = {
-    _eq: option(bool),
-    _gt: option(bool),
-    _gte: option(bool),
-    _in: option(array(bool)),
-    _is_null: option(bool),
-    _lt: option(bool),
-    _lte: option(bool),
-    _neq: option(bool),
-    _nin: option(array(bool)),
-  };
-  type community_settings_bool_exp = {
-    _and: option(array(option(community_settings_bool_exp))),
-    _not: option(community_settings_bool_exp),
-    _or: option(array(option(community_settings_bool_exp))),
-    allow_draws: option(boolean_comparison_exp),
-    community: option(communities_bool_exp),
-    community_id: option(int_comparison_exp),
-    include_extra_time: option(boolean_comparison_exp),
-    max_selectable_points: option(int_comparison_exp),
-    score_type: option(score_types_enum_comparison_exp),
-    use_dropdown_for_points: option(boolean_comparison_exp),
-  };
-  type community_settings_on_conflict = {
-    [@bs.as "constraint"]
-    constraint_: [ | `community_settings_pkey | `FutureAddedValue(string)],
-    update_columns:
-      array(
-        [
-          | `allow_draws
-          | `community_id
-          | `include_extra_time
-          | `max_selectable_points
-          | `score_type
-          | `use_dropdown_for_points
-          | `FutureAddedValue(string)
-        ],
-      ),
-    where: option(community_settings_bool_exp),
-  };
-  type community_settings_insert_input = {
-    allow_draws: option(bool),
-    community: option(communities_obj_rel_insert_input),
-    community_id: option(int),
-    include_extra_time: option(bool),
-    max_selectable_points: option(int),
-    score_type: option([ | `Goals | `Points | `FutureAddedValue(string)]),
-    use_dropdown_for_points: option(bool),
-  };
-  type community_settings_arr_rel_insert_input = {
-    data: array(community_settings_insert_input),
-    on_conflict: option(community_settings_on_conflict),
-  };
-  type communities_insert_input = {
-    community_settings: option(community_settings_arr_rel_insert_input),
-    description: option(string),
-    id: option(int),
-    name: option(string),
-    players: option(players_arr_rel_insert_input),
-    results: option(results_arr_rel_insert_input),
-  };
-  type communities_obj_rel_insert_input = {
-    data: communities_insert_input,
-    on_conflict: option(communities_on_conflict),
-  };
-  type results_insert_input = {
-    comment: option(string),
-    community: option(communities_obj_rel_insert_input),
-    communityId: option(int),
-    date: option(string),
-    extratime: option(bool),
-    id: option(int),
-    player1: option(players_obj_rel_insert_input),
-    player1Id: option(int),
-    player1goals: option(int),
-    player2: option(players_obj_rel_insert_input),
-    player2Id: option(int),
-    player2goals: option(int),
-  };
-  type response_insert_results_one = {id: string};
 
   type response = {insert_results_one: option(response_insert_results_one)};
   type rawResponse = response;

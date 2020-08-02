@@ -1,15 +1,14 @@
 /* @generated */
 
 module Types = {
-  type response_results_connection_edges_node_player2 = {
-    id: string,
-    name: string,
-  };
-  type response_results_connection_edges_node_player1 = {
-    id: string,
-    name: string,
-  };
-  type response_results_connection_edges_node = {
+  [@ocaml.warning "-30"];
+  type response_results_connection = {
+    edges: array(response_results_connection_edges),
+  }
+  and response_results_connection_edges = {
+    node: response_results_connection_edges_node,
+  }
+  and response_results_connection_edges_node = {
     id: string,
     player1: response_results_connection_edges_node_player1,
     player1goals: int,
@@ -17,12 +16,14 @@ module Types = {
     player2goals: int,
     date: string,
     extratime: bool,
-  };
-  type response_results_connection_edges = {
-    node: response_results_connection_edges_node,
-  };
-  type response_results_connection = {
-    edges: array(response_results_connection_edges),
+  }
+  and response_results_connection_edges_node_player1 = {
+    id: string,
+    name: string,
+  }
+  and response_results_connection_edges_node_player2 = {
+    id: string,
+    name: string,
   };
 
   type response = {results_connection: response_results_connection};

@@ -1,13 +1,14 @@
 /* @generated */
 
 module Types = {
-  type response_communities_connection_edges_node = {name: string};
-  type response_communities_connection_edges = {
-    node: response_communities_connection_edges_node,
-  };
+  [@ocaml.warning "-30"];
   type response_communities_connection = {
     edges: array(response_communities_connection_edges),
-  };
+  }
+  and response_communities_connection_edges = {
+    node: response_communities_connection_edges_node,
+  }
+  and response_communities_connection_edges_node = {name: string};
 
   type response = {communities_connection: response_communities_connection};
   type rawResponse = response;

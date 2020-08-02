@@ -16,7 +16,7 @@ let fetchQuery: ReasonRelay.Network.fetchFunctionPromise =
   (operation, variables, _cacheConfig) =>
     Fetch.(
       fetchWithInit(
-        "https://hockeyapi.yakim.dev/v1beta1/relay",
+        "https://stage.yakim.dev/v1beta1/relay",
         RequestInit.make(
           ~method_=Post,
           ~body=
