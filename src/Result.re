@@ -93,14 +93,14 @@ let make =
         style=playerLinkStyle>
         {text(result.player1.name)}
       </RouteLink>
+      {temp_showRatings && isWide
+         ? <Rating
+             onClick={_ => showGraphForPlayer(result.player1.name)}
+             ratingBefore={resultWithRatings.player1RatingBefore}
+             ratingAfter={resultWithRatings.player1RatingAfter}
+           />
+         : React.null}
     </MaterialUi.TableCell>
-    {temp_showRatings && isWide
-       ? <Rating
-           onClick={_ => showGraphForPlayer(result.player1.name)}
-           ratingBefore={resultWithRatings.player1RatingBefore}
-           ratingAfter={resultWithRatings.player1RatingAfter}
-         />
-       : React.null}
     <MaterialUi.TableCell style=numberCellStyle>
       {text(string_of_int(result.player1goals))}
     </MaterialUi.TableCell>
@@ -116,14 +116,14 @@ let make =
         style=playerLinkStyle>
         {text(result.player2.name)}
       </RouteLink>
+      {temp_showRatings && isWide
+         ? <Rating
+             onClick={_ => showGraphForPlayer(result.player2.name)}
+             ratingBefore={resultWithRatings.player2RatingBefore}
+             ratingAfter={resultWithRatings.player2RatingAfter}
+           />
+         : React.null}
     </MaterialUi.TableCell>
-    {temp_showRatings && isWide
-       ? <Rating
-           onClick={_ => showGraphForPlayer(result.player2.name)}
-           ratingBefore={resultWithRatings.player2RatingBefore}
-           ratingAfter={resultWithRatings.player2RatingAfter}
-         />
-       : React.null}
     {isWide
        ? <ExtraTimeColumn
            extraTime={result.extratime}
