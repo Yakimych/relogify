@@ -2,9 +2,14 @@ open Queries;
 open Utils;
 open EloUtils;
 
+// TODO: Remove this component and attach ratings directly in the ResultsTable?
 module Query = [%relay.query
   {|
-    query ResultsQuery($communityName:String!, $dateFrom:timestamptz, $dateTo:timestamptz) {
+    query ResultsQuery(
+      $communityName: String!
+      $dateFrom: timestamptz
+      $dateTo: timestamptz
+    ) {
       results_connection(
         where: {
           community: { name: { _eq: $communityName } }
@@ -91,6 +96,8 @@ let make =
         communityName
         results={resultsWithRatingMap.resultsWithRatings}
         resultIdsToHighlight={highlightNewResults ? newResultIds : []}
+        ?dateFrom
+        ?dateTo
         temp_showRatings
       />;
 };

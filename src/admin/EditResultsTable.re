@@ -5,8 +5,6 @@ open Mutations;
 open UseCommunitySettings;
 open ApolloHooks;
 
-let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
-
 type editResultsTableState =
   | Idle
   | Editing(string, editableResultValues)
