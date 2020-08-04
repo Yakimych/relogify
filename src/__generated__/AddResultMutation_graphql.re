@@ -1,202 +1,43 @@
 /* @generated */
 
-type enum_score_types_enum = [
-  | `Goals
-  | `Points
-  | `FutureAddedValue(string)
-];
+type enum_score_types_enum = pri [> | `Goals | `Points];
 
-let unwrap_enum_score_types_enum: string => enum_score_types_enum =
-  fun
-  | "Goals" => `Goals
-  | "Points" => `Points
-  | v => `FutureAddedValue(v);
+type enum_results_update_column =
+  pri [>
+    | `comment
+    | `communityId
+    | `date
+    | `extratime
+    | `id
+    | `player1Id
+    | `player1goals
+    | `player2Id
+    | `player2goals
+  ];
 
-let wrap_enum_score_types_enum: enum_score_types_enum => string =
-  fun
-  | `Goals => "Goals"
-  | `Points => "Points"
-  | `FutureAddedValue(v) => v;
+type enum_results_constraint = pri [> | `results_pkey];
 
-type enum_results_update_column = [
-  | `comment
-  | `communityId
-  | `date
-  | `extratime
-  | `id
-  | `player1Id
-  | `player1goals
-  | `player2Id
-  | `player2goals
-  | `FutureAddedValue(string)
-];
+type enum_players_update_column = pri [> | `communityId | `id | `name];
 
-let unwrap_enum_results_update_column: string => enum_results_update_column =
-  fun
-  | "comment" => `comment
-  | "communityId" => `communityId
-  | "date" => `date
-  | "extratime" => `extratime
-  | "id" => `id
-  | "player1Id" => `player1Id
-  | "player1goals" => `player1goals
-  | "player2Id" => `player2Id
-  | "player2goals" => `player2goals
-  | v => `FutureAddedValue(v);
+type enum_players_constraint =
+  pri [> | `players_name_communityId_key | `players_pkey];
 
-let wrap_enum_results_update_column: enum_results_update_column => string =
-  fun
-  | `comment => "comment"
-  | `communityId => "communityId"
-  | `date => "date"
-  | `extratime => "extratime"
-  | `id => "id"
-  | `player1Id => "player1Id"
-  | `player1goals => "player1goals"
-  | `player2Id => "player2Id"
-  | `player2goals => "player2goals"
-  | `FutureAddedValue(v) => v;
+type enum_community_settings_update_column =
+  pri [>
+    | `allow_draws
+    | `community_id
+    | `include_extra_time
+    | `max_selectable_points
+    | `score_type
+    | `use_dropdown_for_points
+  ];
 
-type enum_results_constraint = [ | `results_pkey | `FutureAddedValue(string)];
+type enum_community_settings_constraint = pri [> | `community_settings_pkey];
 
-let unwrap_enum_results_constraint: string => enum_results_constraint =
-  fun
-  | "results_pkey" => `results_pkey
-  | v => `FutureAddedValue(v);
+type enum_communities_update_column = pri [> | `description | `id | `name];
 
-let wrap_enum_results_constraint: enum_results_constraint => string =
-  fun
-  | `results_pkey => "results_pkey"
-  | `FutureAddedValue(v) => v;
-
-type enum_players_update_column = [
-  | `communityId
-  | `id
-  | `name
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_players_update_column: string => enum_players_update_column =
-  fun
-  | "communityId" => `communityId
-  | "id" => `id
-  | "name" => `name
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_players_update_column: enum_players_update_column => string =
-  fun
-  | `communityId => "communityId"
-  | `id => "id"
-  | `name => "name"
-  | `FutureAddedValue(v) => v;
-
-type enum_players_constraint = [
-  | `players_name_communityId_key
-  | `players_pkey
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_players_constraint: string => enum_players_constraint =
-  fun
-  | "players_name_communityId_key" => `players_name_communityId_key
-  | "players_pkey" => `players_pkey
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_players_constraint: enum_players_constraint => string =
-  fun
-  | `players_name_communityId_key => "players_name_communityId_key"
-  | `players_pkey => "players_pkey"
-  | `FutureAddedValue(v) => v;
-
-type enum_community_settings_update_column = [
-  | `allow_draws
-  | `community_id
-  | `include_extra_time
-  | `max_selectable_points
-  | `score_type
-  | `use_dropdown_for_points
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_community_settings_update_column:
-  string => enum_community_settings_update_column =
-  fun
-  | "allow_draws" => `allow_draws
-  | "community_id" => `community_id
-  | "include_extra_time" => `include_extra_time
-  | "max_selectable_points" => `max_selectable_points
-  | "score_type" => `score_type
-  | "use_dropdown_for_points" => `use_dropdown_for_points
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_community_settings_update_column:
-  enum_community_settings_update_column => string =
-  fun
-  | `allow_draws => "allow_draws"
-  | `community_id => "community_id"
-  | `include_extra_time => "include_extra_time"
-  | `max_selectable_points => "max_selectable_points"
-  | `score_type => "score_type"
-  | `use_dropdown_for_points => "use_dropdown_for_points"
-  | `FutureAddedValue(v) => v;
-
-type enum_community_settings_constraint = [
-  | `community_settings_pkey
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_community_settings_constraint:
-  string => enum_community_settings_constraint =
-  fun
-  | "community_settings_pkey" => `community_settings_pkey
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_community_settings_constraint:
-  enum_community_settings_constraint => string =
-  fun
-  | `community_settings_pkey => "community_settings_pkey"
-  | `FutureAddedValue(v) => v;
-
-type enum_communities_update_column = [
-  | `description
-  | `id
-  | `name
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_communities_update_column:
-  string => enum_communities_update_column =
-  fun
-  | "description" => `description
-  | "id" => `id
-  | "name" => `name
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_communities_update_column:
-  enum_communities_update_column => string =
-  fun
-  | `description => "description"
-  | `id => "id"
-  | `name => "name"
-  | `FutureAddedValue(v) => v;
-
-type enum_communities_constraint = [
-  | `communities_name_key
-  | `communities_pkey
-  | `FutureAddedValue(string)
-];
-
-let unwrap_enum_communities_constraint: string => enum_communities_constraint =
-  fun
-  | "communities_name_key" => `communities_name_key
-  | "communities_pkey" => `communities_pkey
-  | v => `FutureAddedValue(v);
-
-let wrap_enum_communities_constraint: enum_communities_constraint => string =
-  fun
-  | `communities_name_key => "communities_name_key"
-  | `communities_pkey => "communities_pkey"
-  | `FutureAddedValue(v) => v;
+type enum_communities_constraint =
+  pri [> | `communities_name_key | `communities_pkey];
 
 module Types = {
   [@ocaml.warning "-30"];
@@ -237,24 +78,13 @@ module Types = {
     community_id: option(int),
     include_extra_time: option(bool),
     max_selectable_points: option(int),
-    score_type: option([ | `Goals | `Points | `FutureAddedValue(string)]),
+    score_type: option(enum_score_types_enum),
     use_dropdown_for_points: option(bool),
   }
   and community_settings_on_conflict = {
     [@bs.as "constraint"]
-    constraint_: [ | `community_settings_pkey | `FutureAddedValue(string)],
-    update_columns:
-      array(
-        [
-          | `allow_draws
-          | `community_id
-          | `include_extra_time
-          | `max_selectable_points
-          | `score_type
-          | `use_dropdown_for_points
-          | `FutureAddedValue(string)
-        ],
-      ),
+    constraint_: enum_community_settings_constraint,
+    update_columns: array(enum_community_settings_update_column),
     where: option(community_settings_bool_exp),
   }
   and community_settings_bool_exp = {
@@ -359,11 +189,11 @@ module Types = {
     _nin: option(array(string)),
   }
   and score_types_enum_comparison_exp = {
-    _eq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
-    _in: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
+    _eq: option(enum_score_types_enum),
+    _in: option(array(enum_score_types_enum)),
     _is_null: option(bool),
-    _neq: option([ | `Goals | `Points | `FutureAddedValue(string)]),
-    _nin: option(array([ | `Goals | `Points | `FutureAddedValue(string)])),
+    _neq: option(enum_score_types_enum),
+    _nin: option(array(enum_score_types_enum)),
   }
   and players_arr_rel_insert_input = {
     data: array(players_insert_input),
@@ -383,44 +213,20 @@ module Types = {
   }
   and results_on_conflict = {
     [@bs.as "constraint"]
-    constraint_: [ | `results_pkey | `FutureAddedValue(string)],
-    update_columns:
-      array(
-        [
-          | `comment
-          | `communityId
-          | `date
-          | `extratime
-          | `id
-          | `player1Id
-          | `player1goals
-          | `player2Id
-          | `player2goals
-          | `FutureAddedValue(string)
-        ],
-      ),
+    constraint_: enum_results_constraint,
+    update_columns: array(enum_results_update_column),
     where: option(results_bool_exp),
   }
   and players_on_conflict = {
     [@bs.as "constraint"]
-    constraint_: [
-      | `players_name_communityId_key
-      | `players_pkey
-      | `FutureAddedValue(string)
-    ],
-    update_columns:
-      array([ | `communityId | `id | `name | `FutureAddedValue(string)]),
+    constraint_: enum_players_constraint,
+    update_columns: array(enum_players_update_column),
     where: option(players_bool_exp),
   }
   and communities_on_conflict = {
     [@bs.as "constraint"]
-    constraint_: [
-      | `communities_name_key
-      | `communities_pkey
-      | `FutureAddedValue(string)
-    ],
-    update_columns:
-      array([ | `description | `id | `name | `FutureAddedValue(string)]),
+    constraint_: enum_communities_constraint,
+    update_columns: array(enum_communities_update_column),
     where: option(communities_bool_exp),
   }
   and players_obj_rel_insert_input = {
@@ -467,19 +273,9 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"input":{"r":"results_insert_input"}},"Boolean_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"Int_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"String_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_ilike":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_like":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nilike":{"n":""},"_nin":{"n":""},"_nlike":{"n":""},"_nsimilar":{"n":""},"_similar":{"n":""}},"communities_bool_exp":{"_and":{"n":"","na":"","r":"communities_bool_exp"},"_not":{"n":"","r":"communities_bool_exp"},"_or":{"n":"","na":"","r":"communities_bool_exp"},"community_settings":{"n":"","r":"community_settings_bool_exp"},"description":{"n":"","r":"String_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"players":{"n":"","r":"players_bool_exp"},"results":{"n":"","r":"results_bool_exp"}},"communities_insert_input":{"community_settings":{"n":"","r":"community_settings_arr_rel_insert_input"},"description":{"n":""},"id":{"n":""},"name":{"n":""},"players":{"n":"","r":"players_arr_rel_insert_input"},"results":{"n":"","r":"results_arr_rel_insert_input"}},"communities_obj_rel_insert_input":{"data":{"r":"communities_insert_input"},"on_conflict":{"n":"","r":"communities_on_conflict"}},"communities_on_conflict":{"constraint":{"e":"enum_communities_constraint"},"update_columns":{"e":"enum_communities_update_column"},"where":{"n":"","r":"communities_bool_exp"}},"community_settings_arr_rel_insert_input":{"data":{"r":"community_settings_insert_input"},"on_conflict":{"n":"","r":"community_settings_on_conflict"}},"community_settings_bool_exp":{"_and":{"n":"","na":"","r":"community_settings_bool_exp"},"_not":{"n":"","r":"community_settings_bool_exp"},"_or":{"n":"","na":"","r":"community_settings_bool_exp"},"allow_draws":{"n":"","r":"Boolean_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"community_id":{"n":"","r":"Int_comparison_exp"},"include_extra_time":{"n":"","r":"Boolean_comparison_exp"},"max_selectable_points":{"n":"","r":"Int_comparison_exp"},"score_type":{"n":"","r":"score_types_enum_comparison_exp"},"use_dropdown_for_points":{"n":"","r":"Boolean_comparison_exp"}},"community_settings_insert_input":{"allow_draws":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"community_id":{"n":""},"include_extra_time":{"n":""},"max_selectable_points":{"n":""},"score_type":{"n":"","e":"enum_score_types_enum"},"use_dropdown_for_points":{"n":""}},"community_settings_on_conflict":{"constraint":{"e":"enum_community_settings_constraint"},"update_columns":{"e":"enum_community_settings_update_column"},"where":{"n":"","r":"community_settings_bool_exp"}},"players_arr_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_bool_exp":{"_and":{"n":"","na":"","r":"players_bool_exp"},"_not":{"n":"","r":"players_bool_exp"},"_or":{"n":"","na":"","r":"players_bool_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"resultsAsPlayer1":{"n":"","r":"results_bool_exp"},"resultsAsPlayer2":{"n":"","r":"results_bool_exp"}},"players_insert_input":{"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"id":{"n":""},"name":{"n":""},"resultsAsPlayer1":{"n":"","r":"results_arr_rel_insert_input"},"resultsAsPlayer2":{"n":"","r":"results_arr_rel_insert_input"}},"players_obj_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_on_conflict":{"constraint":{"e":"enum_players_constraint"},"update_columns":{"e":"enum_players_update_column"},"where":{"n":"","r":"players_bool_exp"}},"results_arr_rel_insert_input":{"data":{"r":"results_insert_input"},"on_conflict":{"n":"","r":"results_on_conflict"}},"results_bool_exp":{"_and":{"n":"","na":"","r":"results_bool_exp"},"_not":{"n":"","r":"results_bool_exp"},"_or":{"n":"","na":"","r":"results_bool_exp"},"comment":{"n":"","r":"String_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"date":{"n":"","r":"timestamptz_comparison_exp"},"extratime":{"n":"","r":"Boolean_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"player1":{"n":"","r":"players_bool_exp"},"player1Id":{"n":"","r":"Int_comparison_exp"},"player1goals":{"n":"","r":"Int_comparison_exp"},"player2":{"n":"","r":"players_bool_exp"},"player2Id":{"n":"","r":"Int_comparison_exp"},"player2goals":{"n":"","r":"Int_comparison_exp"}},"results_insert_input":{"comment":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"date":{"n":""},"extratime":{"n":""},"id":{"n":""},"player1":{"n":"","r":"players_obj_rel_insert_input"},"player1Id":{"n":""},"player1goals":{"n":""},"player2":{"n":"","r":"players_obj_rel_insert_input"},"player2Id":{"n":""},"player2goals":{"n":""}},"results_on_conflict":{"constraint":{"e":"enum_results_constraint"},"update_columns":{"e":"enum_results_update_column"},"where":{"n":"","r":"results_bool_exp"}},"score_types_enum_comparison_exp":{"_eq":{"n":"","e":"enum_score_types_enum"},"_in":{"n":"","e":"enum_score_types_enum"},"_is_null":{"n":""},"_neq":{"n":"","e":"enum_score_types_enum"},"_nin":{"n":"","e":"enum_score_types_enum"}},"timestamptz_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}}} |json}
+    {json| {"__root":{"input":{"r":"results_insert_input"}},"Boolean_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"Int_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"String_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_ilike":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_like":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nilike":{"n":""},"_nin":{"n":""},"_nlike":{"n":""},"_nsimilar":{"n":""},"_similar":{"n":""}},"communities_bool_exp":{"_and":{"n":"","na":"","r":"communities_bool_exp"},"_not":{"n":"","r":"communities_bool_exp"},"_or":{"n":"","na":"","r":"communities_bool_exp"},"community_settings":{"n":"","r":"community_settings_bool_exp"},"description":{"n":"","r":"String_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"players":{"n":"","r":"players_bool_exp"},"results":{"n":"","r":"results_bool_exp"}},"communities_insert_input":{"community_settings":{"n":"","r":"community_settings_arr_rel_insert_input"},"description":{"n":""},"id":{"n":""},"name":{"n":""},"players":{"n":"","r":"players_arr_rel_insert_input"},"results":{"n":"","r":"results_arr_rel_insert_input"}},"communities_obj_rel_insert_input":{"data":{"r":"communities_insert_input"},"on_conflict":{"n":"","r":"communities_on_conflict"}},"communities_on_conflict":{"where":{"n":"","r":"communities_bool_exp"}},"community_settings_arr_rel_insert_input":{"data":{"r":"community_settings_insert_input"},"on_conflict":{"n":"","r":"community_settings_on_conflict"}},"community_settings_bool_exp":{"_and":{"n":"","na":"","r":"community_settings_bool_exp"},"_not":{"n":"","r":"community_settings_bool_exp"},"_or":{"n":"","na":"","r":"community_settings_bool_exp"},"allow_draws":{"n":"","r":"Boolean_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"community_id":{"n":"","r":"Int_comparison_exp"},"include_extra_time":{"n":"","r":"Boolean_comparison_exp"},"max_selectable_points":{"n":"","r":"Int_comparison_exp"},"score_type":{"n":"","r":"score_types_enum_comparison_exp"},"use_dropdown_for_points":{"n":"","r":"Boolean_comparison_exp"}},"community_settings_insert_input":{"allow_draws":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"community_id":{"n":""},"include_extra_time":{"n":""},"max_selectable_points":{"n":""},"score_type":{"n":""},"use_dropdown_for_points":{"n":""}},"community_settings_on_conflict":{"where":{"n":"","r":"community_settings_bool_exp"}},"players_arr_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_bool_exp":{"_and":{"n":"","na":"","r":"players_bool_exp"},"_not":{"n":"","r":"players_bool_exp"},"_or":{"n":"","na":"","r":"players_bool_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"resultsAsPlayer1":{"n":"","r":"results_bool_exp"},"resultsAsPlayer2":{"n":"","r":"results_bool_exp"}},"players_insert_input":{"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"id":{"n":""},"name":{"n":""},"resultsAsPlayer1":{"n":"","r":"results_arr_rel_insert_input"},"resultsAsPlayer2":{"n":"","r":"results_arr_rel_insert_input"}},"players_obj_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_on_conflict":{"where":{"n":"","r":"players_bool_exp"}},"results_arr_rel_insert_input":{"data":{"r":"results_insert_input"},"on_conflict":{"n":"","r":"results_on_conflict"}},"results_bool_exp":{"_and":{"n":"","na":"","r":"results_bool_exp"},"_not":{"n":"","r":"results_bool_exp"},"_or":{"n":"","na":"","r":"results_bool_exp"},"comment":{"n":"","r":"String_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"date":{"n":"","r":"timestamptz_comparison_exp"},"extratime":{"n":"","r":"Boolean_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"player1":{"n":"","r":"players_bool_exp"},"player1Id":{"n":"","r":"Int_comparison_exp"},"player1goals":{"n":"","r":"Int_comparison_exp"},"player2":{"n":"","r":"players_bool_exp"},"player2Id":{"n":"","r":"Int_comparison_exp"},"player2goals":{"n":"","r":"Int_comparison_exp"}},"results_insert_input":{"comment":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"date":{"n":""},"extratime":{"n":""},"id":{"n":""},"player1":{"n":"","r":"players_obj_rel_insert_input"},"player1Id":{"n":""},"player1goals":{"n":""},"player2":{"n":"","r":"players_obj_rel_insert_input"},"player2Id":{"n":""},"player2goals":{"n":""}},"results_on_conflict":{"where":{"n":"","r":"results_bool_exp"}},"score_types_enum_comparison_exp":{"_eq":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"timestamptz_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}}} |json}
   ];
-  let variablesConverterMap = {
-    "enum_score_types_enum": wrap_enum_score_types_enum,
-    "enum_community_settings_constraint": wrap_enum_community_settings_constraint,
-    "enum_community_settings_update_column": wrap_enum_community_settings_update_column,
-    "enum_results_constraint": wrap_enum_results_constraint,
-    "enum_results_update_column": wrap_enum_results_update_column,
-    "enum_players_constraint": wrap_enum_players_constraint,
-    "enum_players_update_column": wrap_enum_players_update_column,
-    "enum_communities_constraint": wrap_enum_communities_constraint,
-    "enum_communities_update_column": wrap_enum_communities_update_column,
-  };
+  let variablesConverterMap = ();
   let convertVariables = v =>
     v
     ->ReasonRelay._convertObj(
@@ -490,6 +286,28 @@ module Internal = {
 };
 
 module Utils = {
+  external score_types_enum_toString: enum_score_types_enum => string =
+    "%identity";
+  external results_update_column_toString: enum_results_update_column => string =
+    "%identity";
+  external results_constraint_toString: enum_results_constraint => string =
+    "%identity";
+  external players_update_column_toString: enum_players_update_column => string =
+    "%identity";
+  external players_constraint_toString: enum_players_constraint => string =
+    "%identity";
+  external community_settings_update_column_toString:
+    enum_community_settings_update_column => string =
+    "%identity";
+  external community_settings_constraint_toString:
+    enum_community_settings_constraint => string =
+    "%identity";
+  external communities_update_column_toString:
+    enum_communities_update_column => string =
+    "%identity";
+  external communities_constraint_toString:
+    enum_communities_constraint => string =
+    "%identity";
   open Types;
   let make_players_obj_rel_insert_input =
       (~data, ~on_conflict=?, ()): players_obj_rel_insert_input => {
