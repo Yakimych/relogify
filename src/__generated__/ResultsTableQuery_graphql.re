@@ -34,7 +34,12 @@ module Types = {
   }
   and response_community_settings_connection_edges_node = {
     fragmentRefs:
-      ReasonRelay.fragmentRefs([ | `ExtraTimeColumn_IncludeExtraTime]),
+      ReasonRelay.fragmentRefs(
+        [
+          | `ExtraTimeColumn_IncludeExtraTime
+          | `ResultsTableHeader_CommunitySettings
+        ],
+      ),
   };
 
   type response = {
@@ -325,6 +330,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "ExtraTimeColumn_IncludeExtraTime"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "ResultsTableHeader_CommunitySettings"
                   }
                 ],
                 "storageKey": null
@@ -416,6 +426,13 @@ return {
                     "name": "include_extra_time",
                     "storageKey": null
                   },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "score_type",
+                    "storageKey": null
+                  },
                   (v3/*: any*/)
                 ],
                 "storageKey": null
@@ -429,12 +446,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e0d187be6df4387dbf2feeb55c714861",
+    "cacheID": "95fbc9fa065520d68b689fbc85597956",
     "id": null,
     "metadata": {},
     "name": "ResultsTableQuery",
     "operationKind": "query",
-    "text": "query ResultsTableQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        ...Result_SingleResult\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n"
+    "text": "query ResultsTableQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        ...Result_SingleResult\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n"
   }
 };
 })() |json}

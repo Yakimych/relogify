@@ -44,8 +44,10 @@ external toSubscriptionData: Js.Json.t => Js.Nullable.t(subscriptionData) =
 module CommunitySettingsQuery = [%graphql
   {|
     query communitySettings($communityName: String!) {
-      community_settings(limit: 1, where: {community: {name: {_eq: $communityName }}})
-      {
+      community_settings(
+        limit: 1
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
         allow_draws
         max_selectable_points
         score_type
@@ -84,7 +86,7 @@ module PlayerResultsQuery = [%graphql
           name
         }
         player2goals
-        date @bsDecoder (fn: "dateToString")
+        date @bsDecoder(fn: "dateToString")
         extratime
       }
     }
