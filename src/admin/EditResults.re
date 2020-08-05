@@ -3,7 +3,11 @@ open Utils;
 
 module Query = [%relay.query
   {|
-    query EditResultsQuery($communityName:String!, $dateFrom:timestamptz, $dateTo:timestamptz) {
+    query EditResultsQuery(
+      $communityName: String!
+      $dateFrom: timestamptz
+      $dateTo: timestamptz
+    ) {
       results_connection(
         where: {
           community: { name: { _eq: $communityName } }
@@ -26,6 +30,16 @@ module Query = [%relay.query
             extratime
             date
             id
+          }
+        }
+      }
+    
+      community_settings_connection(
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
+        edges {
+          node {
+            ...AddResultTableRowFragment_CommunitySettings
           }
         }
       }
@@ -52,6 +66,11 @@ let make =
       },
       (),
     );
+
+  let communitySettingsFragment =
+    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
+      fragmentRefs;
+
   let results = queryData.results_connection.edges |> toListOfResults5;
 
   <>
@@ -67,6 +86,7 @@ let make =
        : <EditResultsTable
            communityName
            results
+           communitySettingsFragment
            //  queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}
          />}
   </>;

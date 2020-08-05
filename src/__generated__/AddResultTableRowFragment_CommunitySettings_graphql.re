@@ -5,7 +5,11 @@ type enum_score_types_enum = pri [> | `Goals | `Points];
 module Types = {
   [@ocaml.warning "-30"];
 
-  type fragment = {score_type: enum_score_types_enum};
+  type fragment = {
+    score_type: enum_score_types_enum,
+    max_selectable_points: int,
+    allow_draws: bool,
+  };
 };
 
 module Internal = {
@@ -26,7 +30,10 @@ module Internal = {
 type t;
 type fragmentRef;
 external getFragmentRef:
-  ReasonRelay.fragmentRefs([> | `TopStatsColumn_ScoreType]) => fragmentRef =
+  ReasonRelay.fragmentRefs(
+    [> | `AddResultTableRowFragment_CommunitySettings],
+  ) =>
+  fragmentRef =
   "%identity";
 
 module Utils = {
@@ -41,13 +48,27 @@ let node: operationType = [%raw
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "TopStatsColumn_ScoreType",
+  "name": "AddResultTableRowFragment_CommunitySettings",
   "selections": [
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
       "name": "score_type",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "max_selectable_points",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "allow_draws",
       "storageKey": null
     }
   ],

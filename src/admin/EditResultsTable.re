@@ -51,6 +51,7 @@ let make =
     (
       ~results: list(matchResult),
       ~communityName: string /*, ~queryToRefetch*/,
+      ~communitySettingsFragment,
     ) => {
   let settingsQuery = useCommunitySettings(communityName);
 
@@ -157,7 +158,7 @@ let make =
           </MaterialUi.TableRow>
         </MaterialUi.TableHead>
         <MaterialUi.TableBody>
-          <AddResultTableRow communityName />
+          <AddResultTableRow communityName communitySettingsFragment />
           {results
            ->Belt.List.map(result =>
                <MaterialUi.TableRow key={result.id}>
