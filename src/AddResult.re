@@ -1,9 +1,5 @@
 open Utils;
-open Queries;
-open Mutations;
 open StorageUtils;
-open UseCommunitySettings;
-open ApolloHooks;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
@@ -18,10 +14,22 @@ module AddMutation = [%relay.mutation
   |}
 ];
 
-[@react.component]
-let make = (~communityName: string, ~onResultAdded) => {
-  let settingsQuery = useCommunitySettings(communityName);
+module AddResultFragment = [%relay.fragment
+  {|
+    fragment AddResultFragment_CommunitySettings on community_settings {
+      include_extra_time
+      score_type
+      max_selectable_points
+      allow_draws
+    }
+  |}
+];
 
+[@react.component]
+let make =
+    (~communitySettingsFragment, ~communityName: string, ~onResultAdded) => {
+  let communitySettingsFragment =
+    AddResultFragment.use(communitySettingsFragment);
   let (mutate, isMutating) = AddMutation.use();
 
   let (getMostUsedPlayer, updateUsedPlayers) =
@@ -148,87 +156,77 @@ let make = (~communityName: string, ~onResultAdded) => {
     };
   };
 
-  switch (settingsQuery) {
-  | Loading => <MaterialUi.CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(communitySettings) =>
-    <MaterialUi.Paper
-      elevation={`Int(6)}
-      style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~marginBottom="10px",
-          (),
-        )}>
-        <PlayerPicker
-          disabled=isMutating
-          placeholderText="Player1"
-          communityName
-          selectedPlayerName=maybePlayer1Name
-          onChange={v => setMaybePlayer1Name(_ => Some(v))}
-        />
-        <GoalsPicker
-          disabled=isMutating
-          selectedGoals=goals1
-          onChange={v => setGoals1(_ => v)}
-          scoreType={communitySettings.scoreType}
-          maxSelectablePoints={communitySettings.maxSelectablePoints}
-        />
-        <GoalsPicker
-          disabled=isMutating
-          selectedGoals=goals2
-          onChange={v => setGoals2(_ => v)}
-          scoreType={communitySettings.scoreType}
-          maxSelectablePoints={communitySettings.maxSelectablePoints}
-        />
-        <PlayerPicker
-          disabled=isMutating
-          placeholderText="Player2"
-          communityName
-          selectedPlayerName=maybePlayer2Name
-          onChange={v => setMaybePlayer2Name(_ => Some(v))}
-        />
-      </div>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~justifyContent="space-between",
-          (),
-        )}>
-        <MaterialUi.Button
-          disabled=isMutating
-          variant=`Contained
-          color=`Primary
-          onClick={_ => addResult(communitySettings.allowDraws)}>
-          {text("Submit")}
-        </MaterialUi.Button>
-        {communitySettings.includeExtraTime
-           ? <MaterialUi.FormControlLabel
-               control={
-                 <MaterialUi.Checkbox
-                   disabled=isMutating
-                   color=`Default
-                   checked=extraTime
-                   onChange={_ => toggleExtraTime()}
-                 />
-               }
-               label={text("Extra Time")}
-             />
-           : React.null}
-        <MaterialUi.TextField
-          disabled=isMutating
-          type_="date"
-          value={`String(formatDate(date))}
-          onChange={e => {
-            let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
-            if (DateFns.isValid(date)) {
-              setDate(_ => date);
-            };
-          }}
-        />
-      </div>
-    </MaterialUi.Paper>
-  };
+  <MaterialUi.Paper
+    elevation={`Int(6)}
+    style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
+    <div
+      style={ReactDOMRe.Style.make(~display="flex", ~marginBottom="10px", ())}>
+      <PlayerPicker
+        disabled=isMutating
+        placeholderText="Player1"
+        communityName
+        selectedPlayerName=maybePlayer1Name
+        onChange={v => setMaybePlayer1Name(_ => Some(v))}
+      />
+      <GoalsPicker
+        disabled=isMutating
+        selectedGoals=goals1
+        onChange={v => setGoals1(_ => v)}
+        scoreType={communitySettingsFragment.score_type}
+        maxSelectablePoints={communitySettingsFragment.max_selectable_points}
+      />
+      <GoalsPicker
+        disabled=isMutating
+        selectedGoals=goals2
+        onChange={v => setGoals2(_ => v)}
+        scoreType={communitySettingsFragment.score_type}
+        maxSelectablePoints={communitySettingsFragment.max_selectable_points}
+      />
+      <PlayerPicker
+        disabled=isMutating
+        placeholderText="Player2"
+        communityName
+        selectedPlayerName=maybePlayer2Name
+        onChange={v => setMaybePlayer2Name(_ => Some(v))}
+      />
+    </div>
+    <div
+      style={ReactDOMRe.Style.make(
+        ~display="flex",
+        ~justifyContent="space-between",
+        (),
+      )}>
+      <MaterialUi.Button
+        disabled=isMutating
+        variant=`Contained
+        color=`Primary
+        onClick={_ => addResult(communitySettingsFragment.allow_draws)}>
+        {text("Submit")}
+      </MaterialUi.Button>
+      {communitySettingsFragment.include_extra_time
+         ? <MaterialUi.FormControlLabel
+             control={
+               <MaterialUi.Checkbox
+                 disabled=isMutating
+                 color=`Default
+                 checked=extraTime
+                 onChange={_ => toggleExtraTime()}
+               />
+             }
+             label={text("Extra Time")}
+           />
+         : React.null}
+      <MaterialUi.TextField
+        disabled=isMutating
+        type_="date"
+        value={`String(formatDate(date))}
+        onChange={e => {
+          let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
+          if (DateFns.isValid(date)) {
+            setDate(_ => date);
+          };
+        }}
+      />
+    </div>
+  </MaterialUi.Paper>;
 };
