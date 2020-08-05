@@ -1,19 +1,39 @@
 /* @generated */
 
-type enum_score_types_enum = pri [> | `Goals | `Points];
+type enum_score_types_enum = [
+  | `Goals
+  | `Points
+  | `FutureAddedValue(string)
+];
+
+let unwrap_enum_score_types_enum: string => enum_score_types_enum =
+  fun
+  | "Goals" => `Goals
+  | "Points" => `Points
+  | v => `FutureAddedValue(v);
+
+let wrap_enum_score_types_enum: enum_score_types_enum => string =
+  fun
+  | `Goals => "Goals"
+  | `Points => "Points"
+  | `FutureAddedValue(v) => v;
 
 module Types = {
   [@ocaml.warning "-30"];
 
-  type fragment = {score_type: enum_score_types_enum};
+  type fragment = {
+    score_type: [ | `Goals | `Points | `FutureAddedValue(string)],
+  };
 };
 
 module Internal = {
   type fragmentRaw;
   let fragmentConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {} |json}
+    {json| {"__root":{"score_type":{"e":"enum_score_types_enum"}}} |json}
   ];
-  let fragmentConverterMap = ();
+  let fragmentConverterMap = {
+    "enum_score_types_enum": unwrap_enum_score_types_enum,
+  };
   let convertFragment = v =>
     v
     ->ReasonRelay._convertObj(
@@ -29,10 +49,7 @@ external getFragmentRef:
   ReasonRelay.fragmentRefs([> | `TopStatsColumn_ScoreType]) => fragmentRef =
   "%identity";
 
-module Utils = {
-  external score_types_enum_toString: enum_score_types_enum => string =
-    "%identity";
-};
+module Utils = {};
 
 type operationType = ReasonRelay.fragmentNode;
 
