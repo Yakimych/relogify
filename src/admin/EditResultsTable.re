@@ -2,7 +2,6 @@ open Utils;
 open Styles;
 open Types;
 open Mutations;
-open UseCommunitySettings;
 open ApolloHooks;
 
 type editResultsTableState =
@@ -53,8 +52,6 @@ let make =
       ~communityName: string /*, ~queryToRefetch*/,
       ~communitySettingsFragment,
     ) => {
-  let settingsQuery = useCommunitySettings(communityName);
-
   let (updateResultMutation, _, _) =
     useMutation(UpdateResultMutation.definition);
   let (deleteResultMutation, _, _) =
@@ -121,107 +118,100 @@ let make =
     };
   };
 
-  switch (settingsQuery) {
-  | Loading => <MaterialUi.CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(communitySettings) =>
-    <MaterialUi.Paper>
-      <div className="title">
-        <MaterialUi.Typography variant=`H6>
-          {text("Results")}
-        </MaterialUi.Typography>
-      </div>
-      <MaterialUi.Table size=`Small>
-        <MaterialUi.TableHead>
-          <MaterialUi.TableRow>
-            <MaterialUi.TableCell> {text("Edit")} </MaterialUi.TableCell>
-            <MaterialUi.TableCell align=`Right>
-              {text("Player1")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=numberCellStyle>
-              {text("G1")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=colonStyle />
-            <MaterialUi.TableCell style=numberCellStyle>
-              {text("G2")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=extraTimeStyle align=`Right>
-              <MaterialUi.Tooltip title={text("Extra time")} placement=`Top>
-                <div> {text("E")} </div>
-              </MaterialUi.Tooltip>
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=dateStyle>
-              {text("Date")}
-            </MaterialUi.TableCell>
-          </MaterialUi.TableRow>
-        </MaterialUi.TableHead>
-        <MaterialUi.TableBody>
-          <AddResultTableRow communityName communitySettingsFragment />
-          {results
-           ->Belt.List.map(result =>
-               <MaterialUi.TableRow key={result.id}>
-                 {switch (state) {
-                  | DeleteConfirmationPending(resultToDeleteId)
-                      when result.id === resultToDeleteId =>
-                    <>
-                      <MaterialUi.TableCell>
-                        <span> {text("Are you sure?")} </span>
-                        <button onClick={_ => deleteResult()}>
-                          {text("Yes")}
-                        </button>
-                        <button onClick={_ => dispatch(StopDeleting)}>
-                          {text("No")}
-                        </button>
-                      </MaterialUi.TableCell>
-                      <ResultTableRow result />
-                    </>
-                  | Editing(id, editedValues) when result.id === id =>
-                    <EditResultTableRow
-                      communityName
-                      communitySettings
-                      initialValuesToEdit=editedValues
-                      id
-                      disabled={apiRequestIsInProgress(state)}
-                      onSave={(id, editedResult) =>
-                        updateResult(id, editedResult)
-                      }
-                      onCancel={_ => dispatch(StopEditing)}
-                    />
-                  | Idle =>
-                    <>
-                      <MaterialUi.TableCell>
-                        <button
-                          onClick={_ => dispatch(StartEditing(result))}>
-                          {text("Edit")}
-                        </button>
-                        <button
-                          onClick={_ => dispatch(DeleteRequested(result.id))}>
-                          {text("Delete")}
-                        </button>
-                      </MaterialUi.TableCell>
-                      <ResultTableRow result />
-                    </>
-                  | DeleteConfirmationPending(_)
-                  | Editing(_) =>
-                    <> <MaterialUi.TableCell /> <ResultTableRow result /> </>
-                  | Deleting(id)
-                  | Updating(id) =>
-                    <>
-                      <MaterialUi.TableCell>
-                        {id === result.id
-                           ? <MaterialUi.CircularProgress /> : React.null}
-                      </MaterialUi.TableCell>
-                      <ResultTableRow result />
-                    </>
-                  }}
-               </MaterialUi.TableRow>
-             )
-           ->Array.of_list
-           ->React.array}
-        </MaterialUi.TableBody>
-      </MaterialUi.Table>
-    </MaterialUi.Paper>
-  };
+  <MaterialUi.Paper>
+    <div className="title">
+      <MaterialUi.Typography variant=`H6>
+        {text("Results")}
+      </MaterialUi.Typography>
+    </div>
+    <MaterialUi.Table size=`Small>
+      <MaterialUi.TableHead>
+        <MaterialUi.TableRow>
+          <MaterialUi.TableCell> {text("Edit")} </MaterialUi.TableCell>
+          <MaterialUi.TableCell align=`Right>
+            {text("Player1")}
+          </MaterialUi.TableCell>
+          <MaterialUi.TableCell style=numberCellStyle>
+            {text("G1")}
+          </MaterialUi.TableCell>
+          <MaterialUi.TableCell style=colonStyle />
+          <MaterialUi.TableCell style=numberCellStyle>
+            {text("G2")}
+          </MaterialUi.TableCell>
+          <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
+          <MaterialUi.TableCell style=extraTimeStyle align=`Right>
+            <MaterialUi.Tooltip title={text("Extra time")} placement=`Top>
+              <div> {text("E")} </div>
+            </MaterialUi.Tooltip>
+          </MaterialUi.TableCell>
+          <MaterialUi.TableCell style=dateStyle>
+            {text("Date")}
+          </MaterialUi.TableCell>
+        </MaterialUi.TableRow>
+      </MaterialUi.TableHead>
+      <MaterialUi.TableBody>
+        <AddResultTableRow communityName communitySettingsFragment />
+        {results
+         ->Belt.List.map(result =>
+             <MaterialUi.TableRow key={result.id}>
+               {switch (state) {
+                | DeleteConfirmationPending(resultToDeleteId)
+                    when result.id === resultToDeleteId =>
+                  <>
+                    <MaterialUi.TableCell>
+                      <span> {text("Are you sure?")} </span>
+                      <button onClick={_ => deleteResult()}>
+                        {text("Yes")}
+                      </button>
+                      <button onClick={_ => dispatch(StopDeleting)}>
+                        {text("No")}
+                      </button>
+                    </MaterialUi.TableCell>
+                    <ResultTableRow result />
+                  </>
+                | Editing(id, editedValues) when result.id === id =>
+                  <EditResultTableRow
+                    communityName
+                    communitySettingsFragment
+                    initialValuesToEdit=editedValues
+                    id
+                    disabled={apiRequestIsInProgress(state)}
+                    onSave={(id, editedResult) =>
+                      updateResult(id, editedResult)
+                    }
+                    onCancel={_ => dispatch(StopEditing)}
+                  />
+                | Idle =>
+                  <>
+                    <MaterialUi.TableCell>
+                      <button onClick={_ => dispatch(StartEditing(result))}>
+                        {text("Edit")}
+                      </button>
+                      <button
+                        onClick={_ => dispatch(DeleteRequested(result.id))}>
+                        {text("Delete")}
+                      </button>
+                    </MaterialUi.TableCell>
+                    <ResultTableRow result />
+                  </>
+                | DeleteConfirmationPending(_)
+                | Editing(_) =>
+                  <> <MaterialUi.TableCell /> <ResultTableRow result /> </>
+                | Deleting(id)
+                | Updating(id) =>
+                  <>
+                    <MaterialUi.TableCell>
+                      {id === result.id
+                         ? <MaterialUi.CircularProgress /> : React.null}
+                    </MaterialUi.TableCell>
+                    <ResultTableRow result />
+                  </>
+                }}
+             </MaterialUi.TableRow>
+           )
+         ->Array.of_list
+         ->React.array}
+      </MaterialUi.TableBody>
+    </MaterialUi.Table>
+  </MaterialUi.Paper>;
 };

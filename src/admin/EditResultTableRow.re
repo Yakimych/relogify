@@ -29,11 +29,20 @@ let editResultReducer =
     };
   };
 
+module EditResultTableRowFragment = [%relay.fragment
+  {|
+    fragment EditResultTableRowFragment_CommunitySettings on community_settings {
+      score_type
+      max_selectable_points
+    }
+  |}
+];
+
 [@react.component]
 let make =
     (
       ~communityName,
-      ~communitySettings: communitySettings,
+      ~communitySettingsFragment,
       ~id,
       ~initialValuesToEdit: editableResultValues,
       ~disabled,
@@ -42,6 +51,9 @@ let make =
     ) => {
   let (valuesUnderEdit, dispatch) =
     React.useReducer(editResultReducer, initialValuesToEdit);
+
+  let communitySettings =
+    EditResultTableRowFragment.use(communitySettingsFragment);
 
   <>
     <MaterialUi.TableCell>
@@ -63,8 +75,8 @@ let make =
         disabled
         selectedGoals={valuesUnderEdit.player1Goals}
         onChange={g => dispatch(SetPlayer1Goals(g))}
-        maxSelectablePoints={communitySettings.maxSelectablePoints}
-        scoreType={communitySettings.scoreType}
+        maxSelectablePoints={communitySettings.max_selectable_points}
+        scoreType={communitySettings.score_type}
       />
     </MaterialUi.TableCell>
     <MaterialUi.TableCell style=colonStyle>
@@ -75,8 +87,8 @@ let make =
         disabled
         selectedGoals={valuesUnderEdit.player2Goals}
         onChange={g => dispatch(SetPlayer2Goals(g))}
-        maxSelectablePoints={communitySettings.maxSelectablePoints}
-        scoreType={communitySettings.scoreType}
+        maxSelectablePoints={communitySettings.max_selectable_points}
+        scoreType={communitySettings.score_type}
       />
     </MaterialUi.TableCell>
     <MaterialUi.TableCell>

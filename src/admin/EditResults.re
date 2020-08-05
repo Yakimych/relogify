@@ -40,6 +40,7 @@ module Query = [%relay.query
         edges {
           node {
             ...AddResultTableRowFragment_CommunitySettings
+            ...EditResultTableRowFragment_CommunitySettings
           }
         }
       }
@@ -84,8 +85,8 @@ let make =
            </MaterialUi.CardContent>
          </MaterialUi.Card>
        : <EditResultsTable
-           communityName
            results
+           communityName
            communitySettingsFragment
            //  queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}
          />}

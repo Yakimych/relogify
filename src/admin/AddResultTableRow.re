@@ -6,7 +6,7 @@ open ApolloHooks;
 
 [@bs.val] external alert: string => unit = "alert";
 
-module AddResultFragment = [%relay.fragment
+module AddResultTableRowFragment = [%relay.fragment
   {|
     fragment AddResultTableRowFragment_CommunitySettings on community_settings {
       score_type
@@ -18,7 +18,8 @@ module AddResultFragment = [%relay.fragment
 
 [@react.component]
 let make = (~communityName: string, ~communitySettingsFragment) => {
-  let communitySettings = AddResultFragment.use(communitySettingsFragment);
+  let communitySettings =
+    AddResultTableRowFragment.use(communitySettingsFragment);
 
   let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
 

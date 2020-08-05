@@ -34,7 +34,10 @@ module Types = {
   and response_community_settings_connection_edges_node = {
     fragmentRefs:
       ReasonRelay.fragmentRefs(
-        [ | `AddResultTableRowFragment_CommunitySettings],
+        [
+          | `AddResultTableRowFragment_CommunitySettings
+          | `EditResultTableRowFragment_CommunitySettings
+        ],
       ),
   };
 
@@ -315,6 +318,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddResultTableRowFragment_CommunitySettings"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "EditResultTableRowFragment_CommunitySettings"
                   }
                 ],
                 "storageKey": null
@@ -394,12 +402,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9ea4d2d983136983d3813d22913f4c60",
+    "cacheID": "764699f6153c875b73e5c0f0e869b537",
     "id": null,
     "metadata": {},
     "name": "EditResultsQuery",
     "operationKind": "query",
-    "text": "query EditResultsQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n"
+    "text": "query EditResultsQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n"
   }
 };
 })() |json}
