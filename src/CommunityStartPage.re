@@ -15,6 +15,7 @@ module Query = [%relay.query
         }
         order_by: { date: desc }
       ) {
+        ...ResultsTable_Results
         edges {
           node {
             id
@@ -27,6 +28,8 @@ module Query = [%relay.query
       ) {
         edges {
           node {
+            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultsTableHeader_CommunitySettings
             ...AddResultFragment_CommunitySettings
           }
         }
@@ -49,6 +52,8 @@ let make = (~communityName) => {
       (),
     );
 
+  let resultsTableFragment = queryData.results_connection.fragmentRefs;
+
   let communitySettingsFragment =
     queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
       fragmentRefs;
@@ -56,11 +61,13 @@ let make = (~communityName) => {
   <>
     <CommunityStartPageHeader communityName communitySettingsFragment />
     <Stats communityName dateFrom=startDate dateTo=endDate />
-    <Results
+    <ResultsTable
+      resultsTableFragment
+      communitySettingsFragment
       communityName
       dateFrom=startDate
       dateTo=endDate
-      highlightNewResults=true
+      // highlightNewResults=true
     />
   </>;
 };

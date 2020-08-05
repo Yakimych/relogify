@@ -92,12 +92,13 @@ let make =
           </MaterialUi.Typography>
         </MaterialUi.CardContent>
       </MaterialUi.Card>
-    : <ResultsTable
-        communityName
-        results={resultsWithRatingMap.resultsWithRatings}
-        resultIdsToHighlight={highlightNewResults ? newResultIds : []}
-        ?dateFrom
-        ?dateTo
-        temp_showRatings
-      />;
+    : React.null;
+  // <ResultsTable
+  //     communityName
+  //     results={resultsWithRatingMap.resultsWithRatings}
+  //     resultIdsToHighlight={highlightNewResults ? newResultIds : []}
+  //     ?dateFrom
+  //     ?dateTo
+  //     temp_showRatings
+  //   />;
 };

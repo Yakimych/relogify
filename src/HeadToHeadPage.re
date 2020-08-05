@@ -2,50 +2,65 @@ open Utils;
 open PlayerStatsUtils;
 open Types;
 open Queries;
-open EloUtils;
 
 module Query = [%relay.query
   {|
-    query HeadToHeadPageQuery($communityName: String!, $player1Name: String!, $player2Name: String!) {
-        results_connection(
-          where: {
-            _and: [
-              { community: { name: { _eq: $communityName } } }
-              {
-                _or: [
-                  { player1: { name: { _eq: $player1Name } } }
-                  { player2: { name: { _eq: $player1Name } } }
-                ]
-              }
-              {
-                _or: [
-                  { player1: { name: { _eq: $player2Name } } }
-                  { player2: { name: { _eq: $player2Name } } }
-                ]
-              }
-            ]
-          }
-          order_by: { date: desc }
-        ) {
-          edges {
-            node {
-                id
-                player1 {
-                  id
-                  name
-                }
-                player1goals
-                player2 {
-                  id
-                  name
-                }
-                player2goals
-                date
-                extratime
+    query HeadToHeadPageQuery(
+      $communityName: String!
+      $player1Name: String!
+      $player2Name: String!
+    ) {
+      results_connection(
+        where: {
+          _and: [
+            { community: { name: { _eq: $communityName } } }
+            {
+              _or: [
+                { player1: { name: { _eq: $player1Name } } }
+                { player2: { name: { _eq: $player1Name } } }
+              ]
             }
+            {
+              _or: [
+                { player1: { name: { _eq: $player2Name } } }
+                { player2: { name: { _eq: $player2Name } } }
+              ]
+            }
+          ]
+        }
+        order_by: { date: desc }
+      ) {
+        ...ResultsTable_Results
+        edges {
+          node {
+            id
+            player1 {
+              id
+              name
+            }
+            player1goals
+            player2 {
+              id
+              name
+            }
+            player2goals
+            date
+            extratime
           }
         }
       }
+    
+      community_settings_connection(
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
+        edges {
+          node {
+            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultsTableHeader_CommunitySettings
+          }
+        }
+      }
+    }
   |}
 ];
 
@@ -54,8 +69,13 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
   let queryData =
     Query.use(~variables={communityName, player1Name, player2Name}, ());
   let results = queryData.results_connection.edges |> toListOfResults2;
-  let stats = getPlayerStats(player1Name, results);
-  let resultsWithRatings = results |> attachRatings;
+  let stats = getPlayerStats_old(player1Name, results);
+
+  let resultsTableFragment = queryData.results_connection.fragmentRefs;
+
+  let communitySettingsFragment =
+    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
+      fragmentRefs;
 
   <>
     <Header page={HeadToHead(communityName, player1Name, player2Name)} />
@@ -110,7 +130,8 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
         )}
       />
       <ResultsTable
-        results={resultsWithRatings.resultsWithRatings}
+        resultsTableFragment
+        communitySettingsFragment
         communityName
       />
     </>

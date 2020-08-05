@@ -15,6 +15,13 @@ type resultWithRatings = {
   player2RatingAfter: float,
 };
 
+type ratingsBeforeAndAfter = {
+  player1RatingBefore: float,
+  player1RatingAfter: float,
+  player2RatingBefore: float,
+  player2RatingAfter: float,
+};
+
 let resultsWithRatingsByDate =
     (first: resultWithRatings, second: resultWithRatings) =>
   DateFns.compareAsc(first.result.date, second.result.date);
@@ -108,7 +115,7 @@ let eloRatingReducer =
 
 let attachRatings = (results: list(matchResult)): temp_resultsWithRatingMap =>
   results
-  ->Belt.List.sort(resultsByDate)
+  ->Belt.List.sort(resultsByDate_old)
   ->Belt.List.reduce(
       {ratingMap: Belt_MapString.empty, resultsWithRatings: []},
       eloRatingReducer,

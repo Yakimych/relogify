@@ -1,12 +1,20 @@
 open Types;
 open Utils;
 
-let startNewStreakWithResult = (result: matchResult, streaks: list(streak)) => [
+let startNewStreakWithResult =
+    (
+      result: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+      streaks: list(streak),
+    ) => [
   {results: [result], endingResult: None},
   ...streaks,
 ];
 
-let addResultToCurrentStreak = (result: matchResult, streaks: list(streak)) => {
+let addResultToCurrentStreak =
+    (
+      result: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+      streaks: list(streak),
+    ) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: [result, ...currentStreak.results], endingResult: None},
@@ -14,7 +22,11 @@ let addResultToCurrentStreak = (result: matchResult, streaks: list(streak)) => {
   ];
 };
 
-let setEndingResult = (result: matchResult, streaks: list(streak)) => {
+let setEndingResult =
+    (
+      result: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+      streaks: list(streak),
+    ) => {
   let currentStreak = streaks->Belt.List.headExn;
   [
     {results: currentStreak.results, endingResult: Some(result)},
@@ -23,7 +35,11 @@ let setEndingResult = (result: matchResult, streaks: list(streak)) => {
 };
 
 let resultStreakReducer =
-    (playerName: string, streaks: list(streak), result: matchResult)
+    (
+      playerName: string,
+      streaks: list(streak),
+      result: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+    )
     : list(streak) => {
   let isWin =
     result.player1.name == playerName
@@ -44,8 +60,7 @@ let resultStreakReducer =
     );
 };
 
-let getAllStreaks =
-    (playerName: string, results: list(matchResult)): list(streak) =>
+let getAllStreaks = (playerName: string, results): list(streak) =>
   results
   ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce([], resultStreakReducer(playerName));

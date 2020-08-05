@@ -1,22 +1,24 @@
 /* @generated */
 
+type enum_score_types_enum = pri [> | `Goals | `Points];
+
 module Types = {
   [@ocaml.warning "-30"];
   type response_results_connection = {
     edges: array(response_results_connection_edges),
+    fragmentRefs: ReasonRelay.fragmentRefs([ | `ResultsTable_Results]),
   }
   and response_results_connection_edges = {
     node: response_results_connection_edges_node,
   }
   and response_results_connection_edges_node = {
+    id: string,
     player1: response_results_connection_edges_node_player1,
+    player1goals: int,
     player2: response_results_connection_edges_node_player2,
     player2goals: int,
-    player1goals: int,
-    extratime: bool,
     date: string,
-    id: string,
-    fragmentRefs: ReasonRelay.fragmentRefs([ | `Result_SingleResult]),
+    extratime: bool,
   }
   and response_results_connection_edges_node_player1 = {
     id: string,
@@ -33,6 +35,7 @@ module Types = {
     node: response_community_settings_connection_edges_node,
   }
   and response_community_settings_connection_edges_node = {
+    score_type: enum_score_types_enum,
     fragmentRefs:
       ReasonRelay.fragmentRefs(
         [
@@ -49,26 +52,23 @@ module Types = {
   type rawResponse = response;
   type refetchVariables = {
     communityName: option(string),
-    dateFrom: option(string),
-    dateTo: option(string),
+    playerName: option(string),
   };
   let makeRefetchVariables =
-      (~communityName=?, ~dateFrom=?, ~dateTo=?, ()): refetchVariables => {
+      (~communityName=?, ~playerName=?, ()): refetchVariables => {
     communityName,
-    dateFrom,
-    dateTo,
+    playerName,
   };
   type variables = {
     communityName: string,
-    dateFrom: option(string),
-    dateTo: option(string),
+    playerName: string,
   };
 };
 
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"results_connection_edges_node":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
+    {json| {"__root":{"results_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
@@ -83,7 +83,7 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"dateFrom":{"n":""},"dateTo":{"n":""}}} |json}
+    {json| {} |json}
   ];
   let variablesConverterMap = ();
   let convertVariables = v =>
@@ -98,11 +98,12 @@ module Internal = {
 type queryRef;
 
 module Utils = {
+  external score_types_enum_toString: enum_score_types_enum => string =
+    "%identity";
   open Types;
-  let makeVariables = (~communityName, ~dateFrom=?, ~dateTo=?, ()): variables => {
+  let makeVariables = (~communityName, ~playerName): variables => {
     communityName,
-    dateFrom,
-    dateTo,
+    playerName,
   };
 };
 
@@ -119,32 +120,42 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "dateFrom"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "dateTo"
+    "name": "playerName"
   }
 ],
-v1 = {
-  "fields": [
-    {
-      "fields": [
-        {
-          "kind": "Variable",
-          "name": "_eq",
-          "variableName": "communityName"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "name"
-    }
-  ],
-  "kind": "ObjectValue",
-  "name": "community"
-},
+v1 = [
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "_eq",
+            "variableName": "communityName"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "name"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "community"
+  }
+],
 v2 = [
+  {
+    "fields": [
+      {
+        "kind": "Variable",
+        "name": "_eq",
+        "variableName": "playerName"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "name"
+  }
+],
+v3 = [
   {
     "kind": "Literal",
     "name": "order_by",
@@ -154,37 +165,65 @@ v2 = [
   },
   {
     "fields": [
-      (v1/*: any*/),
       {
-        "fields": [
+        "items": [
           {
-            "kind": "Variable",
-            "name": "_gte",
-            "variableName": "dateFrom"
+            "fields": (v1/*: any*/),
+            "kind": "ObjectValue",
+            "name": "_and.0"
           },
           {
-            "kind": "Variable",
-            "name": "_lte",
-            "variableName": "dateTo"
+            "fields": [
+              {
+                "items": [
+                  {
+                    "fields": [
+                      {
+                        "fields": (v2/*: any*/),
+                        "kind": "ObjectValue",
+                        "name": "player1"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "_or.0"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "fields": (v2/*: any*/),
+                        "kind": "ObjectValue",
+                        "name": "player2"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "_or.1"
+                  }
+                ],
+                "kind": "ListValue",
+                "name": "_or"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "_and.1"
           }
         ],
-        "kind": "ObjectValue",
-        "name": "date"
+        "kind": "ListValue",
+        "name": "_and"
       }
     ],
     "kind": "ObjectValue",
     "name": "where"
   }
 ],
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = [
-  (v3/*: any*/),
+v5 = [
+  (v4/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -193,45 +232,38 @@ v4 = [
     "storageKey": null
   }
 ],
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "players",
   "kind": "LinkedField",
   "name": "player1",
   "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "players",
-  "kind": "LinkedField",
-  "name": "player2",
-  "plural": false,
-  "selections": (v4/*: any*/),
+  "selections": (v5/*: any*/),
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "player2goals",
+  "name": "player1goals",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "player1goals",
+  "concreteType": "players",
+  "kind": "LinkedField",
+  "name": "player2",
+  "plural": false,
+  "selections": (v5/*: any*/),
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "extratime",
+  "name": "player2goals",
   "storageKey": null
 },
 v10 = {
@@ -241,25 +273,37 @@ v10 = {
   "name": "date",
   "storageKey": null
 },
-v11 = [
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "extratime",
+  "storageKey": null
+},
+v12 = [
   {
-    "fields": [
-      (v1/*: any*/)
-    ],
+    "fields": (v1/*: any*/),
     "kind": "ObjectValue",
     "name": "where"
   }
-];
+],
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "score_type",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResultsTableQuery",
+    "name": "PlayerResultsQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "results_connection",
@@ -281,30 +325,30 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
+                  (v4/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
-                  (v3/*: any*/),
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "Result_SingleResult"
-                  }
+                  (v11/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "ResultsTable_Results"
           }
         ],
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v11/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -326,6 +370,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v13/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -353,11 +398,11 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ResultsTableQuery",
+    "name": "PlayerResultsQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "results_connection",
@@ -379,13 +424,13 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
-                  (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
+                  (v7/*: any*/),
+                  (v11/*: any*/),
                   (v10/*: any*/),
-                  (v3/*: any*/)
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -397,7 +442,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v11/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -426,14 +471,8 @@ return {
                     "name": "include_extra_time",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "score_type",
-                    "storageKey": null
-                  },
-                  (v3/*: any*/)
+                  (v13/*: any*/),
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -446,12 +485,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "95fbc9fa065520d68b689fbc85597956",
+    "cacheID": "3600e28620ce85c81b1c579367d19800",
     "id": null,
     "metadata": {},
-    "name": "ResultsTableQuery",
+    "name": "PlayerResultsQuery",
     "operationKind": "query",
-    "text": "query ResultsTableQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        ...Result_SingleResult\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n"
+    "text": "query PlayerResultsQuery(\n  $communityName: String!\n  $playerName: String!\n) {\n  results_connection(where: {_and: [{community: {name: {_eq: $communityName}}}, {_or: [{player1: {name: {_eq: $playerName}}}, {player2: {name: {_eq: $playerName}}}]}]}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        id\n        player1 {\n          id\n          name\n        }\n        player1goals\n        player2 {\n          id\n          name\n        }\n        player2goals\n        date\n        extratime\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        score_type\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}

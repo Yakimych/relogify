@@ -36,23 +36,30 @@ type playerStats = {
 };
 
 type streak = {
-  results: list(matchResult),
-  endingResult: option(matchResult),
+  results:
+    list(
+      PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+    ),
+  endingResult:
+    option(
+      PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+    ),
 };
 
 let numberOfMatches = (streak: streak) => streak.results->Belt.List.length;
 
 let startedAt = (streak: streak) =>
-  streak.results->Belt.List.reverse->Belt.List.headExn.date;
+  streak.results->Belt.List.reverse->Belt.List.headExn.date
+  ->Js.Date.fromString;
 
 // TODO: Merge endedAt and endedBy and return a Tuple/type?
 let endedAt = (streak: streak) =>
-  streak.endingResult->Belt.Option.map(r => r.date);
+  streak.endingResult->Belt.Option.map(r => r.date |> Js.Date.fromString);
 
 let endedBy = (streak: streak, playerName: string) =>
   streak.endingResult
   ->Belt.Option.map(r =>
-      r.player1.name === playerName ? r.player2 : r.player1
+      r.player1.name === playerName ? r.player2.name : r.player1.name
     );
 
 type streaks = {

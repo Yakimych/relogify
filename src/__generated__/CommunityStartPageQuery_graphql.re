@@ -4,6 +4,7 @@ module Types = {
   [@ocaml.warning "-30"];
   type response_results_connection = {
     edges: array(response_results_connection_edges),
+    fragmentRefs: ReasonRelay.fragmentRefs([ | `ResultsTable_Results]),
   }
   and response_results_connection_edges = {
     node: response_results_connection_edges_node,
@@ -17,7 +18,13 @@ module Types = {
   }
   and response_community_settings_connection_edges_node = {
     fragmentRefs:
-      ReasonRelay.fragmentRefs([ | `AddResultFragment_CommunitySettings]),
+      ReasonRelay.fragmentRefs(
+        [
+          | `ExtraTimeColumn_IncludeExtraTime
+          | `ResultsTableHeader_CommunitySettings
+          | `AddResultFragment_CommunitySettings
+        ],
+      ),
   };
 
   type response = {
@@ -46,7 +53,7 @@ module Types = {
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"community_settings_connection_edges_node":{"f":""}}} |json}
+    {json| {"__root":{"results_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
@@ -122,76 +129,43 @@ v1 = {
   "kind": "ObjectValue",
   "name": "community"
 },
-v2 = {
+v2 = [
+  {
+    "kind": "Literal",
+    "name": "order_by",
+    "value": {
+      "date": "desc"
+    }
+  },
+  {
+    "fields": [
+      (v1/*: any*/),
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "_gte",
+            "variableName": "dateFrom"
+          },
+          {
+            "kind": "Variable",
+            "name": "_lte",
+            "variableName": "dateTo"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "date"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "where"
+  }
+],
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "order_by",
-      "value": {
-        "date": "desc"
-      }
-    },
-    {
-      "fields": [
-        (v1/*: any*/),
-        {
-          "fields": [
-            {
-              "kind": "Variable",
-              "name": "_gte",
-              "variableName": "dateFrom"
-            },
-            {
-              "kind": "Variable",
-              "name": "_lte",
-              "variableName": "dateTo"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "date"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "where"
-    }
-  ],
-  "concreteType": "resultsConnection",
-  "kind": "LinkedField",
-  "name": "results_connection",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "resultsEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "results",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v2/*: any*/)
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
   "storageKey": null
 },
 v4 = [
@@ -202,6 +176,16 @@ v4 = [
     "kind": "ObjectValue",
     "name": "where"
   }
+],
+v5 = [
+  (v3/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
 ];
 return {
   "fragment": {
@@ -210,7 +194,45 @@ return {
     "metadata": null,
     "name": "CommunityStartPageQuery",
     "selections": [
-      (v3/*: any*/),
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "resultsConnection",
+        "kind": "LinkedField",
+        "name": "results_connection",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "resultsEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "results",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "ResultsTable_Results"
+          }
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": (v4/*: any*/),
@@ -238,6 +260,16 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
+                    "name": "ExtraTimeColumn_IncludeExtraTime"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "ResultsTableHeader_CommunitySettings"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
                     "name": "AddResultFragment_CommunitySettings"
                   }
                 ],
@@ -259,7 +291,88 @@ return {
     "kind": "Operation",
     "name": "CommunityStartPageQuery",
     "selections": [
-      (v3/*: any*/),
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "resultsConnection",
+        "kind": "LinkedField",
+        "name": "results_connection",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "resultsEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "results",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "players",
+                    "kind": "LinkedField",
+                    "name": "player1",
+                    "plural": false,
+                    "selections": (v5/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "players",
+                    "kind": "LinkedField",
+                    "name": "player2",
+                    "plural": false,
+                    "selections": (v5/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "player2goals",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "player1goals",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "extratime",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "date",
+                    "storageKey": null
+                  },
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": (v4/*: any*/),
@@ -312,7 +425,7 @@ return {
                     "name": "allow_draws",
                     "storageKey": null
                   },
-                  (v2/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -325,12 +438,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4260931028973c664e2464c3ebc4e8a1",
+    "cacheID": "528d7f9d0d9954b1003e26499d12acc1",
     "id": null,
     "metadata": {},
     "name": "CommunityStartPageQuery",
     "operationKind": "query",
-    "text": "query CommunityStartPageQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultFragment_CommunitySettings on community_settings {\n  include_extra_time\n  score_type\n  max_selectable_points\n  allow_draws\n}\n"
+    "text": "query CommunityStartPageQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...AddResultFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultFragment_CommunitySettings on community_settings {\n  include_extra_time\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}
