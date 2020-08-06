@@ -16,12 +16,13 @@ module ExistingPlayerPickerFragment = [%relay.fragment
 [@react.component]
 let make =
     (
-      ~playerPickerFragment,
+      ~existingPlayerPickerFragment,
       ~selectedPlayerId: string,
       ~disabled: bool,
       ~onChange: string => unit,
     ) => {
-  let queryData = ExistingPlayerPickerFragment.use(playerPickerFragment);
+  let queryData =
+    ExistingPlayerPickerFragment.use(existingPlayerPickerFragment);
 
   <MaterialUi.NativeSelect
     disabled

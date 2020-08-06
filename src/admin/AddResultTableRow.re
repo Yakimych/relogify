@@ -17,7 +17,12 @@ module AddResultTableRowFragment = [%relay.fragment
 ];
 
 [@react.component]
-let make = (~communityName: string, ~communitySettingsFragment) => {
+let make =
+    (
+      ~communityName: string,
+      ~communitySettingsFragment,
+      ~playerPickerFragment,
+    ) => {
   let communitySettings =
     AddResultTableRowFragment.use(communitySettingsFragment);
 
@@ -99,7 +104,7 @@ let make = (~communityName: string, ~communitySettingsFragment) => {
       <PlayerPicker
         disabled=isAddingResult
         placeholderText="Player1"
-        communityName
+        playerPickerFragment
         selectedPlayerName=maybePlayer1Name
         onChange={v => setMaybePlayer1Name(_ => Some(v))}
       />
@@ -129,7 +134,7 @@ let make = (~communityName: string, ~communitySettingsFragment) => {
       <PlayerPicker
         disabled=isAddingResult
         placeholderText="Player2"
-        communityName
+        playerPickerFragment
         selectedPlayerName=maybePlayer2Name
         onChange={v => setMaybePlayer2Name(_ => Some(v))}
       />

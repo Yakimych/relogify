@@ -23,6 +23,10 @@ module Query = [%relay.query
         }
       }
     
+      players_connection(where: { community: { name: { _eq: $communityName } } }) {
+        ...PlayerPicker_Players
+      }
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -58,8 +62,14 @@ let make = (~communityName) => {
     queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
       fragmentRefs;
 
+  let playersFragment = queryData.players_connection.fragmentRefs;
+
   <>
-    <CommunityStartPageHeader communityName communitySettingsFragment />
+    <CommunityStartPageHeader
+      communityName
+      communitySettingsFragment
+      playerPickerFragment=playersFragment
+    />
     <Stats communityName dateFrom=startDate dateTo=endDate />
     <ResultsTable
       resultsTableFragment

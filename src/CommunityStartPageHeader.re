@@ -2,7 +2,12 @@ open Utils;
 open Types;
 
 [@react.component]
-let make = (~communityName: string, ~communitySettingsFragment) => {
+let make =
+    (
+      ~communityName: string,
+      ~communitySettingsFragment,
+      ~playerPickerFragment,
+    ) => {
   let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
   <>
     <MaterialUi.AppBar position=`Fixed color=`Secondary className="app-header">
@@ -25,6 +30,7 @@ let make = (~communityName: string, ~communitySettingsFragment) => {
               <AddResult
                 communityName
                 communitySettingsFragment
+                playerPickerFragment
                 onResultAdded={_ => setAddResultIsOpen(_ => false)}
               />
             </MaterialUi.ExpansionPanel>

@@ -35,6 +35,7 @@ module Query = [%relay.query
       }
     
       players_connection(where: { community: { name: { _eq: $communityName } } }) {
+        ...PlayerPicker_Players
         ...ExistingPlayerPicker_Players
       }
     
@@ -92,7 +93,7 @@ let make =
          </MaterialUi.Card>
        : <EditResultsTable
            results
-           playerPickerFragment=playersFragment
+           playersFragment
            communityName
            communitySettingsFragment
            //  queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}

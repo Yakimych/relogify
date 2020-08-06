@@ -49,7 +49,7 @@ let editResultsTableReducer =
 let make =
     (
       ~results: list(matchResult),
-      ~playerPickerFragment,
+      ~playersFragment,
       ~communityName: string /*, ~queryToRefetch*/,
       ~communitySettingsFragment,
     ) => {
@@ -151,7 +151,11 @@ let make =
         </MaterialUi.TableRow>
       </MaterialUi.TableHead>
       <MaterialUi.TableBody>
-        <AddResultTableRow communityName communitySettingsFragment />
+        <AddResultTableRow
+          communityName
+          communitySettingsFragment
+          playerPickerFragment=playersFragment
+        />
         {results
          ->Belt.List.map(result =>
              <MaterialUi.TableRow key={result.id}>
@@ -172,7 +176,7 @@ let make =
                   </>
                 | Editing(id, editedValues) when result.id === id =>
                   <EditResultTableRow
-                    playerPickerFragment
+                    existingPlayerPickerFragment=playersFragment
                     communitySettingsFragment
                     initialValuesToEdit=editedValues
                     id
