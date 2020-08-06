@@ -53,22 +53,11 @@ module Types = {
     community_settings_connection: response_community_settings_connection,
   };
   type rawResponse = response;
-  type refetchVariables = {
-    communityName: option(string),
-    dateFrom: option(string),
-    dateTo: option(string),
+  type refetchVariables = {communityName: option(string)};
+  let makeRefetchVariables = (~communityName=?, ()): refetchVariables => {
+    communityName: communityName,
   };
-  let makeRefetchVariables =
-      (~communityName=?, ~dateFrom=?, ~dateTo=?, ()): refetchVariables => {
-    communityName,
-    dateFrom,
-    dateTo,
-  };
-  type variables = {
-    communityName: string,
-    dateFrom: option(string),
-    dateTo: option(string),
-  };
+  type variables = {communityName: string};
 };
 
 module Internal = {
@@ -89,7 +78,7 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"dateFrom":{"n":""},"dateTo":{"n":""}}} |json}
+    {json| {} |json}
   ];
   let variablesConverterMap = ();
   let convertVariables = v =>
@@ -105,10 +94,8 @@ type queryRef;
 
 module Utils = {
   open Types;
-  let makeVariables = (~communityName, ~dateFrom=?, ~dateTo=?, ()): variables => {
-    communityName,
-    dateFrom,
-    dateTo,
+  let makeVariables = (~communityName): variables => {
+    communityName: communityName,
   };
 };
 
@@ -121,16 +108,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "communityName"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "dateFrom"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "dateTo"
   }
 ],
 v1 = {
@@ -138,17 +115,23 @@ v1 = {
     {
       "fields": [
         {
-          "kind": "Variable",
-          "name": "_eq",
-          "variableName": "communityName"
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "_eq",
+              "variableName": "communityName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
         }
       ],
       "kind": "ObjectValue",
-      "name": "name"
+      "name": "community"
     }
   ],
   "kind": "ObjectValue",
-  "name": "community"
+  "name": "where"
 },
 v2 = {
   "alias": null,
@@ -178,29 +161,7 @@ v5 = {
         "date": "desc"
       }
     },
-    {
-      "fields": [
-        (v1/*: any*/),
-        {
-          "fields": [
-            {
-              "kind": "Variable",
-              "name": "_gte",
-              "variableName": "dateFrom"
-            },
-            {
-              "kind": "Variable",
-              "name": "_lte",
-              "variableName": "dateTo"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "date"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "where"
-    }
+    (v1/*: any*/)
   ],
   "concreteType": "resultsConnection",
   "kind": "LinkedField",
@@ -282,13 +243,7 @@ v5 = {
   "storageKey": null
 },
 v6 = [
-  {
-    "fields": [
-      (v1/*: any*/)
-    ],
-    "kind": "ObjectValue",
-    "name": "where"
-  }
+  (v1/*: any*/)
 ];
 return {
   "fragment": {
@@ -466,12 +421,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "23013f081cf409daaf8b9811d7faf034",
+    "cacheID": "4b4b0b75242f787ce6bcbb6a8c49f92e",
     "id": null,
     "metadata": {},
     "name": "EditResultsQuery",
     "operationKind": "query",
-    "text": "query EditResultsQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  players_connection(where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    ...ExistingPlayerPicker_Players\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n\nfragment ExistingPlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n"
+    "text": "query EditResultsQuery(\n  $communityName: String!\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  players_connection(where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    ...ExistingPlayerPicker_Players\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n\nfragment ExistingPlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}

@@ -3,16 +3,9 @@ open Utils;
 
 module Query = [%relay.query
   {|
-    query EditResultsQuery(
-      $communityName: String!
-      $dateFrom: timestamptz
-      $dateTo: timestamptz
-    ) {
+    query EditResultsQuery($communityName: String!) {
       results_connection(
-        where: {
-          community: { name: { _eq: $communityName } }
-          date: { _gte: $dateFrom, _lte: $dateTo }
-        }
+        where: { community: { name: { _eq: $communityName } } }
         order_by: { date: desc }
       ) {
         edges {
@@ -54,24 +47,8 @@ module Query = [%relay.query
 ];
 
 [@react.component]
-let make =
-    (
-      ~communityName: string,
-      ~dateFrom: option(Js.Date.t)=?,
-      ~dateTo: option(Js.Date.t)=?,
-    ) => {
-  let dateFromString = dateFrom->Belt.Option.map(Js.Date.toISOString);
-  let dateToString = dateTo->Belt.Option.map(Js.Date.toISOString);
-
-  let queryData =
-    Query.use(
-      ~variables={
-        communityName,
-        dateFrom: dateFromString,
-        dateTo: dateToString,
-      },
-      (),
-    );
+let make = (~communityName: string) => {
+  let queryData = Query.use(~variables={communityName: communityName}, ());
 
   let communitySettingsFragment =
     queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
