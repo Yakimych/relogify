@@ -41,58 +41,6 @@ external toAllResults: Js.Json.t => Js.Nullable.t(allResults) = "%identity";
 external toSubscriptionData: Js.Json.t => Js.Nullable.t(subscriptionData) =
   "%identity";
 
-module CommunitySettingsQuery = [%graphql
-  {|
-    query communitySettings($communityName: String!) {
-      community_settings(
-        limit: 1
-        where: { community: { name: { _eq: $communityName } } }
-      ) {
-        allow_draws
-        max_selectable_points
-        score_type
-        use_dropdown_for_points
-        include_extra_time
-      }
-    }
-  |}
-];
-
-module PlayerResultsQuery = [%graphql
-  {|
-    query playerResults($communityName: String!, $playerName: String!) {
-      results(
-        where: {
-          _and: [
-            { community: { name: { _eq: $communityName } } }
-            {
-              _or: [
-                { player1: { name: { _eq: $playerName } } }
-                { player2: { name: { _eq: $playerName } } }
-              ]
-            }
-          ]
-        }
-        order_by: { date: desc }
-      ) {
-        id
-        player1 {
-          id
-          name
-        }
-        player1goals
-        player2 {
-          id
-          name
-        }
-        player2goals
-        date @bsDecoder(fn: "dateToString")
-        extratime
-      }
-    }
-  |}
-];
-
 let toListOfResults2 =
     (
       res:
@@ -245,24 +193,3 @@ let toListOfResults = (res): list(matchResult) =>
       }
     )
   ->Belt.List.fromArray;
-
-let toCommunitySettingsRecord = (communitySettingsObject): communitySettings => {
-  allowDraws: communitySettingsObject##allow_draws,
-  maxSelectablePoints: communitySettingsObject##max_selectable_points,
-  scoreType: communitySettingsObject##score_type,
-  includeExtraTime: communitySettingsObject##include_extra_time,
-  useDropDownForPoints: communitySettingsObject##use_dropdown_for_points,
-};
-
-let toCommunitySettings =
-    (queryResult: CommunitySettingsQuery.t): communitySettings => {
-  switch (queryResult##community_settings) {
-  // TODO: Set default community settings in the database
-  | [||] => defaultCommunitySettings
-  | [|settings|] => settings |> toCommunitySettingsRecord
-  | _ =>
-    Js.Exn.raiseError(
-      "Unexpected query result - found multiple settings for community ",
-    )
-  };
-};
