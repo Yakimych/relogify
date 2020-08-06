@@ -1,8 +1,6 @@
 open Utils;
 open Styles;
 open Types;
-open Mutations;
-open ApolloHooks;
 
 type editResultsTableState =
   | Idle
@@ -45,6 +43,53 @@ let editResultsTableReducer =
     }
   };
 
+module UpdateMutation = [%relay.mutation
+  {|
+    mutation EditResultsTable_UpdateResult_Mutation(
+      $resultId: Int!
+      $player1Id: Int!
+      $player2Id: Int!
+      $player1Goals: Int!
+      $player2Goals: Int!
+      $extraTime: Boolean!
+      $date: timestamptz!
+    ) {
+      update_results(
+        where: { id: { _eq: $resultId } }
+        _set: {
+          player1Id: $player1Id
+          player1goals: $player1Goals
+          player2goals: $player2Goals
+          player2Id: $player2Id
+          extratime: $extraTime
+          date: $date
+        }
+      ) {
+        affected_rows
+      }
+    }
+  |}
+];
+
+module DeleteMutation = [%relay.mutation
+  {|
+    mutation EditResultsTable_DeleteResult_Mutation($resultId: Int!) {
+      delete_results(where: { id: { _eq: $resultId } }) {
+        affected_rows
+      }
+    }
+  |}
+];
+
+// TODO: Is there a way to only use Relay Ids with Hasura?
+let toInternalId = [%raw
+  {|
+    function(relayId) {
+      return Number(atob(relayId).split(" ").reverse()[0].replace("]", ""));
+    }
+  |}
+];
+
 [@react.component]
 let make =
     (
@@ -53,31 +98,26 @@ let make =
       ~communityName: string /*, ~queryToRefetch*/,
       ~communitySettingsFragment,
     ) => {
-  let (updateResultMutation, _, _) =
-    useMutation(UpdateResultMutation.definition);
-  let (deleteResultMutation, _, _) =
-    useMutation(DeleteResultMutation.definition);
+  let (updateResultMutation, _) = UpdateMutation.use();
+  let (deleteResultMutation, _) = DeleteMutation.use();
+
   let (state, dispatch) = React.useReducer(editResultsTableReducer, Idle);
+
+  let onDeleteSuccess = (_, _) => {
+    // TODO: Handle errors
+    // TODO: Update UI
+    dispatch(StopDeleting);
+  };
 
   let deleteResult = () => {
     switch (state) {
     | DeleteConfirmationPending(resultId) =>
       dispatch(StartDeleting);
       deleteResultMutation(
-        ~variables=
-          DeleteResultMutation.makeVariables(
-            ~resultId=resultId |> int_of_string, // TODO: This will fail
-            (),
-          ),
-        // ~refetchQueries=_ => [|queryToRefetch|],
-        // TODO: Update local apollo cache manually instead of refetchQueries
+        ~onCompleted=onDeleteSuccess,
+        ~variables={resultId: toInternalId(resultId)},
         (),
       )
-      |> Js.Promise.then_(_ => dispatch(StopEditing) |> Js.Promise.resolve)
-      |> Js.Promise.catch(e => {
-           Js.Console.error2("Error: ", e);
-           dispatch(StopDeleting) |> Js.Promise.resolve;
-         })
       |> ignore;
     | Editing(_)
     | Updating(_)
@@ -86,31 +126,30 @@ let make =
     };
   };
 
+  let onUpdateSuccess = (_, _) => {
+    // TODO: Handle errors
+    // TODO: Update UI
+    dispatch(StopEditing);
+  };
+
   let updateResult = (resultId: string, editedValues: editableResultValues) => {
     switch (state) {
     | Editing(_) =>
       dispatch(StartUpdating);
       updateResultMutation(
+        ~onCompleted=onUpdateSuccess,
         ~variables=
-          UpdateResultMutation.makeVariables(
-            ~resultId=resultId |> int_of_string,
-            ~player1Id=editedValues.player1Id |> int_of_string,
-            ~player2Id=editedValues.player2Id |> int_of_string,
+          EditResultsTable_UpdateResult_Mutation_graphql.Utils.makeVariables(
+            ~resultId=resultId |> toInternalId,
+            ~player1Id=editedValues.player1Id |> toInternalId,
+            ~player2Id=editedValues.player2Id |> toInternalId,
             ~player1Goals=editedValues.player1Goals,
             ~player2Goals=editedValues.player2Goals,
             ~extraTime=editedValues.extraTime,
-            ~date=editedValues.date->toJsonDate,
-            (),
+            ~date=editedValues.date |> Js.Date.toISOString,
           ),
-        // ~refetchQueries=_ => [|queryToRefetch|],
-        // TODO: Update local apollo cache manually instead of refetchQueries
         (),
       )
-      |> Js.Promise.then_(_ => dispatch(StopEditing) |> Js.Promise.resolve)
-      |> Js.Promise.catch(e => {
-           Js.Console.error2("Error: ", e);
-           dispatch(StopEditing) |> Js.Promise.resolve;
-         })
       |> ignore;
     | Updating(_)
     | DeleteConfirmationPending(_)
