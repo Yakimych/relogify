@@ -69,16 +69,16 @@ let make =
             ~extraTime,
             (),
           ),
-        ~refetchQueries=
-          _ =>
-            [|
-              // ApolloHooks.toQueryObj(
-              //   AllResultsQuery.make(~communityName, ()),
-              // ),
-              ApolloHooks.toQueryObj(
-                AllPlayersQuery.make(~communityName, ()),
-              ),
-            |],
+        // ~refetchQueries=
+        //   _ =>
+        //     [|
+        //       ApolloHooks.toQueryObj(
+        //         AllResultsQuery.make(~communityName, ()),
+        //       ),
+        //       ApolloHooks.toQueryObj(
+        //         AllPlayersQuery.make(~communityName, ()),
+        //       ),
+        //     |],
         (),
       )
       |> Js.Promise.then_(_ =>

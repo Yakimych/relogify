@@ -6,17 +6,6 @@ external castToString: Js.Json.t => string = "%identity";
 let dateToString = (dateString: Js.Json.t) =>
   dateString |> castToString |> Js.Date.fromString;
 
-module AllPlayersQuery = [%graphql
-  {|
-    query AllPlayersQuery($communityName: String!) {
-      players(where: { community: { name: { _eq: $communityName } } }) {
-        id
-        name
-      }
-    }
-  |}
-];
-
 type playerWithTypeName = {
   id: int,
   name: string,
