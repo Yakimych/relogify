@@ -43,6 +43,7 @@ let editResultsTableReducer =
     }
   };
 
+// TODO: Extract the "returning" part into a fragment and use the same in the query?
 module UpdateMutation = [%relay.mutation
   {|
     mutation EditResultsTable_UpdateResult_Mutation(
@@ -66,6 +67,21 @@ module UpdateMutation = [%relay.mutation
         }
       ) {
         affected_rows
+        returning {
+          player1 {
+            id
+            name
+          }
+          player2 {
+            id
+            name
+          }
+          player2goals
+          player1goals
+          extratime
+          date
+          id
+        }
       }
     }
   |}

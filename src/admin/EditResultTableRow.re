@@ -29,6 +29,7 @@ let editResultReducer =
     };
   };
 
+// TODO: Define a fragment for the result itself?
 module EditResultTableRowFragment = [%relay.fragment
   {|
     fragment EditResultTableRowFragment_CommunitySettings on community_settings {
