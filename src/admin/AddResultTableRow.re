@@ -1,8 +1,5 @@
 open Utils;
-open Queries;
-open Mutations;
 open Styles;
-open ApolloHooks;
 
 [@bs.val] external alert: string => unit = "alert";
 
@@ -12,6 +9,16 @@ module AddResultTableRowFragment = [%relay.fragment
       score_type
       max_selectable_points
       allow_draws
+    }
+  |}
+];
+
+module AddMutation = [%relay.mutation
+  {|
+    mutation AddResultTableRowMutation($input: results_insert_input!) {
+      insert_results_one(object: $input) {
+        id
+      }
     }
   |}
 ];
@@ -26,7 +33,7 @@ let make =
   let communitySettings =
     AddResultTableRowFragment.use(communitySettingsFragment);
 
-  let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
+  let (addResult, isAddingResult) = AddMutation.use();
 
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
@@ -38,7 +45,6 @@ let make =
   let toggleExtraTime = () => setExtraTime(oldExtraTime => !oldExtraTime);
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
-  let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
   let addResult = allowDraws => {
     let validationResult =
@@ -54,41 +60,92 @@ let make =
     switch (validationResult) {
     | Error(message) => alert(message)
     | Ok((player1Name, player2Name)) =>
-      setIsAddingResult(_ => true);
+      let communityInput: AddResultTableRowMutation_graphql.Types.communities_obj_rel_insert_input = {
+        data: {
+          community_settings: None,
+          description: None,
+          id: None,
+          name: Some(communityName),
+          players: None,
+          results: None,
+        },
+        on_conflict:
+          Some({
+            constraint_: `communities_name_key,
+            update_columns: [|`name|],
+            where: None,
+          }),
+      };
 
-      // TODO: Pass in a query to refetch instead? Consolidate with AddResult.re?
-      addResultMutation(
-        ~variables=
-          AddResultMutation.makeVariables(
-            ~communityName,
-            ~player1Name,
-            ~player2Name,
-            ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
-            ~player1Goals=goals1,
-            ~player2Goals=goals2,
-            ~extraTime,
-            (),
-          ),
-        // ~refetchQueries=
-        //   _ =>
-        //     [|
-        //       ApolloHooks.toQueryObj(
-        //         AllResultsQuery.make(~communityName, ()),
-        //       ),
-        //       ApolloHooks.toQueryObj(
-        //         AllPlayersQuery.make(~communityName, ()),
-        //       ),
-        //     |],
+      let playersOnConflictInput: AddResultTableRowMutation_graphql.Types.players_on_conflict = {
+        constraint_: `players_name_communityId_key,
+        update_columns: [|`name|],
+        where: None,
+      };
+
+      addResult(
+        ~variables={
+          input: {
+            community: Some(communityInput),
+            player1:
+              Some({
+                data: {
+                  community: Some(communityInput),
+                  communityId: None,
+                  id: None,
+                  name: Some(player1Name),
+                  resultsAsPlayer1: None,
+                  resultsAsPlayer2: None,
+                },
+                on_conflict: Some(playersOnConflictInput),
+              }),
+
+            player2:
+              Some({
+                data: {
+                  community: Some(communityInput),
+                  communityId: None,
+                  id: None,
+                  name: Some(player2Name),
+                  resultsAsPlayer1: None,
+                  resultsAsPlayer2: None,
+                },
+                on_conflict: Some(playersOnConflictInput),
+              }),
+
+            comment: None,
+            communityId: None,
+            date: Some(date |> Js.Date.toISOString),
+            extratime: Some(extraTime),
+            id: None,
+            player1Id: None,
+            player1goals: Some(goals1),
+            player2Id: None,
+            player2goals: Some(goals2),
+          },
+        },
         (),
       )
-      |> Js.Promise.then_(_ =>
-           setIsAddingResult(_ => false) |> Js.Promise.resolve
-         )
-      |> Js.Promise.catch(e => {
-           Js.Console.error2("Error: ", e);
-           setIsAddingResult(_ => false) |> Js.Promise.resolve;
-         })
       |> ignore;
+    // ~refetchQueries=
+    //   _ =>
+    //     [|
+    //       ApolloHooks.toQueryObj(
+    //         AllResultsQuery.make(~communityName, ()),
+    //       ),
+    //       ApolloHooks.toQueryObj(
+    //         AllPlayersQuery.make(~communityName, ()),
+    //       ),
+    //     |],
+    //   (),
+    // )
+    // |> Js.Promise.then_(_ =>
+    //      setIsAddingResult(_ => false) |> Js.Promise.resolve
+    //    )
+    // |> Js.Promise.catch(e => {
+    //      Js.Console.error2("Error: ", e);
+    //      setIsAddingResult(_ => false) |> Js.Promise.resolve;
+    //    })
     };
   };
 
