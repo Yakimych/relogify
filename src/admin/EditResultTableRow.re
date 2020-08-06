@@ -41,7 +41,7 @@ module EditResultTableRowFragment = [%relay.fragment
 [@react.component]
 let make =
     (
-      ~communityName,
+      ~playerPickerFragment,
       ~communitySettingsFragment,
       ~id,
       ~initialValuesToEdit: editableResultValues,
@@ -65,7 +65,7 @@ let make =
     <MaterialUi.TableCell align=`Right>
       <ExistingPlayerPicker
         disabled
-        communityName
+        playerPickerFragment
         selectedPlayerId={valuesUnderEdit.player1Id}
         onChange={id => dispatch(SetPlayer1Id(id))}
       />
@@ -94,7 +94,7 @@ let make =
     <MaterialUi.TableCell>
       <ExistingPlayerPicker
         disabled
-        communityName
+        playerPickerFragment
         selectedPlayerId={valuesUnderEdit.player2Id}
         onChange={id => dispatch(SetPlayer2Id(id))}
       />

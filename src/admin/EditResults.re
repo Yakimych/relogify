@@ -34,6 +34,10 @@ module Query = [%relay.query
         }
       }
     
+      players_connection(where: { community: { name: { _eq: $communityName } } }) {
+        ...ExistingPlayerPicker_Players
+      }
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -72,6 +76,8 @@ let make =
     queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
       fragmentRefs;
 
+  let playersFragment = queryData.players_connection.fragmentRefs;
+
   let results = queryData.results_connection.edges |> toListOfResults5;
 
   <>
@@ -86,6 +92,7 @@ let make =
          </MaterialUi.Card>
        : <EditResultsTable
            results
+           playerPickerFragment=playersFragment
            communityName
            communitySettingsFragment
            //  queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}

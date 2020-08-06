@@ -49,6 +49,7 @@ let editResultsTableReducer =
 let make =
     (
       ~results: list(matchResult),
+      ~playerPickerFragment,
       ~communityName: string /*, ~queryToRefetch*/,
       ~communitySettingsFragment,
     ) => {
@@ -171,7 +172,7 @@ let make =
                   </>
                 | Editing(id, editedValues) when result.id === id =>
                   <EditResultTableRow
-                    communityName
+                    playerPickerFragment
                     communitySettingsFragment
                     initialValuesToEdit=editedValues
                     id

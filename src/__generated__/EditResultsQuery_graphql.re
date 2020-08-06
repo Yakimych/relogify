@@ -25,6 +25,10 @@ module Types = {
     id: string,
     name: string,
   }
+  and response_players_connection = {
+    fragmentRefs:
+      ReasonRelay.fragmentRefs([ | `ExistingPlayerPicker_Players]),
+  }
   and response_community_settings_connection = {
     edges: array(response_community_settings_connection_edges),
   }
@@ -43,6 +47,7 @@ module Types = {
 
   type response = {
     results_connection: response_results_connection,
+    players_connection: response_players_connection,
     community_settings_connection: response_community_settings_connection,
   };
   type rawResponse = response;
@@ -67,7 +72,7 @@ module Types = {
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"community_settings_connection_edges_node":{"f":""}}} |json}
+    {json| {"__root":{"players_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
@@ -293,6 +298,22 @@ return {
       {
         "alias": null,
         "args": (v5/*: any*/),
+        "concreteType": "playersConnection",
+        "kind": "LinkedField",
+        "name": "players_connection",
+        "plural": false,
+        "selections": [
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "ExistingPlayerPicker_Players"
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -344,6 +365,38 @@ return {
     "name": "EditResultsQuery",
     "selections": [
       (v4/*: any*/),
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
+        "concreteType": "playersConnection",
+        "kind": "LinkedField",
+        "name": "players_connection",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "playersEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "players",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": (v3/*: any*/),
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": (v5/*: any*/),
@@ -402,12 +455,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "764699f6153c875b73e5c0f0e869b537",
+    "cacheID": "2824419c32a93b47e92ed436708bc027",
     "id": null,
     "metadata": {},
     "name": "EditResultsQuery",
     "operationKind": "query",
-    "text": "query EditResultsQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n"
+    "text": "query EditResultsQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  players_connection(where: {community: {name: {_eq: $communityName}}}) {\n    ...ExistingPlayerPicker_Players\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n\nfragment ExistingPlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n"
   }
 };
 })() |json}
