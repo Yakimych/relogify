@@ -16,7 +16,7 @@ let apiRequestIsInProgress =
   | _ => false;
 
 type editResultsTableAction =
-  | StartEditing(EditResultsTable_Results_graphql.Types.fragment_edges_node)
+  | StartEditing(string)
   | StopEditing
   | StartUpdating
   | DeleteRequested(string)
@@ -26,7 +26,7 @@ type editResultsTableAction =
 let editResultsTableReducer =
     (state: editResultsTableState, action: editResultsTableAction) =>
   switch (action) {
-  | StartEditing(result) => Editing(result.id)
+  | StartEditing(resultId) => Editing(resultId)
   | StartUpdating =>
     switch (state) {
     | Editing(id) => Updating(id)
@@ -273,7 +273,8 @@ let make =
                 | Idle =>
                   <>
                     <MaterialUi.TableCell>
-                      <button onClick={_ => dispatch(StartEditing(result))}>
+                      <button
+                        onClick={_ => dispatch(StartEditing(result.id))}>
                         {text("Edit")}
                       </button>
                       <button
