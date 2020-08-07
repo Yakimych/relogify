@@ -105,26 +105,6 @@ type editableResultValues = {
   date: Js.Date.t,
 };
 
-let toEditableResultValues_old = (result: matchResult): editableResultValues => {
-  player1Id: result.player1.id,
-  player2Id: result.player2.id,
-  player1Goals: result.player1goals,
-  player2Goals: result.player2goals,
-  extraTime: result.extratime,
-  date: result.date,
-};
-
-let toEditableResultValues =
-    (result: EditResultsTable_Results_graphql.Types.fragment_edges_node)
-    : editableResultValues => {
-  player1Id: result.player1.id,
-  player2Id: result.player2.id,
-  player1Goals: result.player1goals,
-  player2Goals: result.player2goals,
-  extraTime: result.extratime,
-  date: result.date |> Js.Date.fromString,
-};
-
 let toEditableResultValues2 =
     (result: EditResultTableRow_SingleResult_graphql.Types.fragment)
     : editableResultValues => {

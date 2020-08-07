@@ -112,18 +112,6 @@ module EditResultsTableFragment = [%relay.fragment
         node {
           ...ResultTableRow_SingleResult
           ...EditResultTableRow_SingleResult
-          player1 {
-            id
-            name
-          }
-          player2 {
-            id
-            name
-          }
-          player2goals
-          player1goals
-          extratime
-          date
           id
         }
       }
