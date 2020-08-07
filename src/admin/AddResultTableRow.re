@@ -17,6 +17,18 @@ module AddMutation = [%relay.mutation
   {|
     mutation AddResultTableRowMutation($input: results_insert_input!) {
       insert_results_one(object: $input) {
+        player1 {
+          id
+          name
+        }
+        player2 {
+          id
+          name
+        }
+        player2goals
+        player1goals
+        extratime
+        date
         id
       }
     }
@@ -45,6 +57,45 @@ let make =
   let toggleExtraTime = () => setExtraTime(oldExtraTime => !oldExtraTime);
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
+
+  let addResultUpdater =
+      (
+        store: ReasonRelay.RecordSourceSelectorProxy.t,
+        response: AddMutation.Types.response,
+      ) => {
+    Js.log("addResultUpdater");
+    Js.log2("Store: ", store);
+    Js.log2("Response: ", response);
+
+    ReasonRelayUtils.(
+      switch (
+        resolveNestedRecord(
+          ~rootRecord=
+            store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
+              ~fieldName="insert_results_one",
+            ),
+          ~path=[],
+        )
+      ) {
+      | Some(node) =>
+        Js.log2("node: ", node);
+        createAndAddEdgeToConnections(
+          ~store,
+          ~node,
+          ~connections=[
+            {
+              parentID: ReasonRelay.storeRootId,
+              key: "EditResults_query_results_connection",
+              filters: None,
+            },
+          ],
+          ~edgeName="resultsEdge",
+          ~insertAt=Start,
+        );
+      | None => Js.log("resolveNestedRecord returned None")
+      }
+    );
+  };
 
   let addResult = allowDraws => {
     let validationResult =
@@ -84,6 +135,25 @@ let make =
       };
 
       addResult(
+        ~updater=addResultUpdater,
+        ~optimisticResponse={
+          insert_results_one:
+            Some({
+              player1: {
+                id: "asd",
+                name: player1Name,
+              },
+              player2: {
+                id: "qwe",
+                name: player2Name,
+              },
+              player2goals: goals1,
+              player1goals: goals2,
+              extratime: extraTime,
+              date: date |> Js.Date.toISOString,
+              id: "kdsflksjdhgfljsdfhjgl",
+            }),
+        },
         ~variables={
           input: {
             community: Some(communityInput),

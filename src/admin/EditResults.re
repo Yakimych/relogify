@@ -4,12 +4,25 @@ module Query = [%relay.query
   {|
     query EditResultsQuery($communityName: String!) {
       results_connection(
+        first: 1000
         where: { community: { name: { _eq: $communityName } } }
         order_by: { date: desc }
-      ) {
+      ) @connection(key: "EditResults_query_results_connection") {
         ...EditResultsTable_Results
         edges {
           node {
+            player1 {
+              id
+              name
+            }
+            player2 {
+              id
+              name
+            }
+            player2goals
+            player1goals
+            extratime
+            date
             id
           }
         }
