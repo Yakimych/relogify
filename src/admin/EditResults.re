@@ -1,4 +1,3 @@
-open Queries;
 open Utils;
 
 module Query = [%relay.query
@@ -8,20 +7,9 @@ module Query = [%relay.query
         where: { community: { name: { _eq: $communityName } } }
         order_by: { date: desc }
       ) {
+        ...EditResultsTable_Results
         edges {
           node {
-            player1 {
-              id
-              name
-            }
-            player2 {
-              id
-              name
-            }
-            player2goals
-            player1goals
-            extratime
-            date
             id
           }
         }
@@ -55,12 +43,12 @@ let make = (~communityName: string) => {
       fragmentRefs;
 
   let playersFragment = queryData.players_connection.fragmentRefs;
-
-  let results = queryData.results_connection.edges |> toListOfResults5;
+  let resultsFragment = queryData.results_connection.fragmentRefs;
 
   <>
     <Header page={AdminResultsPage(communityName)} />
-    {results->Belt.List.length === 0
+    // TODO: Move this into ResultsTable?
+    {queryData.results_connection.edges->Belt.Array.length === 0
        ? <MaterialUi.Card className="no-result-info">
            <MaterialUi.CardContent>
              <MaterialUi.Typography variant=`H6>
@@ -69,7 +57,7 @@ let make = (~communityName: string) => {
            </MaterialUi.CardContent>
          </MaterialUi.Card>
        : <EditResultsTable
-           results
+           resultsFragment
            playersFragment
            communityName
            communitySettingsFragment

@@ -30,11 +30,31 @@ let editResultReducer =
   };
 
 // TODO: Define a fragment for the result itself?
-module EditResultTableRowFragment = [%relay.fragment
+module CommunitySettingsFragment = [%relay.fragment
   {|
     fragment EditResultTableRowFragment_CommunitySettings on community_settings {
       score_type
       max_selectable_points
+    }
+  |}
+];
+
+module SingleResultFragment = [%relay.fragment
+  {|
+    fragment EditResultTableRow_SingleResult on results {
+      player1 {
+        id
+        name
+      }
+      player2 {
+        id
+        name
+      }
+      player2goals
+      player1goals
+      extratime
+      date
+      id
     }
   |}
 ];
@@ -45,16 +65,19 @@ let make =
       ~existingPlayerPickerFragment,
       ~communitySettingsFragment,
       ~id,
-      ~initialValuesToEdit: editableResultValues,
+      // ~initialValuesToEdit: editableResultValues,
+      ~resultFragment,
       ~disabled,
       ~onSave,
       ~onCancel,
     ) => {
+  let resultFragment = SingleResultFragment.use(resultFragment);
+  let initialValuesToEdit = resultFragment |> toEditableResultValues2;
   let (valuesUnderEdit, dispatch) =
     React.useReducer(editResultReducer, initialValuesToEdit);
 
   let communitySettings =
-    EditResultTableRowFragment.use(communitySettingsFragment);
+    CommunitySettingsFragment.use(communitySettingsFragment);
 
   <>
     <MaterialUi.TableCell>

@@ -16,7 +16,7 @@ let apiRequestIsInProgress =
   | _ => false;
 
 type editResultsTableAction =
-  | StartEditing(matchResult)
+  | StartEditing(EditResultsTable_Results_graphql.Types.fragment_edges_node)
   | StopEditing
   | StartUpdating
   | DeleteRequested(string)
@@ -106,14 +106,43 @@ let toInternalId = [%raw
   |}
 ];
 
+module EditResultsTableFragment = [%relay.fragment
+  {|
+    fragment EditResultsTable_Results on resultsConnection {
+      edges {
+        node {
+          ...ResultTableRow_SingleResult
+          ...EditResultTableRow_SingleResult
+          player1 {
+            id
+            name
+          }
+          player2 {
+            id
+            name
+          }
+          player2goals
+          player1goals
+          extratime
+          date
+          id
+        }
+      }
+    }
+  |}
+];
+
 [@react.component]
 let make =
+    // ~results: list(matchResult),
     (
-      ~results: list(matchResult),
       ~playersFragment,
+      ~resultsFragment,
       ~communityName: string /*, ~queryToRefetch*/,
       ~communitySettingsFragment,
     ) => {
+  let resultsFragment = EditResultsTableFragment.use(resultsFragment);
+
   let (updateResultMutation, _) = UpdateMutation.use();
   let (deleteResultMutation, _) = DeleteMutation.use();
 
@@ -211,8 +240,9 @@ let make =
           communitySettingsFragment
           playerPickerFragment=playersFragment
         />
-        {results
-         ->Belt.List.map(result =>
+        {resultsFragment.edges
+         ->Belt.Array.map(resultNode => resultNode.node)
+         ->Belt.Array.map(result =>
              <MaterialUi.TableRow key={result.id}>
                {switch (state) {
                 | DeleteConfirmationPending(resultToDeleteId)
@@ -227,13 +257,13 @@ let make =
                         {text("No")}
                       </button>
                     </MaterialUi.TableCell>
-                    <ResultTableRow result />
+                    <ResultTableRow resultFragment={result.fragmentRefs} />
                   </>
                 | Editing(id, editedValues) when result.id === id =>
                   <EditResultTableRow
                     existingPlayerPickerFragment=playersFragment
                     communitySettingsFragment
-                    initialValuesToEdit=editedValues
+                    resultFragment={result.fragmentRefs}
                     id
                     disabled={apiRequestIsInProgress(state)}
                     onSave={(id, editedResult) =>
@@ -252,11 +282,14 @@ let make =
                         {text("Delete")}
                       </button>
                     </MaterialUi.TableCell>
-                    <ResultTableRow result />
+                    <ResultTableRow resultFragment={result.fragmentRefs} />
                   </>
                 | DeleteConfirmationPending(_)
                 | Editing(_) =>
-                  <> <MaterialUi.TableCell /> <ResultTableRow result /> </>
+                  <>
+                    <MaterialUi.TableCell />
+                    <ResultTableRow resultFragment={result.fragmentRefs} />
+                  </>
                 | Deleting(id)
                 | Updating(id) =>
                   <>
@@ -264,12 +297,11 @@ let make =
                       {id === result.id
                          ? <MaterialUi.CircularProgress /> : React.null}
                     </MaterialUi.TableCell>
-                    <ResultTableRow result />
+                    <ResultTableRow resultFragment={result.fragmentRefs} />
                   </>
                 }}
              </MaterialUi.TableRow>
            )
-         ->Array.of_list
          ->React.array}
       </MaterialUi.TableBody>
     </MaterialUi.Table>

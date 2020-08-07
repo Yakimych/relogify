@@ -1,9 +1,30 @@
 open Utils;
-open Types;
 open Styles;
 
+module ResultTableRowFragment = [%relay.fragment
+  {|
+    fragment ResultTableRow_SingleResult on results {
+      player1 {
+        id
+        name
+      }
+      player2 {
+        id
+        name
+      }
+      player2goals
+      player1goals
+      extratime
+      date
+      id
+    }
+  |}
+];
+
 [@react.component]
-let make = (~result) => {
+let make = (~resultFragment) => {
+  let result = ResultTableRowFragment.use(resultFragment);
+
   <>
     <MaterialUi.TableCell align=`Right>
       <span> {text(result.player1.name)} </span>
@@ -24,7 +45,7 @@ let make = (~result) => {
       {text(result.extratime ? "X" : "")}
     </MaterialUi.TableCell>
     <MaterialUi.TableCell>
-      {text(formatDate(result.date))}
+      {text(formatDate(result.date |> Js.Date.fromString))}
     </MaterialUi.TableCell>
   </>;
 };

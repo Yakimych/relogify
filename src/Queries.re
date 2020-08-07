@@ -133,35 +133,6 @@ let toListOfResults4 =
     })
   ->Belt.List.fromArray;
 
-let toListOfResults5 =
-    (
-      res:
-        array(
-          EditResultsQuery_graphql.Types.response_results_connection_edges,
-        ),
-    )
-    : list(matchResult) =>
-  res
-  ->Belt.Array.map(resultNode => {
-      let r = resultNode.node;
-      {
-        id: r.id,
-        player1: {
-          id: r.player1.id,
-          name: r.player1.name,
-        },
-        player2: {
-          id: r.player2.id,
-          name: r.player2.name,
-        },
-        player1goals: r.player1goals,
-        player2goals: r.player2goals,
-        date: r.date |> Js.Date.fromString,
-        extratime: r.extratime,
-      };
-    })
-  ->Belt.List.fromArray;
-
 let toListOfResults = (res): list(matchResult) =>
   res
   ->Belt.Array.map(r =>
