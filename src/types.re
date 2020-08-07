@@ -105,7 +105,7 @@ type editableResultValues = {
   date: Js.Date.t,
 };
 
-let toEditableResultValues2 =
+let toEditableResultValues =
     (result: EditResultTableRow_SingleResult_graphql.Types.fragment)
     : editableResultValues => {
   player1Id: result.player1.id,

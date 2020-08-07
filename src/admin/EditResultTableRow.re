@@ -1,6 +1,6 @@
+open Types;
 open Styles;
 open Utils;
-open Types;
 
 type editResultAction =
   | SetPlayer1Id(string)
@@ -29,7 +29,6 @@ let editResultReducer =
     };
   };
 
-// TODO: Define a fragment for the result itself?
 module CommunitySettingsFragment = [%relay.fragment
   {|
     fragment EditResultTableRowFragment_CommunitySettings on community_settings {
@@ -59,20 +58,21 @@ module SingleResultFragment = [%relay.fragment
   |}
 ];
 
+// TODO: Consider moving the mutation here too
+
 [@react.component]
 let make =
     (
       ~existingPlayerPickerFragment,
       ~communitySettingsFragment,
       ~id,
-      // ~initialValuesToEdit: editableResultValues,
       ~resultFragment,
       ~disabled,
       ~onSave,
       ~onCancel,
     ) => {
   let resultFragment = SingleResultFragment.use(resultFragment);
-  let initialValuesToEdit = resultFragment |> toEditableResultValues2;
+  let initialValuesToEdit = resultFragment |> toEditableResultValues;
   let (valuesUnderEdit, dispatch) =
     React.useReducer(editResultReducer, initialValuesToEdit);
 
