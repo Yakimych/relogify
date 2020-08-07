@@ -121,14 +121,23 @@ module EditResultsTableFragment = [%relay.fragment
 
 [@react.component]
 let make =
-    // ~results: list(matchResult),
     (
       ~playersFragment,
       ~resultsFragment,
-      ~communityName: string /*, ~queryToRefetch*/,
+      ~communityName: string,
       ~communitySettingsFragment,
     ) => {
   let resultsFragment = EditResultsTableFragment.use(resultsFragment);
+
+  let deleteUpdater =
+      (
+        store: ReasonRelay.RecordSourceSelectorProxy.t,
+        response: DeleteMutation.Types.response,
+      ) => {
+    Js.log("deleteResultUpdater");
+    Js.log2("Store: ", store);
+    Js.log2("Response: ", response);
+  };
 
   let (updateResultMutation, _) = UpdateMutation.use();
   let (deleteResultMutation, _) = DeleteMutation.use();
@@ -147,6 +156,7 @@ let make =
       dispatch(StartDeleting);
       deleteResultMutation(
         ~onCompleted=onDeleteSuccess,
+        ~updater=deleteUpdater,
         ~variables={resultId: toInternalId(resultId)},
         (),
       )
