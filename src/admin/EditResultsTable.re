@@ -4,7 +4,7 @@ open Types;
 
 type editResultsTableState =
   | Idle
-  | Editing(string, editableResultValues)
+  | Editing(string)
   | Updating(string)
   | DeleteConfirmationPending(string)
   | Deleting(string);
@@ -26,11 +26,10 @@ type editResultsTableAction =
 let editResultsTableReducer =
     (state: editResultsTableState, action: editResultsTableAction) =>
   switch (action) {
-  | StartEditing(result) =>
-    Editing(result.id, result->toEditableResultValues)
+  | StartEditing(result) => Editing(result.id)
   | StartUpdating =>
     switch (state) {
-    | Editing(id, _) => Updating(id)
+    | Editing(id) => Updating(id)
     | _ => state
     }
   | StopEditing
@@ -259,7 +258,7 @@ let make =
                     </MaterialUi.TableCell>
                     <ResultTableRow resultFragment={result.fragmentRefs} />
                   </>
-                | Editing(id, editedValues) when result.id === id =>
+                | Editing(id) when result.id === id =>
                   <EditResultTableRow
                     existingPlayerPickerFragment=playersFragment
                     communitySettingsFragment
