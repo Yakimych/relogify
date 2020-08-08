@@ -61,12 +61,9 @@ let make =
   let addResultUpdater =
       (
         store: ReasonRelay.RecordSourceSelectorProxy.t,
-        response: AddMutation.Types.response,
+        _response: AddMutation.Types.response,
       ) => {
-    Js.log("addResultUpdater");
-    Js.log2("Store: ", store);
-    Js.log2("Response: ", response);
-
+    // TODO: Add returned players to the store too
     ReasonRelayUtils.(
       switch (
         resolveNestedRecord(
@@ -78,7 +75,6 @@ let make =
         )
       ) {
       | Some(node) =>
-        Js.log2("node: ", node);
         createAndAddEdgeToConnections(
           ~store,
           ~node,
@@ -91,8 +87,8 @@ let make =
           ],
           ~edgeName="resultsEdge",
           ~insertAt=End,
-        );
-      | None => Js.log("resolveNestedRecord returned None")
+        )
+      | None => ()
       }
     );
   };
@@ -136,24 +132,6 @@ let make =
 
       addResult(
         ~updater=addResultUpdater,
-        ~optimisticResponse={
-          insert_results_one:
-            Some({
-              player1: {
-                id: "asd",
-                name: player1Name,
-              },
-              player2: {
-                id: "qwe",
-                name: player2Name,
-              },
-              player2goals: goals1,
-              player1goals: goals2,
-              extratime: extraTime,
-              date: date |> Js.Date.toISOString,
-              id: "kdsflksjdhgfljsdfhjgl",
-            }),
-        },
         ~variables={
           input: {
             community: Some(communityInput),
@@ -200,9 +178,6 @@ let make =
     // ~refetchQueries=
     //   _ =>
     //     [|
-    //       ApolloHooks.toQueryObj(
-    //         AllResultsQuery.make(~communityName, ()),
-    //       ),
     //       ApolloHooks.toQueryObj(
     //         AllPlayersQuery.make(~communityName, ()),
     //       ),

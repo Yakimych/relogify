@@ -89,8 +89,8 @@ module UpdateMutation = [%relay.mutation
 module DeleteMutation = [%relay.mutation
   {|
     mutation EditResultsTable_DeleteResult_Mutation($resultId: Int!) {
-      delete_results(where: { id: { _eq: $resultId } }) {
-        affected_rows
+      delete_results_by_pk(id: $resultId) {
+        id
       }
     }
   |}
@@ -134,9 +134,35 @@ let make =
         store: ReasonRelay.RecordSourceSelectorProxy.t,
         response: DeleteMutation.Types.response,
       ) => {
-    Js.log("deleteResultUpdater");
-    Js.log2("Store: ", store);
-    Js.log2("Response: ", response);
+    response.delete_results_by_pk
+    ->Belt.Option.mapWithDefault(
+        (),
+        r => {
+          let deletedItemId = r.id;
+
+          switch (
+            store->ReasonRelay.RecordSourceSelectorProxy.get(
+              ~dataId=deletedItemId->ReasonRelay.makeDataId,
+            )
+          ) {
+          | Some(node) =>
+            ReasonRelayUtils.(
+              removeNodeFromConnections(
+                ~store,
+                ~node,
+                ~connections=[
+                  {
+                    parentID: ReasonRelay.storeRootId,
+                    key: "EditResults_query_results_connection",
+                    filters: None,
+                  },
+                ],
+              )
+            )
+          | None => ()
+          };
+        },
+      );
   };
 
   let (updateResultMutation, _) = UpdateMutation.use();
