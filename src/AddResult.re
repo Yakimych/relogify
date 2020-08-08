@@ -1,9 +1,12 @@
+open StoreUpdater;
 open Utils;
 open StorageUtils;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
+let nameOfConnectionToUpdate = "CommunityStartPage_query_players_connection";
+let mutationFieldName = "insert_results_one";
 module AddMutation = [%relay.mutation
   {|
     mutation AddResultMutation($input: results_insert_input!) {
@@ -36,69 +39,6 @@ module AddResultFragment = [%relay.fragment
     }
   |}
 ];
-
-let updateResultList = (store: ReasonRelay.RecordSourceSelectorProxy.t) => {
-  ReasonRelayUtils.(
-    switch (
-      resolveNestedRecord(
-        ~rootRecord=
-          store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
-            ~fieldName="insert_results_one",
-          ),
-        ~path=[],
-      )
-    ) {
-    | Some(node) =>
-      createAndAddEdgeToConnections(
-        ~store,
-        ~node,
-        ~connections=[
-          {
-            parentID: ReasonRelay.storeRootId,
-            key: "CommunityStartPage_query_results_connection",
-            filters: None,
-          },
-        ],
-        ~edgeName="resultsEdge",
-        ~insertAt=End,
-      )
-    | None => ()
-    }
-  );
-};
-
-let tryGetPlayerFromMutationResult =
-    (store: ReasonRelay.RecordSourceSelectorProxy.t, playerPath: string) =>
-  ReasonRelayUtils.resolveNestedRecord(
-    ~rootRecord=
-      store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
-        ~fieldName="insert_results_one",
-      ),
-    ~path=[playerPath],
-  );
-
-let addPlayerToStore = (store: ReasonRelay.RecordSourceSelectorProxy.t, node) =>
-  ReasonRelayUtils.createAndAddEdgeToConnections(
-    ~store,
-    ~node,
-    ~connections=[
-      {
-        parentID: ReasonRelay.storeRootId,
-        key: "CommunityStartPage_query_players_connection",
-        filters: None,
-      },
-    ],
-    ~edgeName="playersEdge",
-    ~insertAt=End,
-  );
-
-let updatePlayerList =
-    (store: ReasonRelay.RecordSourceSelectorProxy.t, playerPath: string) => {
-  switch (tryGetPlayerFromMutationResult(store, playerPath)) {
-  | Some(playerResult) => addPlayerToStore(store, playerResult)
-  | None => ()
-  };
-};
 
 [@react.component]
 let make =
@@ -174,9 +114,20 @@ let make =
       mutate(
         ~updater=
           (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
-            updateResultList(store);
-            updatePlayerList(store, "player1");
-            updatePlayerList(store, "player2");
+            updateResultList(store, mutationFieldName);
+            // TODO: Handle duplicates
+            updatePlayerList(
+              store,
+              mutationFieldName,
+              nameOfConnectionToUpdate,
+              ["player1"],
+            );
+            updatePlayerList(
+              store,
+              mutationFieldName,
+              nameOfConnectionToUpdate,
+              ["player2"],
+            );
           },
         ~onCompleted=
           (_, maybeMutationErrors) => {
