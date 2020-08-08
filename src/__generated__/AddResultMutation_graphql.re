@@ -41,7 +41,23 @@ type enum_communities_constraint =
 
 module Types = {
   [@ocaml.warning "-30"];
-  type response_insert_results_one = {id: string}
+  type response_insert_results_one = {
+    player1: response_insert_results_one_player1,
+    player2: response_insert_results_one_player2,
+    player2goals: int,
+    player1goals: int,
+    extratime: bool,
+    date: string,
+    id: string,
+  }
+  and response_insert_results_one_player1 = {
+    id: string,
+    name: string,
+  }
+  and response_insert_results_one_player2 = {
+    id: string,
+    name: string,
+  }
   and results_insert_input = {
     comment: option(string),
     community: option(communities_obj_rel_insert_input),
@@ -696,8 +712,36 @@ module Utils = {
 
   let makeVariables = (~input): variables => {input: input};
 
-  let make_response_insert_results_one = (~id): response_insert_results_one => {
-    id: id,
+  let make_response_insert_results_one_player2 =
+      (~id, ~name): response_insert_results_one_player2 => {
+    id,
+    name,
+  };
+
+  let make_response_insert_results_one_player1 =
+      (~id, ~name): response_insert_results_one_player1 => {
+    id,
+    name,
+  };
+
+  let make_response_insert_results_one =
+      (
+        ~player1,
+        ~player2,
+        ~player2goals,
+        ~player1goals,
+        ~extratime,
+        ~date,
+        ~id,
+      )
+      : response_insert_results_one => {
+    player1,
+    player2,
+    player2goals,
+    player1goals,
+    extratime,
+    date,
+    id,
   };
 
   let makeOptimisticResponse = (~insert_results_one=?, ()): rawResponse => {
@@ -716,7 +760,24 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
+  (v1/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v3 = [
   {
     "alias": null,
     "args": [
@@ -734,10 +795,52 @@ v1 = [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
+        "concreteType": "players",
+        "kind": "LinkedField",
+        "name": "player1",
+        "plural": false,
+        "selections": (v2/*: any*/),
         "storageKey": null
-      }
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "players",
+        "kind": "LinkedField",
+        "name": "player2",
+        "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "player2goals",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "player1goals",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "extratime",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "date",
+        "storageKey": null
+      },
+      (v1/*: any*/)
     ],
     "storageKey": null
   }
@@ -748,7 +851,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddResultMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "mutation_root",
     "abstractKey": null
   },
@@ -757,15 +860,15 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddResultMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "edacd78570fd6fbd66b9fae2ae53e3d4",
+    "cacheID": "77c2f816985ae4dad19cd7770eccd67a",
     "id": null,
     "metadata": {},
     "name": "AddResultMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResultMutation(\n  $input: results_insert_input!\n) {\n  insert_results_one(object: $input) {\n    id\n  }\n}\n"
+    "text": "mutation AddResultMutation(\n  $input: results_insert_input!\n) {\n  insert_results_one(object: $input) {\n    player1 {\n      id\n      name\n    }\n    player2 {\n      id\n      name\n    }\n    player2goals\n    player1goals\n    extratime\n    date\n    id\n  }\n}\n"
   }
 };
 })() |json}

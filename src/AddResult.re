@@ -8,6 +8,18 @@ module AddMutation = [%relay.mutation
   {|
     mutation AddResultMutation($input: results_insert_input!) {
       insert_results_one(object: $input) {
+        player1 {
+          id
+          name
+        }
+        player2 {
+          id
+          name
+        }
+        player2goals
+        player1goals
+        extratime
+        date
         id
       }
     }
@@ -104,7 +116,38 @@ let make =
         where: None,
       };
 
+      // TODO: use makeVariables instead?
       mutate(
+        ~updater=
+          (store, _response) => {
+            ReasonRelayUtils.(
+              switch (
+                resolveNestedRecord(
+                  ~rootRecord=
+                    store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
+                      ~fieldName="insert_results_one",
+                    ),
+                  ~path=[],
+                )
+              ) {
+              | Some(node) =>
+                createAndAddEdgeToConnections(
+                  ~store,
+                  ~node,
+                  ~connections=[
+                    {
+                      parentID: ReasonRelay.storeRootId,
+                      key: "CommunityStartPage_query_results_connection",
+                      filters: None,
+                    },
+                  ],
+                  ~edgeName="resultsEdge",
+                  ~insertAt=End,
+                )
+              | None => ()
+              }
+            )
+          },
         ~variables={
           input: {
             community: Some(communityInput),

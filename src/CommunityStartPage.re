@@ -9,12 +9,17 @@ module Query = [%relay.query
       $dateTo: timestamptz
     ) {
       results_connection(
+        first: 1000
         where: {
           community: { name: { _eq: $communityName } }
           date: { _gte: $dateFrom, _lte: $dateTo }
         }
         order_by: { date: desc }
-      ) {
+      )
+        @connection(
+          key: "CommunityStartPage_query_results_connection"
+          filters: []
+        ) {
         ...ResultsTable_Results
         edges {
           node {
