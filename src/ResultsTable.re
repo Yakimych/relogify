@@ -85,6 +85,7 @@ let make =
                |> List.find(r => r.result.id === result.node.id);
 
              <Result
+               key={result.node.id}
                temp_showRatings
                result={result.node.fragmentRefs}
                resultWithRatings
