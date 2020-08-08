@@ -37,6 +37,69 @@ module AddResultFragment = [%relay.fragment
   |}
 ];
 
+let updateResultList = (store: ReasonRelay.RecordSourceSelectorProxy.t) => {
+  ReasonRelayUtils.(
+    switch (
+      resolveNestedRecord(
+        ~rootRecord=
+          store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
+            ~fieldName="insert_results_one",
+          ),
+        ~path=[],
+      )
+    ) {
+    | Some(node) =>
+      createAndAddEdgeToConnections(
+        ~store,
+        ~node,
+        ~connections=[
+          {
+            parentID: ReasonRelay.storeRootId,
+            key: "CommunityStartPage_query_results_connection",
+            filters: None,
+          },
+        ],
+        ~edgeName="resultsEdge",
+        ~insertAt=End,
+      )
+    | None => ()
+    }
+  );
+};
+
+let tryGetPlayerFromMutationResult =
+    (store: ReasonRelay.RecordSourceSelectorProxy.t, playerPath: string) =>
+  ReasonRelayUtils.resolveNestedRecord(
+    ~rootRecord=
+      store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
+        ~fieldName="insert_results_one",
+      ),
+    ~path=[playerPath],
+  );
+
+let addPlayerToStore = (store: ReasonRelay.RecordSourceSelectorProxy.t, node) =>
+  ReasonRelayUtils.createAndAddEdgeToConnections(
+    ~store,
+    ~node,
+    ~connections=[
+      {
+        parentID: ReasonRelay.storeRootId,
+        key: "CommunityStartPage_query_players_connection",
+        filters: None,
+      },
+    ],
+    ~edgeName="playersEdge",
+    ~insertAt=End,
+  );
+
+let updatePlayerList =
+    (store: ReasonRelay.RecordSourceSelectorProxy.t, playerPath: string) => {
+  switch (tryGetPlayerFromMutationResult(store, playerPath)) {
+  | Some(playerResult) => addPlayerToStore(store, playerResult)
+  | None => ()
+  };
+};
+
 [@react.component]
 let make =
     (
@@ -74,6 +137,7 @@ let make =
     setDate(_ => Js.Date.make());
   };
 
+  // TODO: resetState in useEffect, or even better - in onCompleted
   let addResult = allowDraws => {
     let validationResult =
       ResultValidation.canAddResult(
@@ -119,34 +183,10 @@ let make =
       // TODO: use makeVariables instead?
       mutate(
         ~updater=
-          (store, _response) => {
-            ReasonRelayUtils.(
-              switch (
-                resolveNestedRecord(
-                  ~rootRecord=
-                    store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
-                      ~fieldName="insert_results_one",
-                    ),
-                  ~path=[],
-                )
-              ) {
-              | Some(node) =>
-                createAndAddEdgeToConnections(
-                  ~store,
-                  ~node,
-                  ~connections=[
-                    {
-                      parentID: ReasonRelay.storeRootId,
-                      key: "CommunityStartPage_query_results_connection",
-                      filters: None,
-                    },
-                  ],
-                  ~edgeName="resultsEdge",
-                  ~insertAt=End,
-                )
-              | None => ()
-              }
-            )
+          (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
+            updateResultList(store);
+            updatePlayerList(store, "player1");
+            updatePlayerList(store, "player2");
           },
         ~variables={
           input: {
@@ -190,7 +230,6 @@ let make =
         },
         (),
       )
-      // TODO: resetState in useEffect
       // |> Js.Promise.then_(_ => {
       //      resetState();
       //      setIsAddingResult(_ => false);
