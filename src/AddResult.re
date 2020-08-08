@@ -110,7 +110,7 @@ let make =
     ) => {
   let communitySettingsFragment =
     AddResultFragment.use(communitySettingsFragment);
-  let (mutate, isMutating) = AddMutation.use();
+  let (mutate, isAddingResult) = AddMutation.use();
 
   let (getMostUsedPlayer, updateUsedPlayers) =
     useMostUsedPlayer(communityName);
@@ -126,7 +126,6 @@ let make =
   let toggleExtraTime = () => setExtraTime(oldExtraTime => !oldExtraTime);
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
-  // let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
   let resetState = () => {
     setMaybePlayer1Name(_ => getMostUsedPlayer());
@@ -137,7 +136,6 @@ let make =
     setDate(_ => Js.Date.make());
   };
 
-  // TODO: resetState in useEffect, or even better - in onCompleted
   let addResult = allowDraws => {
     let validationResult =
       ResultValidation.canAddResult(
@@ -152,11 +150,8 @@ let make =
     switch (validationResult) {
     | Error(message) => alert(message)
     | Ok((player1Name, player2Name)) =>
-      // setIsAddingResult(_ => true);
       updateUsedPlayers(player1Name, player2Name);
 
-      // Will refetch query for current week after adding result
-      let (startDate, endDate) = getCurrentWeek();
       let communityInput: AddResultMutation_graphql.Types.communities_obj_rel_insert_input = {
         data: {
           community_settings: None,
@@ -187,6 +182,15 @@ let make =
             updateResultList(store);
             updatePlayerList(store, "player1");
             updatePlayerList(store, "player2");
+          },
+        ~onCompleted=
+          (_, maybeMutationErrors) => {
+            switch (maybeMutationErrors) {
+            | Some(e) => Js.Console.error2("Error adding result", e)
+            | None =>
+              resetState();
+              onResultAdded();
+            }
           },
         ~variables={
           input: {
@@ -230,15 +234,6 @@ let make =
         },
         (),
       )
-      // |> Js.Promise.then_(_ => {
-      //      resetState();
-      //      setIsAddingResult(_ => false);
-      //      onResultAdded() |> Js.Promise.resolve;
-      //    })
-      // |> Js.Promise.catch(e => {
-      //      Js.Console.error2("Error: ", e);
-      //      setIsAddingResult(_ => false) |> Js.Promise.resolve;
-      //    })
       |> ignore;
     };
   };
@@ -249,28 +244,28 @@ let make =
     <div
       style={ReactDOMRe.Style.make(~display="flex", ~marginBottom="10px", ())}>
       <PlayerPicker
-        disabled=isMutating
+        disabled=isAddingResult
         placeholderText="Player1"
         playerPickerFragment
         selectedPlayerName=maybePlayer1Name
         onChange={v => setMaybePlayer1Name(_ => Some(v))}
       />
       <GoalsPicker
-        disabled=isMutating
+        disabled=isAddingResult
         selectedGoals=goals1
         onChange={v => setGoals1(_ => v)}
         scoreType={communitySettingsFragment.score_type}
         maxSelectablePoints={communitySettingsFragment.max_selectable_points}
       />
       <GoalsPicker
-        disabled=isMutating
+        disabled=isAddingResult
         selectedGoals=goals2
         onChange={v => setGoals2(_ => v)}
         scoreType={communitySettingsFragment.score_type}
         maxSelectablePoints={communitySettingsFragment.max_selectable_points}
       />
       <PlayerPicker
-        disabled=isMutating
+        disabled=isAddingResult
         placeholderText="Player2"
         playerPickerFragment
         selectedPlayerName=maybePlayer2Name
@@ -284,7 +279,7 @@ let make =
         (),
       )}>
       <MaterialUi.Button
-        disabled=isMutating
+        disabled=isAddingResult
         variant=`Contained
         color=`Primary
         onClick={_ => addResult(communitySettingsFragment.allow_draws)}>
@@ -294,7 +289,7 @@ let make =
          ? <MaterialUi.FormControlLabel
              control={
                <MaterialUi.Checkbox
-                 disabled=isMutating
+                 disabled=isAddingResult
                  color=`Default
                  checked=extraTime
                  onChange={_ => toggleExtraTime()}
@@ -304,7 +299,7 @@ let make =
            />
          : React.null}
       <MaterialUi.TextField
-        disabled=isMutating
+        disabled=isAddingResult
         type_="date"
         value={`String(formatDate(date))}
         onChange={e => {
