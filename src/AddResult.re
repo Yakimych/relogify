@@ -152,22 +152,18 @@ let make =
     | Ok((player1Name, player2Name)) =>
       updateUsedPlayers(player1Name, player2Name);
 
-      let communityInput: AddResultMutation_graphql.Types.communities_obj_rel_insert_input = {
-        data: {
-          community_settings: None,
-          description: None,
-          id: None,
-          name: Some(communityName),
-          players: None,
-          results: None,
-        },
-        on_conflict:
-          Some({
-            constraint_: `communities_name_key,
-            update_columns: [|`name|],
-            where: None,
-          }),
-      };
+      let communityInput: AddResultMutation_graphql.Types.communities_obj_rel_insert_input =
+        AddResultMutation_graphql.Utils.(
+          make_communities_obj_rel_insert_input(
+            ~data=make_communities_insert_input(~name=communityName, ()),
+            ~on_conflict={
+              constraint_: `communities_name_key,
+              update_columns: [|`name|],
+              where: None,
+            },
+            (),
+          )
+        );
 
       let playersOnConflictInput: AddResultMutation_graphql.Types.players_on_conflict = {
         constraint_: `players_name_communityId_key,
@@ -175,7 +171,6 @@ let make =
         where: None,
       };
 
-      // TODO: use makeVariables instead?
       mutate(
         ~updater=
           (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
@@ -192,46 +187,42 @@ let make =
               onResultAdded();
             }
           },
-        ~variables={
-          input: {
-            community: Some(communityInput),
-            player1:
-              Some({
-                data: {
-                  community: Some(communityInput),
-                  communityId: None,
-                  id: None,
-                  name: Some(player1Name),
-                  resultsAsPlayer1: None,
-                  resultsAsPlayer2: None,
-                },
-                on_conflict: Some(playersOnConflictInput),
-              }),
-
-            player2:
-              Some({
-                data: {
-                  community: Some(communityInput),
-                  communityId: None,
-                  id: None,
-                  name: Some(player2Name),
-                  resultsAsPlayer1: None,
-                  resultsAsPlayer2: None,
-                },
-                on_conflict: Some(playersOnConflictInput),
-              }),
-
-            comment: None,
-            communityId: None,
-            date: Some(date |> Js.Date.toISOString),
-            extratime: Some(extraTime),
-            id: None,
-            player1Id: None,
-            player1goals: Some(goals1),
-            player2Id: None,
-            player2goals: Some(goals2),
-          },
-        },
+        ~variables=
+          AddResultMutation_graphql.Utils.(
+            AddMutation.makeVariables(
+              ~input=
+                make_results_insert_input(
+                  ~community=communityInput,
+                  ~player1=
+                    make_players_obj_rel_insert_input(
+                      ~data=
+                        make_players_insert_input(
+                          ~community=communityInput,
+                          ~name=player1Name,
+                          (),
+                        ),
+                      ~on_conflict=playersOnConflictInput,
+                      (),
+                    ),
+                  ~player2=
+                    make_players_obj_rel_insert_input(
+                      ~data=
+                        make_players_insert_input(
+                          ~community=communityInput,
+                          ~name=player2Name,
+                          (),
+                        ),
+                      ~on_conflict=playersOnConflictInput,
+                      (),
+                    ),
+                  ~date=date |> Js.Date.toISOString,
+                  ~extratime=extraTime,
+                  ~player1goals=goals1,
+                  ~player2goals=goals2,
+                  (),
+                ),
+            )
+          ),
         (),
       )
       |> ignore;
