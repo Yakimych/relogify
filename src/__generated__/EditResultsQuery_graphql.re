@@ -112,54 +112,24 @@ var v0 = [
   }
 ],
 v1 = {
-  "kind": "Literal",
-  "name": "order_by",
-  "value": {
-    "date": "desc"
-  }
-},
-v2 = {
-  "fields": [
-    {
-      "fields": [
-        {
-          "fields": [
-            {
-              "kind": "Variable",
-              "name": "_eq",
-              "variableName": "communityName"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "name"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "community"
-    }
-  ],
-  "kind": "ObjectValue",
-  "name": "where"
-},
-v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v5 = [
-  (v3/*: any*/),
-  (v4/*: any*/)
+v3 = [
+  (v1/*: any*/),
+  (v2/*: any*/)
 ],
-v6 = {
+v4 = {
   "alias": null,
   "args": null,
   "concreteType": "resultsEdge",
@@ -182,7 +152,7 @@ v6 = {
           "kind": "LinkedField",
           "name": "player1",
           "plural": false,
-          "selections": (v5/*: any*/),
+          "selections": (v3/*: any*/),
           "storageKey": null
         },
         {
@@ -192,7 +162,7 @@ v6 = {
           "kind": "LinkedField",
           "name": "player2",
           "plural": false,
-          "selections": (v5/*: any*/),
+          "selections": (v3/*: any*/),
           "storageKey": null
         },
         {
@@ -223,7 +193,7 @@ v6 = {
           "name": "date",
           "storageKey": null
         },
-        (v3/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -244,7 +214,7 @@ v6 = {
   ],
   "storageKey": null
 },
-v7 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -269,17 +239,46 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = [
-  (v2/*: any*/)
+v6 = {
+  "fields": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "_eq",
+              "variableName": "communityName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "community"
+    }
+  ],
+  "kind": "ObjectValue",
+  "name": "where"
+},
+v7 = [
+  (v6/*: any*/)
 ],
-v9 = [
+v8 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 1000
   },
-  (v1/*: any*/),
-  (v2/*: any*/)
+  {
+    "kind": "Literal",
+    "name": "order_by",
+    "value": {
+      "date": "desc"
+    }
+  },
+  (v6/*: any*/)
 ];
 return {
   "fragment": {
@@ -290,17 +289,14 @@ return {
     "selections": [
       {
         "alias": "results_connection",
-        "args": [
-          (v1/*: any*/),
-          (v2/*: any*/)
-        ],
+        "args": null,
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "__EditResults_query_results_connection_connection",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
-          (v7/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -311,7 +307,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "playersConnection",
         "kind": "LinkedField",
         "name": "players_connection",
@@ -332,7 +328,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -385,24 +381,21 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v9/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "results_connection",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
-          (v7/*: any*/)
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v9/*: any*/),
-        "filters": [
-          "where",
-          "order_by"
-        ],
+        "args": (v8/*: any*/),
+        "filters": [],
         "handle": "connection",
         "key": "EditResults_query_results_connection",
         "kind": "LinkedHandle",
@@ -410,7 +403,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "playersConnection",
         "kind": "LinkedField",
         "name": "players_connection",
@@ -432,8 +425,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v3/*: any*/)
+                  (v2/*: any*/),
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -445,7 +438,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -488,7 +481,7 @@ return {
                     "name": "allow_draws",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }

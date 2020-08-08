@@ -7,7 +7,7 @@ module Query = [%relay.query
         first: 1000
         where: { community: { name: { _eq: $communityName } } }
         order_by: { date: desc }
-      ) @connection(key: "EditResults_query_results_connection") {
+      ) @connection(key: "EditResults_query_results_connection", filters: []) {
         ...EditResultsTable_Results
         edges {
           node {

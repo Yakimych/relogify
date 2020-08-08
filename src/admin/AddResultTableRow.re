@@ -90,7 +90,7 @@ let make =
             },
           ],
           ~edgeName="resultsEdge",
-          ~insertAt=Start,
+          ~insertAt=End,
         );
       | None => Js.log("resolveNestedRecord returned None")
       }
