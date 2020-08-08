@@ -1,3 +1,4 @@
+open StoreUpdater;
 open Utils;
 open Styles;
 
@@ -13,6 +14,8 @@ module AddResultTableRowFragment = [%relay.fragment
   |}
 ];
 
+let nameOfConnectionToUpdate = "EditResults_query_results_connection";
+let mutationFieldName = "insert_results_one";
 module AddMutation = [%relay.mutation
   {|
     mutation AddResultTableRowMutation($input: results_insert_input!) {
@@ -58,41 +61,6 @@ let make =
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
 
-  let addResultUpdater =
-      (
-        store: ReasonRelay.RecordSourceSelectorProxy.t,
-        _response: AddMutation.Types.response,
-      ) => {
-    // TODO: Add returned players to the store too
-    ReasonRelayUtils.(
-      switch (
-        resolveNestedRecord(
-          ~rootRecord=
-            store->ReasonRelay.RecordSourceSelectorProxy.getRootField(
-              ~fieldName="insert_results_one",
-            ),
-          ~path=[],
-        )
-      ) {
-      | Some(node) =>
-        createAndAddEdgeToConnections(
-          ~store,
-          ~node,
-          ~connections=[
-            {
-              parentID: ReasonRelay.storeRootId,
-              key: "EditResults_query_results_connection",
-              filters: None,
-            },
-          ],
-          ~edgeName="resultsEdge",
-          ~insertAt=End,
-        )
-      | None => ()
-      }
-    );
-  };
-
   let addResult = allowDraws => {
     let validationResult =
       ResultValidation.canAddResult(
@@ -127,7 +95,23 @@ let make =
       };
 
       addResult(
-        ~updater=addResultUpdater,
+        ~updater=
+          (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
+            updateResultList(store, mutationFieldName);
+            // TODO: Handle duplicates
+            updatePlayerList(
+              store,
+              mutationFieldName,
+              nameOfConnectionToUpdate,
+              ["player1"],
+            );
+            updatePlayerList(
+              store,
+              mutationFieldName,
+              nameOfConnectionToUpdate,
+              ["player2"],
+            );
+          },
         ~variables=
           AddResultTableRowMutation_graphql.Utils.(
             AddMutation.makeVariables(
@@ -166,22 +150,6 @@ let make =
           ),
       )
       |> ignore;
-    // ~refetchQueries=
-    //   _ =>
-    //     [|
-    //       ApolloHooks.toQueryObj(
-    //         AllPlayersQuery.make(~communityName, ()),
-    //       ),
-    //     |],
-    //   (),
-    // )
-    // |> Js.Promise.then_(_ =>
-    //      setIsAddingResult(_ => false) |> Js.Promise.resolve
-    //    )
-    // |> Js.Promise.catch(e => {
-    //      Js.Console.error2("Error: ", e);
-    //      setIsAddingResult(_ => false) |> Js.Promise.resolve;
-    //    })
     };
   };
 
