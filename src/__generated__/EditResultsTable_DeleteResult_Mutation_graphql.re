@@ -2,9 +2,11 @@
 
 module Types = {
   [@ocaml.warning "-30"];
-  type response_delete_results = {affected_rows: int};
+  type response_delete_results_by_pk = {id: string};
 
-  type response = {delete_results: option(response_delete_results)};
+  type response = {
+    delete_results_by_pk: option(response_delete_results_by_pk),
+  };
   type rawResponse = response;
   type variables = {resultId: int};
 };
@@ -12,7 +14,7 @@ module Types = {
 module Internal = {
   type wrapResponseRaw;
   let wrapResponseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"delete_results":{"n":""}}} |json}
+    {json| {"__root":{"delete_results_by_pk":{"n":""}}} |json}
   ];
   let wrapResponseConverterMap = ();
   let convertWrapResponse = v =>
@@ -25,7 +27,7 @@ module Internal = {
 
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"delete_results":{"n":""}}} |json}
+    {json| {"__root":{"delete_results_by_pk":{"n":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
@@ -59,12 +61,13 @@ module Utils = {
   open Types;
   let makeVariables = (~resultId): variables => {resultId: resultId};
 
-  let make_response_delete_results = (~affected_rows): response_delete_results => {
-    affected_rows: affected_rows,
+  let make_response_delete_results_by_pk =
+      (~id): response_delete_results_by_pk => {
+    id: id,
   };
 
-  let makeOptimisticResponse = (~delete_results=?, ()): rawResponse => {
-    delete_results: delete_results,
+  let makeOptimisticResponse = (~delete_results_by_pk=?, ()): rawResponse => {
+    delete_results_by_pk: delete_results_by_pk,
   };
 };
 
@@ -84,33 +87,21 @@ v1 = [
     "alias": null,
     "args": [
       {
-        "fields": [
-          {
-            "fields": [
-              {
-                "kind": "Variable",
-                "name": "_eq",
-                "variableName": "resultId"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "id"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "where"
+        "kind": "Variable",
+        "name": "id",
+        "variableName": "resultId"
       }
     ],
-    "concreteType": "results_mutation_response",
+    "concreteType": "results",
     "kind": "LinkedField",
-    "name": "delete_results",
+    "name": "delete_results_by_pk",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "affected_rows",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -135,12 +126,12 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d44734674814dec8312260be1c981f11",
+    "cacheID": "e4a0706d361acc9e0a81c12bdec4bf26",
     "id": null,
     "metadata": {},
     "name": "EditResultsTable_DeleteResult_Mutation",
     "operationKind": "mutation",
-    "text": "mutation EditResultsTable_DeleteResult_Mutation(\n  $resultId: Int!\n) {\n  delete_results(where: {id: {_eq: $resultId}}) {\n    affected_rows\n  }\n}\n"
+    "text": "mutation EditResultsTable_DeleteResult_Mutation(\n  $resultId: Int!\n) {\n  delete_results_by_pk(id: $resultId) {\n    id\n  }\n}\n"
   }
 };
 })() |json}
