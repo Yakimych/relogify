@@ -144,7 +144,7 @@ let make =
                       ~on_conflict=playersOnConflictInput,
                       (),
                     ),
-                  ~date=date |> Js.Date.toISOString,
+                  ~date,
                   ~extratime=extraTime,
                   ~player1goals=goals1,
                   ~player2goals=goals2,

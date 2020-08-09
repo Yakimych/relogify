@@ -47,7 +47,7 @@ module Types = {
     player2goals: int,
     player1goals: int,
     extratime: bool,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
     id: string,
   }
   and response_insert_results_one_player1 = {
@@ -62,7 +62,7 @@ module Types = {
     comment: option(string),
     community: option(communities_obj_rel_insert_input),
     communityId: option(int),
-    date: option(string),
+    date: option(DateTimeUtils.Datetime.t),
     extratime: option(bool),
     id: option(int),
     player1: option(players_obj_rel_insert_input),
@@ -194,15 +194,15 @@ module Types = {
     player2goals: option(int_comparison_exp),
   }
   and timestamptz_comparison_exp = {
-    _eq: option(string),
-    _gt: option(string),
-    _gte: option(string),
-    _in: option(array(string)),
+    _eq: option(DateTimeUtils.Datetime.t),
+    _gt: option(DateTimeUtils.Datetime.t),
+    _gte: option(DateTimeUtils.Datetime.t),
+    _in: option(array(DateTimeUtils.Datetime.t)),
     _is_null: option(bool),
-    _lt: option(string),
-    _lte: option(string),
-    _neq: option(string),
-    _nin: option(array(string)),
+    _lt: option(DateTimeUtils.Datetime.t),
+    _lte: option(DateTimeUtils.Datetime.t),
+    _neq: option(DateTimeUtils.Datetime.t),
+    _nin: option(array(DateTimeUtils.Datetime.t)),
   }
   and score_types_enum_comparison_exp = {
     _eq: option(enum_score_types_enum),
@@ -258,9 +258,11 @@ module Types = {
 module Internal = {
   type wrapResponseRaw;
   let wrapResponseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"insert_results_one":{"n":""}}} |json}
+    {json| {"__root":{"insert_results_one":{"n":""},"insert_results_one_date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let wrapResponseConverterMap = ();
+  let wrapResponseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertWrapResponse = v =>
     v
     ->ReasonRelay._convertObj(
@@ -271,9 +273,11 @@ module Internal = {
 
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"insert_results_one":{"n":""}}} |json}
+    {json| {"__root":{"insert_results_one":{"n":""},"insert_results_one_date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let responseConverterMap = ();
+  let responseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.parse,
+  };
   let convertResponse = v =>
     v
     ->ReasonRelay._convertObj(
@@ -289,9 +293,11 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"input":{"r":"results_insert_input"}},"Boolean_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"Int_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"String_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_ilike":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_like":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nilike":{"n":""},"_nin":{"n":""},"_nlike":{"n":""},"_nsimilar":{"n":""},"_similar":{"n":""}},"communities_bool_exp":{"_and":{"n":"","na":"","r":"communities_bool_exp"},"_not":{"n":"","r":"communities_bool_exp"},"_or":{"n":"","na":"","r":"communities_bool_exp"},"community_settings":{"n":"","r":"community_settings_bool_exp"},"description":{"n":"","r":"String_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"players":{"n":"","r":"players_bool_exp"},"results":{"n":"","r":"results_bool_exp"}},"communities_insert_input":{"community_settings":{"n":"","r":"community_settings_arr_rel_insert_input"},"description":{"n":""},"id":{"n":""},"name":{"n":""},"players":{"n":"","r":"players_arr_rel_insert_input"},"results":{"n":"","r":"results_arr_rel_insert_input"}},"communities_obj_rel_insert_input":{"data":{"r":"communities_insert_input"},"on_conflict":{"n":"","r":"communities_on_conflict"}},"communities_on_conflict":{"where":{"n":"","r":"communities_bool_exp"}},"community_settings_arr_rel_insert_input":{"data":{"r":"community_settings_insert_input"},"on_conflict":{"n":"","r":"community_settings_on_conflict"}},"community_settings_bool_exp":{"_and":{"n":"","na":"","r":"community_settings_bool_exp"},"_not":{"n":"","r":"community_settings_bool_exp"},"_or":{"n":"","na":"","r":"community_settings_bool_exp"},"allow_draws":{"n":"","r":"Boolean_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"community_id":{"n":"","r":"Int_comparison_exp"},"include_extra_time":{"n":"","r":"Boolean_comparison_exp"},"max_selectable_points":{"n":"","r":"Int_comparison_exp"},"score_type":{"n":"","r":"score_types_enum_comparison_exp"},"use_dropdown_for_points":{"n":"","r":"Boolean_comparison_exp"}},"community_settings_insert_input":{"allow_draws":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"community_id":{"n":""},"include_extra_time":{"n":""},"max_selectable_points":{"n":""},"score_type":{"n":""},"use_dropdown_for_points":{"n":""}},"community_settings_on_conflict":{"where":{"n":"","r":"community_settings_bool_exp"}},"players_arr_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_bool_exp":{"_and":{"n":"","na":"","r":"players_bool_exp"},"_not":{"n":"","r":"players_bool_exp"},"_or":{"n":"","na":"","r":"players_bool_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"resultsAsPlayer1":{"n":"","r":"results_bool_exp"},"resultsAsPlayer2":{"n":"","r":"results_bool_exp"}},"players_insert_input":{"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"id":{"n":""},"name":{"n":""},"resultsAsPlayer1":{"n":"","r":"results_arr_rel_insert_input"},"resultsAsPlayer2":{"n":"","r":"results_arr_rel_insert_input"}},"players_obj_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_on_conflict":{"where":{"n":"","r":"players_bool_exp"}},"results_arr_rel_insert_input":{"data":{"r":"results_insert_input"},"on_conflict":{"n":"","r":"results_on_conflict"}},"results_bool_exp":{"_and":{"n":"","na":"","r":"results_bool_exp"},"_not":{"n":"","r":"results_bool_exp"},"_or":{"n":"","na":"","r":"results_bool_exp"},"comment":{"n":"","r":"String_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"date":{"n":"","r":"timestamptz_comparison_exp"},"extratime":{"n":"","r":"Boolean_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"player1":{"n":"","r":"players_bool_exp"},"player1Id":{"n":"","r":"Int_comparison_exp"},"player1goals":{"n":"","r":"Int_comparison_exp"},"player2":{"n":"","r":"players_bool_exp"},"player2Id":{"n":"","r":"Int_comparison_exp"},"player2goals":{"n":"","r":"Int_comparison_exp"}},"results_insert_input":{"comment":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"date":{"n":""},"extratime":{"n":""},"id":{"n":""},"player1":{"n":"","r":"players_obj_rel_insert_input"},"player1Id":{"n":""},"player1goals":{"n":""},"player2":{"n":"","r":"players_obj_rel_insert_input"},"player2Id":{"n":""},"player2goals":{"n":""}},"results_on_conflict":{"where":{"n":"","r":"results_bool_exp"}},"score_types_enum_comparison_exp":{"_eq":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"timestamptz_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}}} |json}
+    {json| {"__root":{"input":{"r":"results_insert_input"}},"Boolean_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"Int_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"String_comparison_exp":{"_eq":{"n":""},"_gt":{"n":""},"_gte":{"n":""},"_ilike":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_like":{"n":""},"_lt":{"n":""},"_lte":{"n":""},"_neq":{"n":""},"_nilike":{"n":""},"_nin":{"n":""},"_nlike":{"n":""},"_nsimilar":{"n":""},"_similar":{"n":""}},"communities_bool_exp":{"_and":{"n":"","na":"","r":"communities_bool_exp"},"_not":{"n":"","r":"communities_bool_exp"},"_or":{"n":"","na":"","r":"communities_bool_exp"},"community_settings":{"n":"","r":"community_settings_bool_exp"},"description":{"n":"","r":"String_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"players":{"n":"","r":"players_bool_exp"},"results":{"n":"","r":"results_bool_exp"}},"communities_insert_input":{"community_settings":{"n":"","r":"community_settings_arr_rel_insert_input"},"description":{"n":""},"id":{"n":""},"name":{"n":""},"players":{"n":"","r":"players_arr_rel_insert_input"},"results":{"n":"","r":"results_arr_rel_insert_input"}},"communities_obj_rel_insert_input":{"data":{"r":"communities_insert_input"},"on_conflict":{"n":"","r":"communities_on_conflict"}},"communities_on_conflict":{"where":{"n":"","r":"communities_bool_exp"}},"community_settings_arr_rel_insert_input":{"data":{"r":"community_settings_insert_input"},"on_conflict":{"n":"","r":"community_settings_on_conflict"}},"community_settings_bool_exp":{"_and":{"n":"","na":"","r":"community_settings_bool_exp"},"_not":{"n":"","r":"community_settings_bool_exp"},"_or":{"n":"","na":"","r":"community_settings_bool_exp"},"allow_draws":{"n":"","r":"Boolean_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"community_id":{"n":"","r":"Int_comparison_exp"},"include_extra_time":{"n":"","r":"Boolean_comparison_exp"},"max_selectable_points":{"n":"","r":"Int_comparison_exp"},"score_type":{"n":"","r":"score_types_enum_comparison_exp"},"use_dropdown_for_points":{"n":"","r":"Boolean_comparison_exp"}},"community_settings_insert_input":{"allow_draws":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"community_id":{"n":""},"include_extra_time":{"n":""},"max_selectable_points":{"n":""},"score_type":{"n":""},"use_dropdown_for_points":{"n":""}},"community_settings_on_conflict":{"where":{"n":"","r":"community_settings_bool_exp"}},"players_arr_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_bool_exp":{"_and":{"n":"","na":"","r":"players_bool_exp"},"_not":{"n":"","r":"players_bool_exp"},"_or":{"n":"","na":"","r":"players_bool_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"name":{"n":"","r":"String_comparison_exp"},"resultsAsPlayer1":{"n":"","r":"results_bool_exp"},"resultsAsPlayer2":{"n":"","r":"results_bool_exp"}},"players_insert_input":{"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"id":{"n":""},"name":{"n":""},"resultsAsPlayer1":{"n":"","r":"results_arr_rel_insert_input"},"resultsAsPlayer2":{"n":"","r":"results_arr_rel_insert_input"}},"players_obj_rel_insert_input":{"data":{"r":"players_insert_input"},"on_conflict":{"n":"","r":"players_on_conflict"}},"players_on_conflict":{"where":{"n":"","r":"players_bool_exp"}},"results_arr_rel_insert_input":{"data":{"r":"results_insert_input"},"on_conflict":{"n":"","r":"results_on_conflict"}},"results_bool_exp":{"_and":{"n":"","na":"","r":"results_bool_exp"},"_not":{"n":"","r":"results_bool_exp"},"_or":{"n":"","na":"","r":"results_bool_exp"},"comment":{"n":"","r":"String_comparison_exp"},"community":{"n":"","r":"communities_bool_exp"},"communityId":{"n":"","r":"Int_comparison_exp"},"date":{"n":"","r":"timestamptz_comparison_exp"},"extratime":{"n":"","r":"Boolean_comparison_exp"},"id":{"n":"","r":"Int_comparison_exp"},"player1":{"n":"","r":"players_bool_exp"},"player1Id":{"n":"","r":"Int_comparison_exp"},"player1goals":{"n":"","r":"Int_comparison_exp"},"player2":{"n":"","r":"players_bool_exp"},"player2Id":{"n":"","r":"Int_comparison_exp"},"player2goals":{"n":"","r":"Int_comparison_exp"}},"results_insert_input":{"comment":{"n":""},"community":{"n":"","r":"communities_obj_rel_insert_input"},"communityId":{"n":""},"date":{"n":"","c":"DateTimeUtils.Datetime"},"extratime":{"n":""},"id":{"n":""},"player1":{"n":"","r":"players_obj_rel_insert_input"},"player1Id":{"n":""},"player1goals":{"n":""},"player2":{"n":"","r":"players_obj_rel_insert_input"},"player2Id":{"n":""},"player2goals":{"n":""}},"results_on_conflict":{"where":{"n":"","r":"results_bool_exp"}},"score_types_enum_comparison_exp":{"_eq":{"n":""},"_in":{"n":""},"_is_null":{"n":""},"_neq":{"n":""},"_nin":{"n":""}},"timestamptz_comparison_exp":{"_eq":{"n":"","c":"DateTimeUtils.Datetime"},"_gt":{"n":"","c":"DateTimeUtils.Datetime"},"_gte":{"n":"","c":"DateTimeUtils.Datetime"},"_in":{"n":"","c":"DateTimeUtils.Datetime"},"_is_null":{"n":""},"_lt":{"n":"","c":"DateTimeUtils.Datetime"},"_lte":{"n":"","c":"DateTimeUtils.Datetime"},"_neq":{"n":"","c":"DateTimeUtils.Datetime"},"_nin":{"n":"","c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let variablesConverterMap = ();
+  let variablesConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertVariables = v =>
     v
     ->ReasonRelay._convertObj(

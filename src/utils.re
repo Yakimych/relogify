@@ -17,10 +17,7 @@ let resultsByDate =
       first: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
       second: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
     ) =>
-  DateFns.compareAsc(
-    first.date |> Js.Date.fromString,
-    second.date |> Js.Date.fromString,
-  );
+  DateFns.compareAsc(first.date, second.date);
 
 let formatDate = (date: Js.Date.t) => date->DateFns.format("yyyy-MM-dd");
 let formatDateTime = (date: Js.Date.t) =>

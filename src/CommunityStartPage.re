@@ -67,8 +67,8 @@ let make = (~communityName) => {
     Query.use(
       ~variables={
         communityName,
-        dateFrom: Some(startDate |> Js.Date.toISOString),
-        dateTo: Some(endDate |> Js.Date.toISOString),
+        dateFrom: Some(startDate),
+        dateTo: Some(endDate),
       },
       (),
     );

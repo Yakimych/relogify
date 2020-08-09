@@ -49,12 +49,11 @@ type streak = {
 let numberOfMatches = (streak: streak) => streak.results->Belt.List.length;
 
 let startedAt = (streak: streak) =>
-  streak.results->Belt.List.reverse->Belt.List.headExn.date
-  ->Js.Date.fromString;
+  streak.results->Belt.List.reverse->Belt.List.headExn.date;
 
 // TODO: Merge endedAt and endedBy and return a Tuple/type?
 let endedAt = (streak: streak) =>
-  streak.endingResult->Belt.Option.map(r => r.date |> Js.Date.fromString);
+  streak.endingResult->Belt.Option.map(r => r.date);
 
 let endedBy = (streak: streak, playerName: string) =>
   streak.endingResult
@@ -113,5 +112,5 @@ let toEditableResultValues =
   player1Goals: result.player1goals,
   player2Goals: result.player2goals,
   extraTime: result.extratime,
-  date: result.date |> Js.Date.fromString,
+  date: result.date,
 };

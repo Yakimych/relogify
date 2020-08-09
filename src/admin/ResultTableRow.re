@@ -45,7 +45,7 @@ let make = (~resultFragment) => {
       {text(result.extratime ? "X" : "")}
     </MaterialUi.TableCell>
     <MaterialUi.TableCell>
-      {text(formatDate(result.date |> Js.Date.fromString))}
+      {result.date |> formatDate |> text}
     </MaterialUi.TableCell>
   </>;
 };

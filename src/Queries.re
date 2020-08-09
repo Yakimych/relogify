@@ -53,7 +53,7 @@ let toListOfResults2 =
         },
         player1goals: r.player1goals,
         player2goals: r.player2goals,
-        date: r.date |> Js.Date.fromString,
+        date: r.date,
         extratime: r.extratime,
       };
     })
@@ -79,7 +79,7 @@ let toListOfResults3 =
         },
         player1goals: r.player1goals,
         player2goals: r.player2goals,
-        date: r.date |> Js.Date.fromString,
+        date: r.date,
         extratime: r.extratime,
       };
     })
@@ -103,7 +103,7 @@ let toListOfResultsFragment =
         },
         player1goals: r.player1goals,
         player2goals: r.player2goals,
-        date: r.date |> Js.Date.fromString,
+        date: r.date,
         extratime: r.extratime,
       };
     })
@@ -127,29 +127,8 @@ let toListOfResults4 =
         },
         player1goals: r.player1goals,
         player2goals: r.player2goals,
-        date: r.date |> Js.Date.fromString,
+        date: r.date,
         extratime: r.extratime,
       };
     })
-  ->Belt.List.fromArray;
-
-let toListOfResults = (res): list(matchResult) =>
-  res
-  ->Belt.Array.map(r =>
-      {
-        id: r##id |> string_of_int,
-        player1: {
-          id: r##player1##id |> string_of_int,
-          name: r##player1##name,
-        },
-        player2: {
-          id: r##player2##id |> string_of_int,
-          name: r##player2##name,
-        },
-        player1goals: r##player1goals,
-        player2goals: r##player2goals,
-        date: r##date,
-        extratime: r##extratime,
-      }
-    )
   ->Belt.List.fromArray;

@@ -17,7 +17,7 @@ module Types = {
     player2goals: int,
     player1goals: int,
     extratime: bool,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
     id: string,
   };
 };
@@ -25,9 +25,11 @@ module Types = {
 module Internal = {
   type fragmentRaw;
   let fragmentConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {} |json}
+    {json| {"__root":{"date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let fragmentConverterMap = ();
+  let fragmentConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.parse,
+  };
   let convertFragment = v =>
     v
     ->ReasonRelay._convertObj(

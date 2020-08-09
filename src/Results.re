@@ -51,18 +51,8 @@ let make =
     ) => {
   let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
 
-  let dateFromString = dateFrom->Belt.Option.map(Js.Date.toISOString);
-  let dateToString = dateTo->Belt.Option.map(Js.Date.toISOString);
-
   let queryData =
-    Query.use(
-      ~variables={
-        communityName,
-        dateFrom: dateFromString,
-        dateTo: dateToString,
-      },
-      (),
-    );
+    Query.use(~variables={communityName, dateFrom, dateTo}, ());
 
   let newlyFetchedResults =
     queryData.results_connection.edges |> toListOfResults3;

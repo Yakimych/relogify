@@ -214,7 +214,7 @@ let make =
             ~player1Goals=editedValues.player1Goals,
             ~player2Goals=editedValues.player2Goals,
             ~extraTime=editedValues.extraTime,
-            ~date=editedValues.date |> Js.Date.toISOString,
+            ~date=editedValues.date,
           ),
         (),
       )

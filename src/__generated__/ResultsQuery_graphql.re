@@ -14,7 +14,7 @@ module Types = {
     player2goals: int,
     player1goals: int,
     extratime: bool,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
     id: string,
   }
   and response_results_connection_edges_node_player1 = {
@@ -30,8 +30,8 @@ module Types = {
   type rawResponse = response;
   type refetchVariables = {
     communityName: option(string),
-    dateFrom: option(string),
-    dateTo: option(string),
+    dateFrom: option(DateTimeUtils.Datetime.t),
+    dateTo: option(DateTimeUtils.Datetime.t),
   };
   let makeRefetchVariables =
       (~communityName=?, ~dateFrom=?, ~dateTo=?, ()): refetchVariables => {
@@ -41,17 +41,19 @@ module Types = {
   };
   type variables = {
     communityName: string,
-    dateFrom: option(string),
-    dateTo: option(string),
+    dateFrom: option(DateTimeUtils.Datetime.t),
+    dateTo: option(DateTimeUtils.Datetime.t),
   };
 };
 
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {} |json}
+    {json| {"__root":{"results_connection_edges_node_date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let responseConverterMap = ();
+  let responseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.parse,
+  };
   let convertResponse = v =>
     v
     ->ReasonRelay._convertObj(
@@ -64,9 +66,11 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"dateFrom":{"n":""},"dateTo":{"n":""}}} |json}
+    {json| {"__root":{"dateFrom":{"n":"","c":"DateTimeUtils.Datetime"},"dateTo":{"n":"","c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let variablesConverterMap = ();
+  let variablesConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertVariables = v =>
     v
     ->ReasonRelay._convertObj(

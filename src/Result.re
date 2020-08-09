@@ -66,7 +66,7 @@ let make =
   let player1Won = hasPlayer1Won(result);
   let player2Won = hasPlayer2Won(result);
   let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
-  let formattedDate = formatDate(result.date |> Js.Date.fromString);
+  let formattedDate = formatDate(result.date);
 
   let resultIdsToHighlight = None;
 

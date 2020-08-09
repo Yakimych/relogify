@@ -15,7 +15,7 @@ module Types = {
     player1goals: int,
     player2: response_results_connection_edges_node_player2,
     player2goals: int,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
     extratime: bool,
   }
   and response_results_connection_edges_node_player1 = {
@@ -68,9 +68,11 @@ module Types = {
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"results_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
+    {json| {"__root":{"results_connection_edges_node_date":{"c":"DateTimeUtils.Datetime"},"results_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
   ];
-  let responseConverterMap = ();
+  let responseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.parse,
+  };
   let convertResponse = v =>
     v
     ->ReasonRelay._convertObj(

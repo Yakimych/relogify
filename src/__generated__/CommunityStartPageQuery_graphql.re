@@ -43,8 +43,8 @@ module Types = {
   type rawResponse = response;
   type refetchVariables = {
     communityName: option(string),
-    dateFrom: option(string),
-    dateTo: option(string),
+    dateFrom: option(DateTimeUtils.Datetime.t),
+    dateTo: option(DateTimeUtils.Datetime.t),
   };
   let makeRefetchVariables =
       (~communityName=?, ~dateFrom=?, ~dateTo=?, ()): refetchVariables => {
@@ -54,8 +54,8 @@ module Types = {
   };
   type variables = {
     communityName: string,
-    dateFrom: option(string),
-    dateTo: option(string),
+    dateFrom: option(DateTimeUtils.Datetime.t),
+    dateTo: option(DateTimeUtils.Datetime.t),
   };
 };
 
@@ -77,9 +77,11 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"dateFrom":{"n":""},"dateTo":{"n":""}}} |json}
+    {json| {"__root":{"dateFrom":{"n":"","c":"DateTimeUtils.Datetime"},"dateTo":{"n":"","c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let variablesConverterMap = ();
+  let variablesConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertVariables = v =>
     v
     ->ReasonRelay._convertObj(

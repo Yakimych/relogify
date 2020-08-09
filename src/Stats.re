@@ -103,18 +103,8 @@ let make =
       ~playerLimit: option(int)=?,
       ~title: option(string)=?,
     ) => {
-  let dateFromString = dateFrom->Belt.Option.map(Js.Date.toISOString);
-  let dateToString = dateTo->Belt.Option.map(Js.Date.toISOString);
-
   let queryData =
-    Query.use(
-      ~variables={
-        communityName,
-        dateFrom: dateFromString,
-        dateTo: dateToString,
-      },
-      (),
-    );
+    Query.use(~variables={communityName, dateFrom, dateTo}, ());
 
   let (sortBy, setSortBy) = React.useState(_ => WinsPerMatch);
   let (sortDirection, setSortDirection) = React.useState(_ => `Desc);

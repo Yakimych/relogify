@@ -12,7 +12,7 @@ module Types = {
     player2goals: int,
     player1goals: int,
     extratime: bool,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
     id: string,
   }
   and response_update_results_returning_player1 = {
@@ -33,16 +33,18 @@ module Types = {
     player1Goals: int,
     player2Goals: int,
     extraTime: bool,
-    date: string,
+    date: DateTimeUtils.Datetime.t,
   };
 };
 
 module Internal = {
   type wrapResponseRaw;
   let wrapResponseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"update_results":{"n":""}}} |json}
+    {json| {"__root":{"update_results":{"n":""},"update_results_returning_date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let wrapResponseConverterMap = ();
+  let wrapResponseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertWrapResponse = v =>
     v
     ->ReasonRelay._convertObj(
@@ -53,9 +55,11 @@ module Internal = {
 
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"update_results":{"n":""}}} |json}
+    {json| {"__root":{"update_results":{"n":""},"update_results_returning_date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let responseConverterMap = ();
+  let responseConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.parse,
+  };
   let convertResponse = v =>
     v
     ->ReasonRelay._convertObj(
@@ -71,9 +75,11 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {} |json}
+    {json| {"__root":{"date":{"c":"DateTimeUtils.Datetime"}}} |json}
   ];
-  let variablesConverterMap = ();
+  let variablesConverterMap = {
+    "DateTimeUtils.Datetime": DateTimeUtils.Datetime.serialize,
+  };
   let convertVariables = v =>
     v
     ->ReasonRelay._convertObj(
