@@ -1,54 +1,12 @@
 open Utils;
 
-module Query = [%relay.query
+module EditResultsFragment = [%relay.fragment
   {|
-    query EditResultsQuery($communityName: String!) {
-      results_connection(
-        first: 1000
-        where: { community: { name: { _eq: $communityName } } }
-        order_by: { date: desc }
-      ) @connection(key: "EditResults_query_results_connection", filters: []) {
-        ...EditResultsTable_Results
-        edges {
-          node {
-            player1 {
-              id
-              name
-            }
-            player2 {
-              id
-              name
-            }
-            player2goals
-            player1goals
-            extratime
-            date
-            id
-          }
-        }
-      }
-    
-      players_connection(
-        first: 1000
-        where: { community: { name: { _eq: $communityName } } }
-      ) @connection(key: "EditResults_query_players_connection", filters: []) {
-        ...PlayerPicker_Players
-        ...ExistingPlayerPicker_Players
-        edges {
-          node {
-            id
-          }
-        }
-      }
-    
-      community_settings_connection(
-        where: { community: { name: { _eq: $communityName } } }
-      ) {
-        edges {
-          node {
-            ...AddResultTableRowFragment_CommunitySettings
-            ...EditResultTableRowFragment_CommunitySettings
-          }
+    fragment EditResultsFragment on resultsConnection {
+      ...EditResultsTable_Results
+      edges {
+        node {
+          id
         }
       }
     }
@@ -56,20 +14,20 @@ module Query = [%relay.query
 ];
 
 [@react.component]
-let make = (~communityName: string) => {
-  let queryData = Query.use(~variables={communityName: communityName}, ());
-
-  let communitySettingsFragment =
-    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
-      fragmentRefs;
-
-  let playersFragment = queryData.players_connection.fragmentRefs;
-  let resultsFragment = queryData.results_connection.fragmentRefs;
+let make =
+    (
+      ~communityName: string,
+      ~editResultsFragment,
+      ~playersFragment,
+      ~communitySettingsFragment,
+    ) => {
+  let editResultsFragment = EditResultsFragment.use(editResultsFragment);
+  let editResultsTableFragment = editResultsFragment.fragmentRefs;
 
   <>
     <Header page={AdminResultsPage(communityName)} />
     // TODO: Move this into ResultsTable?
-    {queryData.results_connection.edges->Belt.Array.length === 0
+    {editResultsFragment.edges->Belt.Array.length === 0
        ? <MaterialUi.Card className="no-result-info">
            <MaterialUi.CardContent>
              <MaterialUi.Typography variant=`H6>
@@ -78,11 +36,10 @@ let make = (~communityName: string) => {
            </MaterialUi.CardContent>
          </MaterialUi.Card>
        : <EditResultsTable
-           resultsFragment
+           resultsFragment=editResultsTableFragment
            playersFragment
            communityName
            communitySettingsFragment
-           //  queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}
          />}
   </>;
 };
