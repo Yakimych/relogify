@@ -13,6 +13,14 @@ module ExistingPlayerPickerFragment = [%relay.fragment
   |}
 ];
 
+let distinctNodeValues =
+    (edges: array(ExistingPlayerPicker_Players_graphql.Types.fragment_edges)) =>
+  edges
+  ->Belt.Array.map(e => (e.node.id, e.node))
+  ->Belt_MapString.fromArray
+  ->Belt_MapString.toArray
+  ->Belt.Array.map(((_, value)) => value);
+
 [@react.component]
 let make =
     (
@@ -39,9 +47,10 @@ let make =
       />
     }>
     {queryData.edges
+     ->distinctNodeValues
      ->Belt.Array.map(p =>
-         <option value={p.node.id} key={"players_" ++ p.node.name}>
-           {text(p.node.name)}
+         <option value={p.id} key={"players_" ++ p.name}>
+           {text(p.name)}
          </option>
        )
      ->React.array}

@@ -120,7 +120,6 @@ let make =
               mutationFieldName,
               nameOfResultsConnectionToUpdate,
             );
-            // TODO: Handle duplicates
             updatePlayerList(
               store,
               mutationFieldName,

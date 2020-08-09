@@ -46,7 +46,8 @@ let make =
     [|selectedPlayerName|],
   );
 
-  let playerNames = queryData.edges->Belt.Array.map(p => p.node.name);
+  let playerNames =
+    queryData.edges->Belt.Array.map(p => p.node.name)->distinctStrings;
 
   isInCustomMode || Belt.Array.length(playerNames) === 0
     ? <MaterialUi.TextField
