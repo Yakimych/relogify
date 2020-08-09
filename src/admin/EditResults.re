@@ -28,9 +28,17 @@ module Query = [%relay.query
         }
       }
     
-      players_connection(where: { community: { name: { _eq: $communityName } } }) {
+      players_connection(
+        first: 1000
+        where: { community: { name: { _eq: $communityName } } }
+      ) @connection(key: "EditResults_query_players_connection", filters: []) {
         ...PlayerPicker_Players
         ...ExistingPlayerPicker_Players
+        edges {
+          node {
+            id
+          }
+        }
       }
     
       community_settings_connection(
