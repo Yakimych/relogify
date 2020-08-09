@@ -19,7 +19,7 @@ let make = () => {
     </MaterialUi.Container>
   | [communityName, "admin", ...subRoute] =>
     <MaterialUi.Container maxWidth=`Lg>
-      <CommunityAdminPage communityName subRoute />
+      <CommunityAdminLoginPage communityName subRoute />
     </MaterialUi.Container>
   | [communityName, "top"] =>
     <MaterialUi.Container maxWidth=`Lg>
