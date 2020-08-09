@@ -49,7 +49,7 @@ let make =
   let communitySettings =
     AddResultTableRowFragment.use(communitySettingsFragment);
 
-  let (addResult, isAddingResult) = AddMutation.use();
+  let (mutate, isAddingResult) = AddMutation.use();
 
   let (maybePlayer1Name, setMaybePlayer1Name) = React.useState(_ => None);
   let (goals1, setGoals1) = React.useState(_ => 0);
@@ -95,7 +95,7 @@ let make =
         where: None,
       };
 
-      addResult(
+      mutate(
         ~updater=
           (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
             updateResultList(
@@ -103,7 +103,6 @@ let make =
               mutationFieldName,
               nameOfResultsConnectionToUpdate,
             );
-            // TODO: Handle duplicates
             updatePlayerList(
               store,
               mutationFieldName,
