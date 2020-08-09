@@ -6,7 +6,7 @@ open Types;
 
 type editCommunitySettingsAction =
   | SetAllSettings(
-      EditSettingsQuery_graphql.Types.response_community_settings_connection_edges_node,
+      EditSettingsFragment_CommunitySettings_graphql.Types.fragment,
     )
   | ToggleAllowDraws
   | ToggleIncludeExtraTime
@@ -15,7 +15,7 @@ type editCommunitySettingsAction =
     )
   | SetMaxSelectablePoints(int);
 
-let defaultCommunitySettings: EditSettingsQuery_graphql.Types.response_community_settings_connection_edges_node = {
+let defaultCommunitySettings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment = {
   allow_draws: false,
   max_selectable_points: 9,
   score_type: `Goals,
@@ -23,11 +23,13 @@ let defaultCommunitySettings: EditSettingsQuery_graphql.Types.response_community
   use_dropdown_for_points: true,
 };
 
+// TODO: Solve the issue with multiple temp types
+
 let scoreTypeConversion_temp =
     (
       scoreType: EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
     )
-    : EditSettingsQuery_graphql.enum_score_types_enum =>
+    : EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum =>
   switch (scoreType) {
   | `Goals => `Goals
   | `Points => `Points
@@ -35,7 +37,9 @@ let scoreTypeConversion_temp =
   };
 
 let scoreTypeConversion_temp2 =
-    (scoreType: EditSettingsQuery_graphql.enum_score_types_enum)
+    (
+      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
+    )
     : EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum =>
   switch (scoreType) {
   | `Goals => `Goals
@@ -44,7 +48,9 @@ let scoreTypeConversion_temp2 =
   };
 
 let scoreTypeConversion_temp3 =
-    (scoreType: EditSettingsQuery_graphql.enum_score_types_enum)
+    (
+      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
+    )
     : EditSettings_CreateCommunitySettings_Mutation_graphql.enum_score_types_enum =>
   switch (scoreType) {
   | `Goals => `Goals
@@ -54,10 +60,10 @@ let scoreTypeConversion_temp3 =
 
 let reducer =
     (
-      settings: EditSettingsQuery_graphql.Types.response_community_settings_connection_edges_node,
+      settings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment,
       action,
     )
-    : EditSettingsQuery_graphql.Types.response_community_settings_connection_edges_node =>
+    : EditSettingsFragment_CommunitySettings_graphql.Types.fragment =>
   switch (action) {
   | SetAllSettings(allSettings) => allSettings
   | ToggleAllowDraws => {...settings, allow_draws: !settings.allow_draws}
@@ -86,7 +92,9 @@ let scoreTypeToString =
   };
 
 let scoreTypeToString2 =
-    (scoreType: EditSettingsQuery_graphql.enum_score_types_enum) =>
+    (
+      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
+    ) =>
   switch (scoreType) {
   | `Goals => "Goals"
   | `Points => "Points"
@@ -96,22 +104,14 @@ let scoreTypeToString2 =
 let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
 // let scoreTypes = [|"Goals", "Points"|];
 
-module Query = [%relay.query
+module EditSettingsFragment = [%relay.fragment
   {|
-      query EditSettingsQuery($communityName: String!) {
-        community_settings_connection(
-          where: { community: { name: { _eq: $communityName } } }
-        ) {
-          edges {
-            node {
-              allow_draws
-              max_selectable_points
-              score_type
-              use_dropdown_for_points
-              include_extra_time
-            }
-          }
-        }
+      fragment EditSettingsFragment_CommunitySettings on community_settings {
+        allow_draws
+        max_selectable_points
+        score_type
+        use_dropdown_for_points
+        include_extra_time
       }
   |}
 ];
@@ -155,24 +155,21 @@ module CreateCommunitySettingsMutation = [%relay.mutation
 ];
 
 [@react.component]
-let make = (~communityName: string) => {
-  let queryData = Query.use(~variables={communityName: communityName}, ());
-  let loadedCommunitySettings =
-    queryData.community_settings_connection.edges->Belt.Array.get(0);
+let make = (~communityName: string, ~editSettingsFragment) => {
+  let initialCommunitySettings =
+    EditSettingsFragment.use(editSettingsFragment);
 
   let (updateSettings, _) = UpdateCommunitySettingsMutation.use();
   let (createSettings, _) = CreateCommunitySettingsMutation.use();
 
-  let initialCommunitySettings =
-    loadedCommunitySettings->Belt.Option.mapWithDefault(
-      defaultCommunitySettings, s =>
-      s.node
-    );
   let (state, dispatch) =
     React.useReducer(reducer, initialCommunitySettings);
 
   let onSaveError = _ => {
-    alert("Failed saving settings");
+    // TODO: Do we need both i onCreateCompleted with Some(errors) and onSaveError?
+    alert(
+      "Failed saving settings",
+    );
   };
 
   let onCreateCompleted = (_, maybeMutationErrors) => {
@@ -182,36 +179,38 @@ let make = (~communityName: string) => {
     };
   };
 
+  // TODO: makeVariables
   let createCommunitySettings = () => {
-    let createCommunitySettingsInput: EditSettings_CreateCommunitySettings_Mutation_graphql.Types.community_settings_insert_input = {
-      community_id: None,
-      community:
-        Some({
-          data: {
-            name: Some(communityName),
-            community_settings: None,
-            description: None,
-            id: None,
-            players: None,
-            results: None,
-          },
-          on_conflict:
-            Some({
-              constraint_: `communities_name_key,
-              update_columns: [|`name|],
-              where: None,
-            }),
-        }),
-      allow_draws: Some(state.allow_draws),
-      max_selectable_points: Some(state.max_selectable_points),
-      score_type: Some(scoreTypeConversion_temp3(state.score_type)),
-      include_extra_time: Some(state.include_extra_time),
-      use_dropdown_for_points: Some(state.use_dropdown_for_points),
-    };
+    let mutationVariables =
+      CreateCommunitySettingsMutation.makeVariables(
+        ~input=
+          EditSettings_CreateCommunitySettings_Mutation_graphql.Utils.(
+            make_community_settings_insert_input(
+              ~community=
+                make_communities_obj_rel_insert_input(
+                  ~data=
+                    make_communities_insert_input(~name=communityName, ()),
+                  ~on_conflict=
+                    make_communities_on_conflict(
+                      ~constraint_=`communities_name_key,
+                      ~update_columns=[|`name|],
+                      (),
+                    ),
+                  (),
+                ),
+              ~allow_draws=state.allow_draws,
+              ~max_selectable_points=state.max_selectable_points,
+              ~score_type=scoreTypeConversion_temp3(state.score_type),
+              ~include_extra_time=state.include_extra_time,
+              ~use_dropdown_for_points=state.use_dropdown_for_points,
+              (),
+            )
+          ),
+      );
     createSettings(
       ~onCompleted=onCreateCompleted,
       ~onError=onSaveError,
-      ~variables={input: createCommunitySettingsInput},
+      ~variables=mutationVariables,
       (),
     )
     |> ignore;

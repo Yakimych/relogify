@@ -34,6 +34,7 @@ module Query = [%relay.query
           node {
             ...AddResultTableRowFragment_CommunitySettings
             ...EditResultTableRowFragment_CommunitySettings
+            ...EditSettingsFragment_CommunitySettings
           }
         }
       }
@@ -53,7 +54,11 @@ let make = (~communityName, ~subRoute) => {
       fragmentRefs;
 
   switch (subRoute) {
-  | ["settings"] => <EditSettings communityName />
+  | ["settings"] =>
+    <EditSettings
+      communityName
+      editSettingsFragment=communitySettingsFragment
+    />
   | ["players"] => <EditPlayers communityName />
   | ["results"]
   | _ =>
