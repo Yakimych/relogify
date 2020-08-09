@@ -1,5 +1,9 @@
 let updateResultList =
-    (store: ReasonRelay.RecordSourceSelectorProxy.t, fieldName: string) => {
+    (
+      store: ReasonRelay.RecordSourceSelectorProxy.t,
+      fieldName: string,
+      connectionKey: string,
+    ) => {
   ReasonRelayUtils.(
     switch (
       resolveNestedRecord(
@@ -17,7 +21,7 @@ let updateResultList =
         ~connections=[
           {
             parentID: ReasonRelay.storeRootId,
-            key: "CommunityStartPage_query_results_connection",
+            key: connectionKey,
             filters: None,
           },
         ],

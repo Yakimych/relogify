@@ -5,7 +5,8 @@ open StorageUtils;
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
-let nameOfConnectionToUpdate = "CommunityStartPage_query_players_connection";
+let nameOfPlayersConnectionToUpdate = "CommunityStartPage_query_players_connection";
+let nameOfResultsConnectionToUpdate = "CommunityStartPage_query_results_connection";
 let mutationFieldName = "insert_results_one";
 module AddMutation = [%relay.mutation
   {|
@@ -114,18 +115,22 @@ let make =
       mutate(
         ~updater=
           (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
-            updateResultList(store, mutationFieldName);
+            updateResultList(
+              store,
+              mutationFieldName,
+              nameOfResultsConnectionToUpdate,
+            );
             // TODO: Handle duplicates
             updatePlayerList(
               store,
               mutationFieldName,
-              nameOfConnectionToUpdate,
+              nameOfPlayersConnectionToUpdate,
               ["player1"],
             );
             updatePlayerList(
               store,
               mutationFieldName,
-              nameOfConnectionToUpdate,
+              nameOfPlayersConnectionToUpdate,
               ["player2"],
             );
           },

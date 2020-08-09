@@ -14,7 +14,8 @@ module AddResultTableRowFragment = [%relay.fragment
   |}
 ];
 
-let nameOfConnectionToUpdate = "EditResults_query_results_connection";
+let nameOfPlayersConnectionToUpdate = "EditResults_query_players_connection";
+let nameOfResultsConnectionToUpdate = "EditResults_query_results_connection";
 let mutationFieldName = "insert_results_one";
 module AddMutation = [%relay.mutation
   {|
@@ -97,18 +98,22 @@ let make =
       addResult(
         ~updater=
           (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
-            updateResultList(store, mutationFieldName);
+            updateResultList(
+              store,
+              mutationFieldName,
+              nameOfResultsConnectionToUpdate,
+            );
             // TODO: Handle duplicates
             updatePlayerList(
               store,
               mutationFieldName,
-              nameOfConnectionToUpdate,
+              nameOfPlayersConnectionToUpdate,
               ["player1"],
             );
             updatePlayerList(
               store,
               mutationFieldName,
-              nameOfConnectionToUpdate,
+              nameOfPlayersConnectionToUpdate,
               ["player2"],
             );
           },
@@ -148,6 +153,7 @@ let make =
                 ),
             )
           ),
+        (),
       )
       |> ignore;
     };
