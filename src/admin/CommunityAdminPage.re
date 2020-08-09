@@ -20,6 +20,7 @@ module Query = [%relay.query
       ) @connection(key: "EditResults_query_players_connection", filters: []) {
         ...PlayerPicker_Players
         ...ExistingPlayerPicker_Players
+        ...EditPlayersFragment_Players
         edges {
           node {
             id
@@ -59,7 +60,8 @@ let make = (~communityName, ~subRoute) => {
       communityName
       editSettingsFragment=communitySettingsFragment
     />
-  | ["players"] => <EditPlayers communityName />
+  | ["players"] =>
+    <EditPlayers communityName editPlayersFragment=playersFragment />
   | ["results"]
   | _ =>
     <EditResults

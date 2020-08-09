@@ -1,16 +1,13 @@
 open Utils;
 open Types;
 
-// TODO: Expose this as a fragment and lift the query up to the CommunityAdminPage?
-module Query = [%relay.query
+module EditPlayersFragment = [%relay.fragment
   {|
-    query EditPlayersQuery($communityName: String!) {
-      players_connection(where: { community: { name: { _eq: $communityName } } }) {
-        edges {
-          node {
-            id
-            name
-          }
+    fragment EditPlayersFragment_Players on playersConnection {
+      edges {
+        node {
+          id
+          name
         }
       }
     }
@@ -18,8 +15,8 @@ module Query = [%relay.query
 ];
 
 [@react.component]
-let make = (~communityName: string) => {
-  let queryData = Query.use(~variables={communityName: communityName}, ());
+let make = (~communityName: string, ~editPlayersFragment) => {
+  let players = EditPlayersFragment.use(editPlayersFragment);
   <>
     <Header page={AdminPlayersPage(communityName)} />
     <MaterialUi.Container maxWidth=`Sm>
@@ -30,7 +27,7 @@ let make = (~communityName: string) => {
           </MaterialUi.TableRow>
         </MaterialUi.TableHead>
         <MaterialUi.TableBody>
-          {queryData.players_connection.edges
+          {players.edges
            ->Belt.Array.map(p =>
                <MaterialUi.TableRow key={p.node.id}>
                  <MaterialUi.TableCell>

@@ -14,7 +14,11 @@ module Types = {
     edges: array(response_players_connection_edges),
     fragmentRefs:
       ReasonRelay.fragmentRefs(
-        [ | `PlayerPicker_Players | `ExistingPlayerPicker_Players],
+        [
+          | `PlayerPicker_Players
+          | `ExistingPlayerPicker_Players
+          | `EditPlayersFragment_Players
+        ],
       ),
   }
   and response_players_connection_edges = {
@@ -294,6 +298,11 @@ return {
             "args": null,
             "kind": "FragmentSpread",
             "name": "ExistingPlayerPicker_Players"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "EditPlayersFragment_Players"
           }
         ],
         "storageKey": null
@@ -569,7 +578,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dcfa750553bfea50f765716a3dd637a2",
+    "cacheID": "82b60d17d453f498545bb40bfdbff3ee",
     "id": null,
     "metadata": {
       "connection": [
@@ -593,7 +602,7 @@ return {
     },
     "name": "CommunityAdminPageQuery",
     "operationKind": "query",
-    "text": "query CommunityAdminPageQuery(\n  $communityName: String!\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}, order_by: {date: desc}) {\n    ...EditResultsFragment\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  players_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    ...ExistingPlayerPicker_Players\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        ...EditSettingsFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n\nfragment EditResultTableRow_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment EditResultsFragment on resultsConnection {\n  ...EditResultsTable_Results\n  edges {\n    node {\n      id\n    }\n  }\n}\n\nfragment EditResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...ResultTableRow_SingleResult\n      ...EditResultTableRow_SingleResult\n      id\n    }\n  }\n}\n\nfragment EditSettingsFragment_CommunitySettings on community_settings {\n  allow_draws\n  max_selectable_points\n  score_type\n  use_dropdown_for_points\n  include_extra_time\n}\n\nfragment ExistingPlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n\nfragment ResultTableRow_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n"
+    "text": "query CommunityAdminPageQuery(\n  $communityName: String!\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}, order_by: {date: desc}) {\n    ...EditResultsFragment\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  players_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    ...ExistingPlayerPicker_Players\n    ...EditPlayersFragment_Players\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...AddResultTableRowFragment_CommunitySettings\n        ...EditResultTableRowFragment_CommunitySettings\n        ...EditSettingsFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment EditPlayersFragment_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n\nfragment EditResultTableRowFragment_CommunitySettings on community_settings {\n  score_type\n  max_selectable_points\n}\n\nfragment EditResultTableRow_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment EditResultsFragment on resultsConnection {\n  ...EditResultsTable_Results\n  edges {\n    node {\n      id\n    }\n  }\n}\n\nfragment EditResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...ResultTableRow_SingleResult\n      ...EditResultTableRow_SingleResult\n      id\n    }\n  }\n}\n\nfragment EditSettingsFragment_CommunitySettings on community_settings {\n  allow_draws\n  max_selectable_points\n  score_type\n  use_dropdown_for_points\n  include_extra_time\n}\n\nfragment ExistingPlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      id\n      name\n    }\n  }\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n\nfragment ResultTableRow_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n"
   }
 };
 })() |json}
