@@ -10,7 +10,8 @@ let nextPrevWeekButtonStyle =
   );
 
 [@react.component]
-let make = (~communityName: string) => {
+let make =
+    (~communityName: string, ~resultsFragment, ~communitySettingsFragment) => {
   let weekStartDate =
     Js.Date.make()
     ->DateFns.startOfWeekOpt({locale: None, weekStartsOn: Some(1)});
@@ -79,13 +80,19 @@ let make = (~communityName: string) => {
         {text(">>")}
       </MaterialUi.Button>
     </MaterialUi.Box>
-    // TODO
-    // <Stats communityName ?dateFrom ?dateTo />
-    <Results
+    <Stats
       communityName
       ?dateFrom
       ?dateTo
-      highlightNewResults=false
+      statsResultsFragment=resultsFragment
+      scoreTypeFragment=communitySettingsFragment
+    />
+    <ResultsTable
+      communityName
+      resultsTableFragment=resultsFragment
+      communitySettingsFragment
+      ?dateFrom
+      ?dateTo
       temp_showRatings={
         dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
       }

@@ -54,6 +54,7 @@ module Query = [%relay.query
 
 [@react.component]
 let make = (~communityName, ~subRoute) => {
+  // TODO: Start and end dates should depend on the route
   let (startDate, endDate) = getCurrentWeek();
 
   let queryData =
@@ -94,7 +95,7 @@ let make = (~communityName, ~subRoute) => {
   // | ["history", startYear, startMonth, startDay, endYear, endMonth, endDay] =>
   | ["history"] =>
     <MaterialUi.Container maxWidth=`Sm>
-      <ResultHistory communityName />
+      <ResultHistory communityName resultsFragment communitySettingsFragment />
     </MaterialUi.Container>
   | [playerName] =>
     <MaterialUi.Container maxWidth=`Sm>
