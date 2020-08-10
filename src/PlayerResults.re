@@ -40,7 +40,7 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -56,6 +56,25 @@ module Query = [%relay.query
   |}
 ];
 
+let toMatchResult =
+    (
+      resultNode: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
+    ) => {
+  id: resultNode.id,
+  player1: {
+    id: resultNode.player1.id,
+    name: resultNode.player1.name,
+  },
+  player2: {
+    id: resultNode.player2.id,
+    name: resultNode.player2.name,
+  },
+  player1goals: resultNode.player1goals,
+  player2goals: resultNode.player2goals,
+  date: resultNode.date,
+  extratime: resultNode.extratime,
+};
+
 [@react.component]
 let make = (~playerName: string, ~communityName: string) => {
   let queryData = Query.use(~variables={communityName, playerName}, ());
@@ -68,14 +87,14 @@ let make = (~playerName: string, ~communityName: string) => {
 
   let communitySettingsFragment = communitySettings.node.fragmentRefs;
 
-  let resultNodes =
+  let matchResults =
     queryData.results_connection.edges
     ->Belt.Array.map(r => r.node)
+    ->Belt.Array.map(toMatchResult)
     ->Belt.List.fromArray;
-  let playerStats: playerStats = getPlayerStats(playerName, resultNodes);
 
-  let streaks = getAllStreaks(playerName, resultNodes);
-  // let state = results |> attachRatings;
+  let playerStats = getPlayerStats(playerName, matchResults);
+  let streaks = getAllStreaks(playerName, matchResults);
 
   <>
     <Header page={PlayerHome(communityName, playerName)} />

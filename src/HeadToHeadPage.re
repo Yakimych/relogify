@@ -1,7 +1,6 @@
 open Utils;
 open PlayerStatsUtils;
 open Types;
-open Queries;
 
 module Query = [%relay.query
   {|
@@ -49,7 +48,7 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -64,12 +63,38 @@ module Query = [%relay.query
   |}
 ];
 
+let toMatchResult =
+    (
+      headToHeadResult: HeadToHeadPageQuery_graphql.Types.response_results_connection_edges_node,
+    )
+    : matchResult => {
+  id: headToHeadResult.id,
+  player1: {
+    id: headToHeadResult.player1.id,
+    name: headToHeadResult.player1.name,
+  },
+  player2: {
+    id: headToHeadResult.player2.id,
+    name: headToHeadResult.player2.name,
+  },
+  player1goals: headToHeadResult.player1goals,
+  player2goals: headToHeadResult.player2goals,
+  date: headToHeadResult.date,
+  extratime: headToHeadResult.extratime,
+};
+
 [@react.component]
 let make = (~communityName, ~player1Name, ~player2Name) => {
   let queryData =
     Query.use(~variables={communityName, player1Name, player2Name}, ());
-  let results = queryData.results_connection.edges |> toListOfResults2;
-  let stats = getPlayerStats_old(player1Name, results);
+
+  let matchResults =
+    queryData.results_connection.edges
+    ->Belt.Array.map(e => e.node)
+    ->Belt.Array.map(toMatchResult)
+    ->Belt.List.fromArray;
+
+  let stats = getPlayerStats(player1Name, matchResults);
 
   let resultsTableFragment = queryData.results_connection.fragmentRefs;
 

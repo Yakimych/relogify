@@ -36,14 +36,8 @@ type playerStats = {
 };
 
 type streak = {
-  results:
-    list(
-      PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
-    ),
-  endingResult:
-    option(
-      PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
-    ),
+  results: list(matchResult),
+  endingResult: option(matchResult),
 };
 
 let numberOfMatches = (streak: streak) => streak.results->Belt.List.length;

@@ -12,11 +12,7 @@ let getCurrentWeek = () => {
 let resultsByDate_old = (first: matchResult, second: matchResult) =>
   DateFns.compareAsc(first.date, second.date);
 
-let resultsByDate =
-    (
-      first: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
-      second: PlayerResultsQuery_graphql.Types.response_results_connection_edges_node,
-    ) =>
+let resultsByDate = (first: matchResult, second: matchResult) =>
   DateFns.compareAsc(first.date, second.date);
 
 let formatDate = (date: Js.Date.t) => date->DateFns.format("yyyy-MM-dd");

@@ -142,20 +142,19 @@ let make =
                       </MaterialUi.TableCell>
                       {showEloRatings && isWide
                          ? <MaterialUi.TableCell style=numberCellStyle>
-                             {text(
-                                resultsWithRatings.ratingMap
-                                ->Belt_MapString.getWithDefault(
-                                    r.playerName,
-                                    initialRating,
-                                  )
-                                |> Js.Math.round
-                                |> int_of_float
-                                |> string_of_int,
-                              )}
+                             {resultsWithRatings.ratingMap
+                              ->Belt_MapString.getWithDefault(
+                                  r.playerName,
+                                  initialRating,
+                                )
+                              |> Js.Math.round
+                              |> int_of_float
+                              |> string_of_int
+                              |> text}
                            </MaterialUi.TableCell>
                          : React.null}
                       <MaterialUi.TableCell style=numberCellStyle>
-                        {text(formatPercentage(r |> matchesWonPerPlayed))}
+                        {r |> matchesWonPerPlayed |> formatPercentage |> text}
                       </MaterialUi.TableCell>
                       <MaterialUi.TableCell style=numberCellStyle>
                         {text(string_of_int(r.matchesWon))}
@@ -175,18 +174,16 @@ let make =
                                {text(r |> goalDiff |> formatDiff)}
                              </MaterialUi.TableCell>
                              <MaterialUi.TableCell style=numberCellStyle>
-                               {text(
-                                  formatGoalsPerMatch(
-                                    r |> goalsScoredPerMatch,
-                                  ),
-                                )}
+                               {r
+                                |> goalsScoredPerMatch
+                                |> formatGoalsPerMatch
+                                |> text}
                              </MaterialUi.TableCell>
                              <MaterialUi.TableCell style=numberCellStyle>
-                               {text(
-                                  formatGoalsPerMatch(
-                                    r |> goalsConcededPerMatch,
-                                  ),
-                                )}
+                               {r
+                                |> goalsConcededPerMatch
+                                |> formatGoalsPerMatch
+                                |> text}
                              </MaterialUi.TableCell>
                            </>
                          : React.null}
