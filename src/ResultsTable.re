@@ -69,42 +69,51 @@ let make =
     resultsTableFragment.edges |> toListOfResultsFragment;
   let resultsWithRatingMap = newlyFetchedResults |> attachRatings;
 
-  <MaterialUi.Paper>
-    <div className="title">
-      <MaterialUi.Typography variant=`H6>
-        {text("Results")}
-      </MaterialUi.Typography>
-    </div>
-    <MaterialUi.Table size=`Small>
-      <ResultsTableHeader communitySettingsFragment />
-      <MaterialUi.TableBody>
-        {resultsTableFragment.edges
-         ->Belt.Array.map(result => {
-             let resultWithRatings: resultWithRatings =
-               resultsWithRatingMap.resultsWithRatings
-               |> List.find(r => r.result.id === result.node.id);
+  resultsTableFragment.edges->Belt.Array.length === 0
+    ? <MaterialUi.Card className="no-result-info">
+        <MaterialUi.CardContent>
+          <MaterialUi.Typography variant=`H6>
+            {text("No results reported")}
+          </MaterialUi.Typography>
+        </MaterialUi.CardContent>
+      </MaterialUi.Card>
+    : <MaterialUi.Paper>
+        <div className="title">
+          <MaterialUi.Typography variant=`H6>
+            {text("Results")}
+          </MaterialUi.Typography>
+        </div>
+        <MaterialUi.Table size=`Small>
+          <ResultsTableHeader communitySettingsFragment />
+          <MaterialUi.TableBody>
+            {resultsTableFragment.edges
+             ->Belt.Array.map(result => {
+                 let resultWithRatings: resultWithRatings =
+                   resultsWithRatingMap.resultsWithRatings
+                   |> List.find(r => r.result.id === result.node.id);
 
-             <Result
-               key={result.node.id}
-               temp_showRatings
-               result={result.node.fragmentRefs}
-               resultWithRatings
-               communityName
-               mainPlayerName
-               includeExtraTimeFragment=communitySettingsFragment
-               showGraphForPlayer
-             />;
-           })
-         ->React.array}
-      </MaterialUi.TableBody>
-    </MaterialUi.Table>
-    {graphIsShownForPlayer->Belt.Option.mapWithDefault(React.null, playerName =>
-       <EloGraphDialog
-         isOpen=true
-         onClose=hideGraphForPlayer
-         playerName
-         resultsWithRatings={resultsWithRatingMap.resultsWithRatings}
-       />
-     )}
-  </MaterialUi.Paper>;
+                 <Result
+                   key={result.node.id}
+                   temp_showRatings
+                   result={result.node.fragmentRefs}
+                   resultWithRatings
+                   communityName
+                   mainPlayerName
+                   includeExtraTimeFragment=communitySettingsFragment
+                   showGraphForPlayer
+                 />;
+               })
+             ->React.array}
+          </MaterialUi.TableBody>
+        </MaterialUi.Table>
+        {graphIsShownForPlayer->Belt.Option.mapWithDefault(
+           React.null, playerName =>
+           <EloGraphDialog
+             isOpen=true
+             onClose=hideGraphForPlayer
+             playerName
+             resultsWithRatings={resultsWithRatingMap.resultsWithRatings}
+           />
+         )}
+      </MaterialUi.Paper>;
 };
