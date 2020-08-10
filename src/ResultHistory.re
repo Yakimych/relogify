@@ -9,9 +9,41 @@ let nextPrevWeekButtonStyle =
     (),
   );
 
+module Query = [%relay.query
+  {|
+    query ResultHistoryQuery(
+      $communityName: String!
+      $dateFrom: timestamptz
+      $dateTo: timestamptz
+    ) {
+      results_connection(
+        where: {
+          community: { name: { _eq: $communityName } }
+          date: { _gte: $dateFrom, _lte: $dateTo }
+        }
+        order_by: { date: desc }
+      ) {
+        ...ResultsTable_Results
+        ...Stats_Results
+      }
+
+      community_settings_connection(
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
+        edges {
+          node {
+            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultsTableHeader_CommunitySettings
+            ...StatsTableHeader_ScoreType
+          }
+        }
+      }
+    }
+  |}
+];
+
 [@react.component]
-let make =
-    (~communityName: string, ~resultsFragment, ~communitySettingsFragment) => {
+let make = (~communityName: string) => {
   let weekStartDate =
     Js.Date.make()
     ->DateFns.startOfWeekOpt({locale: None, weekStartsOn: Some(1)});
@@ -39,6 +71,15 @@ let make =
     setDateFrom(df => df->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
     setDateTo(dt => dt->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
   };
+
+  let queryData =
+    Query.use(~variables={communityName, dateFrom, dateTo}, ());
+
+  let resultsFragment = queryData.results_connection.fragmentRefs;
+
+  let communitySettingsFragment =
+    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
+      fragmentRefs;
 
   <>
     <Header page={History(communityName)} />

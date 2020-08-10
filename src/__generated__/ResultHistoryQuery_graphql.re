@@ -3,22 +3,9 @@
 module Types = {
   [@ocaml.warning "-30"];
   type response_results_connection = {
-    edges: array(response_results_connection_edges),
     fragmentRefs:
       ReasonRelay.fragmentRefs([ | `ResultsTable_Results | `Stats_Results]),
   }
-  and response_results_connection_edges = {
-    node: response_results_connection_edges_node,
-  }
-  and response_results_connection_edges_node = {id: string}
-  and response_players_connection = {
-    edges: array(response_players_connection_edges),
-    fragmentRefs: ReasonRelay.fragmentRefs([ | `PlayerPicker_Players]),
-  }
-  and response_players_connection_edges = {
-    node: response_players_connection_edges_node,
-  }
-  and response_players_connection_edges_node = {id: string}
   and response_community_settings_connection = {
     edges: array(response_community_settings_connection_edges),
   }
@@ -31,7 +18,6 @@ module Types = {
         [
           | `ExtraTimeColumn_IncludeExtraTime
           | `ResultsTableHeader_CommunitySettings
-          | `AddResultFragment_CommunitySettings
           | `StatsTableHeader_ScoreType
         ],
       ),
@@ -39,7 +25,6 @@ module Types = {
 
   type response = {
     results_connection: response_results_connection,
-    players_connection: response_players_connection,
     community_settings_connection: response_community_settings_connection,
   };
   type rawResponse = response;
@@ -64,7 +49,7 @@ module Types = {
 module Internal = {
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"results_connection":{"f":""},"players_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
+    {json| {"__root":{"results_connection":{"f":""},"community_settings_connection_edges_node":{"f":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
@@ -126,56 +111,6 @@ var v0 = [
   }
 ],
 v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "__typename",
-  "storageKey": null
-},
-v3 = [
-  (v1/*: any*/),
-  (v2/*: any*/)
-],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "cursor",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "PageInfo",
-  "kind": "LinkedField",
-  "name": "pageInfo",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "endCursor",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "hasNextPage",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v6 = {
   "fields": [
     {
       "fields": [
@@ -192,23 +127,7 @@ v6 = {
   "kind": "ObjectValue",
   "name": "community"
 },
-v7 = {
-  "fields": [
-    (v6/*: any*/)
-  ],
-  "kind": "ObjectValue",
-  "name": "where"
-},
-v8 = [
-  (v7/*: any*/)
-],
-v9 = {
-  "kind": "Literal",
-  "name": "first",
-  "value": 1000
-},
-v10 = [
-  (v9/*: any*/),
+v2 = [
   {
     "kind": "Literal",
     "name": "order_by",
@@ -218,7 +137,7 @@ v10 = [
   },
   {
     "fields": [
-      (v6/*: any*/),
+      (v1/*: any*/),
       {
         "fields": [
           {
@@ -240,59 +159,47 @@ v10 = [
     "name": "where"
   }
 ],
-v11 = {
+v3 = [
+  {
+    "fields": [
+      (v1/*: any*/)
+    ],
+    "kind": "ObjectValue",
+    "name": "where"
+  }
+],
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "id",
   "storageKey": null
 },
-v12 = [
-  (v1/*: any*/),
-  (v11/*: any*/)
-],
-v13 = [
-  (v9/*: any*/),
-  (v7/*: any*/)
+v5 = [
+  (v4/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
 ];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "CommunityRouteQuery",
+    "name": "ResultHistoryQuery",
     "selections": [
       {
-        "alias": "results_connection",
-        "args": null,
+        "alias": null,
+        "args": (v2/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
-        "name": "__CommunityRoute_query_results_connection_connection",
+        "name": "results_connection",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "resultsEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "results",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v3/*: any*/),
-                "storageKey": null
-              },
-              (v4/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v5/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -307,47 +214,8 @@ return {
         "storageKey": null
       },
       {
-        "alias": "players_connection",
-        "args": null,
-        "concreteType": "playersConnection",
-        "kind": "LinkedField",
-        "name": "__CommunityRoute_query_players_connection_connection",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "playersEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "players",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v3/*: any*/),
-                "storageKey": null
-              },
-              (v4/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v5/*: any*/),
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "PlayerPicker_Players"
-          }
-        ],
-        "storageKey": null
-      },
-      {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -382,11 +250,6 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AddResultFragment_CommunitySettings"
-                  },
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
                     "name": "StatsTableHeader_ScoreType"
                   }
                 ],
@@ -406,11 +269,11 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "CommunityRouteQuery",
+    "name": "ResultHistoryQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v10/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "results_connection",
@@ -439,7 +302,7 @@ return {
                     "kind": "LinkedField",
                     "name": "player1",
                     "plural": false,
-                    "selections": (v12/*: any*/),
+                    "selections": (v5/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -449,7 +312,7 @@ return {
                     "kind": "LinkedField",
                     "name": "player2",
                     "plural": false,
-                    "selections": (v12/*: any*/),
+                    "selections": (v5/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -480,78 +343,19 @@ return {
                     "name": "date",
                     "storageKey": null
                   },
-                  (v1/*: any*/),
-                  (v2/*: any*/)
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
-              },
-              (v4/*: any*/)
+              }
             ],
             "storageKey": null
-          },
-          (v5/*: any*/)
+          }
         ],
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v10/*: any*/),
-        "filters": [],
-        "handle": "connection",
-        "key": "CommunityRoute_query_results_connection",
-        "kind": "LinkedHandle",
-        "name": "results_connection"
-      },
-      {
-        "alias": null,
-        "args": (v13/*: any*/),
-        "concreteType": "playersConnection",
-        "kind": "LinkedField",
-        "name": "players_connection",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "playersEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "players",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v11/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              },
-              (v4/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v5/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v13/*: any*/),
-        "filters": [],
-        "handle": "connection",
-        "key": "CommunityRoute_query_players_connection",
-        "kind": "LinkedHandle",
-        "name": "players_connection"
-      },
-      {
-        "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "community_settingsConnection",
         "kind": "LinkedField",
         "name": "community_settings_connection",
@@ -587,21 +391,7 @@ return {
                     "name": "score_type",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "max_selectable_points",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "allow_draws",
-                    "storageKey": null
-                  },
-                  (v1/*: any*/)
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -614,31 +404,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ab25a8c3f7f36ed66dbfd67b0c9b355a",
+    "cacheID": "a924b282a157d8144c9dbef5b507ed50",
     "id": null,
-    "metadata": {
-      "connection": [
-        {
-          "count": null,
-          "cursor": null,
-          "direction": "forward",
-          "path": [
-            "results_connection"
-          ]
-        },
-        {
-          "count": null,
-          "cursor": null,
-          "direction": "forward",
-          "path": [
-            "players_connection"
-          ]
-        }
-      ]
-    },
-    "name": "CommunityRouteQuery",
+    "metadata": {},
+    "name": "ResultHistoryQuery",
     "operationKind": "query",
-    "text": "query CommunityRouteQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    ...Stats_Results\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  players_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...AddResultFragment_CommunitySettings\n        ...StatsTableHeader_ScoreType\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultFragment_CommunitySettings on community_settings {\n  include_extra_time\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n\nfragment StatsTableHeader_ScoreType on community_settings {\n  score_type\n}\n\nfragment Stats_Results on resultsConnection {\n  edges {\n    node {\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
+    "text": "query ResultHistoryQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    ...Stats_Results\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...StatsTableHeader_ScoreType\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n\nfragment StatsTableHeader_ScoreType on community_settings {\n  score_type\n}\n\nfragment Stats_Results on resultsConnection {\n  edges {\n    node {\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}

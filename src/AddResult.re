@@ -5,8 +5,8 @@ open StorageUtils;
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
-let nameOfPlayersConnectionToUpdate = "CommunityRoute_query_players_connection";
-let nameOfResultsConnectionToUpdate = "CommunityRoute_query_results_connection";
+let nameOfPlayersConnectionToUpdate = "CommunityStartPage_query_players_connection";
+let nameOfResultsConnectionToUpdate = "CommunityStartPage_query_results_connection";
 let mutationFieldName = "insert_results_one";
 module AddMutation = [%relay.mutation
   {|
