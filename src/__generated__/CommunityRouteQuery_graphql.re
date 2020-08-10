@@ -4,7 +4,8 @@ module Types = {
   [@ocaml.warning "-30"];
   type response_results_connection = {
     edges: array(response_results_connection_edges),
-    fragmentRefs: ReasonRelay.fragmentRefs([ | `ResultsTable_Results]),
+    fragmentRefs:
+      ReasonRelay.fragmentRefs([ | `ResultsTable_Results | `Stats_Results]),
   }
   and response_results_connection_edges = {
     node: response_results_connection_edges_node,
@@ -31,6 +32,7 @@ module Types = {
           | `ExtraTimeColumn_IncludeExtraTime
           | `ResultsTableHeader_CommunitySettings
           | `AddResultFragment_CommunitySettings
+          | `StatsTableHeader_ScoreType
         ],
       ),
   };
@@ -258,14 +260,14 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "CommunityStartPageQuery",
+    "name": "CommunityRouteQuery",
     "selections": [
       {
         "alias": "results_connection",
         "args": null,
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
-        "name": "__CommunityStartPage_query_results_connection_connection",
+        "name": "__CommunityRoute_query_results_connection_connection",
         "plural": false,
         "selections": [
           {
@@ -295,6 +297,11 @@ return {
             "args": null,
             "kind": "FragmentSpread",
             "name": "ResultsTable_Results"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "Stats_Results"
           }
         ],
         "storageKey": null
@@ -304,7 +311,7 @@ return {
         "args": null,
         "concreteType": "playersConnection",
         "kind": "LinkedField",
-        "name": "__CommunityStartPage_query_players_connection_connection",
+        "name": "__CommunityRoute_query_players_connection_connection",
         "plural": false,
         "selections": [
           {
@@ -376,6 +383,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddResultFragment_CommunitySettings"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "StatsTableHeader_ScoreType"
                   }
                 ],
                 "storageKey": null
@@ -394,7 +406,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "CommunityStartPageQuery",
+    "name": "CommunityRouteQuery",
     "selections": [
       {
         "alias": null,
@@ -486,7 +498,7 @@ return {
         "args": (v10/*: any*/),
         "filters": [],
         "handle": "connection",
-        "key": "CommunityStartPage_query_results_connection",
+        "key": "CommunityRoute_query_results_connection",
         "kind": "LinkedHandle",
         "name": "results_connection"
       },
@@ -533,7 +545,7 @@ return {
         "args": (v13/*: any*/),
         "filters": [],
         "handle": "connection",
-        "key": "CommunityStartPage_query_players_connection",
+        "key": "CommunityRoute_query_players_connection",
         "kind": "LinkedHandle",
         "name": "players_connection"
       },
@@ -602,7 +614,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2d465f0a8aefad72718c2cdd63547d4b",
+    "cacheID": "ab25a8c3f7f36ed66dbfd67b0c9b355a",
     "id": null,
     "metadata": {
       "connection": [
@@ -624,9 +636,9 @@ return {
         }
       ]
     },
-    "name": "CommunityStartPageQuery",
+    "name": "CommunityRouteQuery",
     "operationKind": "query",
-    "text": "query CommunityStartPageQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  players_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...AddResultFragment_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultFragment_CommunitySettings on community_settings {\n  include_extra_time\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
+    "text": "query CommunityRouteQuery(\n  $communityName: String!\n  $dateFrom: timestamptz\n  $dateTo: timestamptz\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}, date: {_gte: $dateFrom, _lte: $dateTo}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    ...Stats_Results\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  players_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}) {\n    ...PlayerPicker_Players\n    edges {\n      node {\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...AddResultFragment_CommunitySettings\n        ...StatsTableHeader_ScoreType\n        id\n      }\n    }\n  }\n}\n\nfragment AddResultFragment_CommunitySettings on community_settings {\n  include_extra_time\n  score_type\n  max_selectable_points\n  allow_draws\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment PlayerPicker_Players on playersConnection {\n  edges {\n    node {\n      name\n      id\n    }\n  }\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n\nfragment StatsTableHeader_ScoreType on community_settings {\n  score_type\n}\n\nfragment Stats_Results on resultsConnection {\n  edges {\n    node {\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}

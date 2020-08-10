@@ -48,46 +48,24 @@ let getSortFunc =
   };
 };
 
-module Query = [%relay.query
+module StatsResultsFragment = [%relay.fragment
   {|
-    query StatsQuery(
-      $communityName: String!
-      $dateFrom: timestamptz
-      $dateTo: timestamptz
-    ) {
-      results_connection(
-        where: {
-          community: { name: { _eq: $communityName } }
-          date: { _gte: $dateFrom, _lte: $dateTo }
-        }
-        order_by: { date: desc }
-      ) {
-        edges {
-          node {
-            player1 {
-              id
-              name
-            }
-            player2 {
-              id
-              name
-            }
-            player2goals
-            player1goals
-            extratime
-            date
+    fragment Stats_Results on resultsConnection {
+      edges {
+        node {
+          player1 {
             id
+            name
           }
-        }
-      }
-    
-      community_settings_connection(
-        where: { community: { name: { _eq: $communityName } } }
-      ) {
-        edges {
-          node {
-            ...StatsTableHeader_ScoreType
+          player2 {
+            id
+            name
           }
+          player2goals
+          player1goals
+          extratime
+          date
+          id
         }
       }
     }
@@ -98,14 +76,13 @@ module Query = [%relay.query
 let make =
     (
       ~communityName: string,
+      ~statsResultsFragment,
+      ~scoreTypeFragment,
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
       ~playerLimit: option(int)=?,
       ~title: option(string)=?,
     ) => {
-  let queryData =
-    Query.use(~variables={communityName, dateFrom, dateTo}, ());
-
   let (sortBy, setSortBy) = React.useState(_ => WinsPerMatch);
   let (sortDirection, setSortDirection) = React.useState(_ => `Desc);
 
@@ -113,7 +90,8 @@ let make =
     setSortBy(_ => columnType);
     setSortDirection(currentDirection => currentDirection);
   };
-  let results = queryData.results_connection.edges |> toListOfResults4;
+  let statsResultsFragment = StatsResultsFragment.use(statsResultsFragment);
+  let results = statsResultsFragment.edges |> toListOfResults4;
   let showEloRatings =
     dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 
@@ -128,10 +106,6 @@ let make =
     playerLimit->Belt.Option.getWithDefault(
       leaderboardRows->Belt.List.length,
     );
-
-  let scoreTypeFragment =
-    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
-      fragmentRefs;
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   <>

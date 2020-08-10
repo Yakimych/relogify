@@ -110,7 +110,7 @@ let toListOfResultsFragment =
   ->Belt.List.fromArray;
 
 let toListOfResults4 =
-    (res: array(StatsQuery_graphql.Types.response_results_connection_edges))
+    (res: array(Stats_Results_graphql.Types.fragment_edges))
     : list(matchResult) =>
   res
   ->Belt.Array.map(resultNode => {

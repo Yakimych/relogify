@@ -79,7 +79,8 @@ let make = (~communityName: string) => {
         {text(">>")}
       </MaterialUi.Button>
     </MaterialUi.Box>
-    <Stats communityName ?dateFrom ?dateTo />
+    // TODO
+    // <Stats communityName ?dateFrom ?dateTo />
     <Results
       communityName
       ?dateFrom
