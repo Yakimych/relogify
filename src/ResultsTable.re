@@ -55,6 +55,7 @@ let make =
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
     ) => {
+  let lastFetchedResultIdsRef = React.useRef(Js.Nullable.null);
   let resultsTableFragment = ResultsTableFragment.use(resultsTableFragment);
 
   let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
@@ -67,6 +68,25 @@ let make =
 
   let newlyFetchedResults =
     resultsTableFragment.edges |> toListOfResultsFragment;
+
+  let newResultIds =
+    lastFetchedResultIdsRef.current
+    ->Js.Nullable.toOption
+    ->Belt.Option.mapWithDefault([], lastFetchedResultIds =>
+        newlyFetchedResults
+        ->Belt.List.map(r => r.id)
+        ->Belt.List.keep(r => !lastFetchedResultIds->Belt.List.has(r, (==)))
+      );
+
+  lastFetchedResultIdsRef.current =
+    Js.Nullable.fromOption(
+      Some(
+        resultsTableFragment.edges
+        ->Belt.Array.map(e => e.node.id)
+        ->Belt.List.fromArray,
+      ),
+    );
+
   let resultsWithRatingMap = newlyFetchedResults |> attachRatings;
 
   resultsTableFragment.edges->Belt.Array.length === 0
@@ -101,6 +121,7 @@ let make =
                    mainPlayerName
                    includeExtraTimeFragment=communitySettingsFragment
                    showGraphForPlayer
+                   resultIdsToHighlight={Some(newResultIds)}
                  />;
                })
              ->React.array}

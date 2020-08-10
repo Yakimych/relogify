@@ -22,10 +22,14 @@ module ResultFragment = [%relay.fragment
   |}
 ];
 
-// TODO: Implement highlighting
 let getHighlightedClassName =
-    (newResults: option(list(string)), currentResult) => {
-  "";
+    (newResults: option(list(string)), currentResultId) => {
+  let resultIsFresh =
+    newResults
+    ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResultId))
+    ->Belt.Option.getWithDefault(false);
+
+  resultIsFresh ? "highlighted" : "";
 };
 
 let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
@@ -59,6 +63,7 @@ let make =
       ~temp_showRatings,
       ~includeExtraTimeFragment,
       ~showGraphForPlayer,
+      ~resultIdsToHighlight: option(list(string)),
     ) => {
   let result = ResultFragment.use(result);
   // let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
@@ -68,14 +73,12 @@ let make =
   let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
   let formattedDate = formatDate(result.date);
 
-  let resultIdsToHighlight = None;
-
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 
   <MaterialUi.TableRow
     key={result.id}
     className={
-      getHighlightedClassName(resultIdsToHighlight, result)
+      getHighlightedClassName(resultIdsToHighlight, result.id)
       ++ " "
       ++ getWinningLosingRowClassName(mainPlayerWon)
     }>
