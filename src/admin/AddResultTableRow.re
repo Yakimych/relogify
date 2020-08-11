@@ -97,24 +97,29 @@ let make =
 
       mutate(
         ~updater=
-          (store: ReasonRelay.RecordSourceSelectorProxy.t, _response) => {
-            updateResultList(
-              store,
-              mutationFieldName,
-              nameOfResultsConnectionToUpdate,
-            );
-            updatePlayerList(
-              store,
-              mutationFieldName,
-              nameOfPlayersConnectionToUpdate,
-              ["player1"],
-            );
-            updatePlayerList(
-              store,
-              mutationFieldName,
-              nameOfPlayersConnectionToUpdate,
-              ["player2"],
-            );
+          (
+            store: ReasonRelay.RecordSourceSelectorProxy.t,
+            response: AddMutation.Types.response,
+          ) => {
+            switch (response.insert_results_one) {
+            | Some(insertedResult) =>
+              updateResultList(
+                store,
+                insertedResult.id->ReasonRelay.makeDataId,
+                nameOfResultsConnectionToUpdate,
+              );
+              updatePlayerList(
+                store,
+                insertedResult.player1.id->ReasonRelay.makeDataId,
+                nameOfPlayersConnectionToUpdate,
+              );
+              updatePlayerList(
+                store,
+                insertedResult.player2.id->ReasonRelay.makeDataId,
+                nameOfPlayersConnectionToUpdate,
+              );
+            | None => ()
+            }
           },
         ~variables=
           AddResultTableRowMutation_graphql.Utils.(
