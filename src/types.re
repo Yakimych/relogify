@@ -62,11 +62,6 @@ type streaks = {
 
 type scoreType = [ | `Goals | `Points];
 
-let scoreTypeToString_old =
-  fun
-  | `Goals => "Goals"
-  | `Points => "Points";
-
 let toScoreType =
   fun
   | "Goals" => `Goals
@@ -79,14 +74,6 @@ type communitySettings = {
   scoreType: EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
   includeExtraTime: bool,
   useDropDownForPoints: bool,
-};
-
-let defaultCommunitySettings_old = {
-  allowDraws: false,
-  maxSelectablePoints: 9,
-  scoreType: `Goals,
-  includeExtraTime: true,
-  useDropDownForPoints: true,
 };
 
 type editableResultValues = {

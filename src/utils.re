@@ -9,9 +9,6 @@ let getCurrentWeek = () => {
   (startDate, startDate->DateFns.addWeeks(1));
 };
 
-let resultsByDate_old = (first: matchResult, second: matchResult) =>
-  DateFns.compareAsc(first.date, second.date);
-
 let resultsByDate = (first: matchResult, second: matchResult) =>
   DateFns.compareAsc(first.date, second.date);
 

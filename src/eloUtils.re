@@ -115,7 +115,7 @@ let eloRatingReducer =
 
 let attachRatings = (results: list(matchResult)): temp_resultsWithRatingMap =>
   results
-  ->Belt.List.sort(resultsByDate_old)
+  ->Belt.List.sort(resultsByDate)
   ->Belt.List.reduce(
       {ratingMap: Belt_MapString.empty, resultsWithRatings: []},
       eloRatingReducer,
