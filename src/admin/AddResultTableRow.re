@@ -105,17 +105,17 @@ let make =
             | Some(insertedResult) =>
               updateResultList(
                 store,
-                insertedResult.id->ReasonRelay.makeDataId,
+                insertedResult.id,
                 nameOfResultsConnectionToUpdate,
               );
               updatePlayerList(
                 store,
-                insertedResult.player1.id->ReasonRelay.makeDataId,
+                insertedResult.player1.id,
                 nameOfPlayersConnectionToUpdate,
               );
               updatePlayerList(
                 store,
-                insertedResult.player2.id->ReasonRelay.makeDataId,
+                insertedResult.player2.id,
                 nameOfPlayersConnectionToUpdate,
               );
             | None => ()

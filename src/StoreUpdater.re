@@ -1,11 +1,13 @@
 let updateResultList =
     (
       store: ReasonRelay.RecordSourceSelectorProxy.t,
-      insertedResultId: ReasonRelay.dataId,
+      insertedResultId: string,
       connectionKey: string,
     ) =>
   switch (
-    store->ReasonRelay.RecordSourceSelectorProxy.get(~dataId=insertedResultId)
+    store->ReasonRelay.RecordSourceSelectorProxy.get(
+      ~dataId=insertedResultId->ReasonRelay.makeDataId,
+    )
   ) {
   | Some(node) =>
     ReasonRelayUtils.createAndAddEdgeToConnections(
@@ -27,11 +29,13 @@ let updateResultList =
 let updatePlayerList =
     (
       store: ReasonRelay.RecordSourceSelectorProxy.t,
-      insertedPlayerId: ReasonRelay.dataId,
+      insertedPlayerId: string,
       connectionKey: string,
     ) => {
   switch (
-    store->ReasonRelay.RecordSourceSelectorProxy.get(~dataId=insertedPlayerId)
+    store->ReasonRelay.RecordSourceSelectorProxy.get(
+      ~dataId=insertedPlayerId->ReasonRelay.makeDataId,
+    )
   ) {
   | Some(playerResult) =>
     ReasonRelayUtils.createAndAddEdgeToConnections(

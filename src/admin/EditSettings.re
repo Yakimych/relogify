@@ -179,7 +179,6 @@ let make = (~communityName: string, ~editSettingsFragment) => {
     };
   };
 
-  // TODO: makeVariables
   let createCommunitySettings = () => {
     let mutationVariables =
       CreateCommunitySettingsMutation.makeVariables(
