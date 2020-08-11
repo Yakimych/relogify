@@ -1,7 +1,6 @@
 open Utils;
 open Types;
 open EloUtils;
-open Queries;
 
 module ResultsTableFragment = [%relay.fragment
   {|
@@ -41,6 +40,26 @@ let getHighlightedClassName =
 let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
   mainPlayerWon ? "winning-row" : "";
 
+let toMatchResult =
+    (resultNode: ResultsTable_Results_graphql.Types.fragment_edges_node)
+    : matchResult => {
+  {
+    id: resultNode.id,
+    player1: {
+      id: resultNode.player1.id,
+      name: resultNode.player1.name,
+    },
+    player2: {
+      id: resultNode.player2.id,
+      name: resultNode.player2.name,
+    },
+    player1goals: resultNode.player1goals,
+    player2goals: resultNode.player2goals,
+    date: resultNode.date,
+    extratime: resultNode.extratime,
+  };
+};
+
 [@react.component]
 let make =
     (
@@ -67,27 +86,28 @@ let make =
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
   let newlyFetchedResults =
-    resultsTableFragment.edges |> toListOfResultsFragment;
+    resultsTableFragment.edges->Belt.Array.map(e => e.node->toMatchResult);
 
   let newResultIds =
     lastFetchedResultIdsRef.current
     ->Js.Nullable.toOption
-    ->Belt.Option.mapWithDefault([], lastFetchedResultIds =>
-        newlyFetchedResults
-        ->Belt.List.map(r => r.id)
-        ->Belt.List.keep(r => !lastFetchedResultIds->Belt.List.has(r, (==)))
+    ->Belt.Option.mapWithDefault([||], lastFetchedResultIds =>
+        resultsTableFragment.edges
+        ->Belt.Array.map(r => r.node.id)
+        ->Belt.Array.keep(r =>
+            lastFetchedResultIds
+            |> Array.exists(lastResult => lastResult == r)
+            |> (!)
+          )
       );
 
   lastFetchedResultIdsRef.current =
     Js.Nullable.fromOption(
-      Some(
-        resultsTableFragment.edges
-        ->Belt.Array.map(e => e.node.id)
-        ->Belt.List.fromArray,
-      ),
+      Some(resultsTableFragment.edges->Belt.Array.map(e => e.node.id)),
     );
 
-  let resultsWithRatingMap = newlyFetchedResults |> attachRatings;
+  let resultsWithRatingMap =
+    newlyFetchedResults |> Array.to_list |> attachRatings;
 
   resultsTableFragment.edges->Belt.Array.length === 0
     ? <MaterialUi.Card className="no-result-info">

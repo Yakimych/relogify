@@ -1,7 +1,6 @@
 open Utils;
 open LeaderboardUtils;
 open Types;
-open Queries;
 open Styles;
 open EloUtils;
 
@@ -72,6 +71,23 @@ module StatsResultsFragment = [%relay.fragment
   |}
 ];
 
+let toMatchResult =
+    (resultNode: Stats_Results_graphql.Types.fragment_edges_node) => {
+  id: resultNode.id,
+  player1: {
+    id: resultNode.player1.id,
+    name: resultNode.player1.name,
+  },
+  player2: {
+    id: resultNode.player2.id,
+    name: resultNode.player2.name,
+  },
+  player1goals: resultNode.player1goals,
+  player2goals: resultNode.player2goals,
+  date: resultNode.date,
+  extratime: resultNode.extratime,
+};
+
 [@react.component]
 let make =
     (
@@ -90,8 +106,13 @@ let make =
     setSortBy(_ => columnType);
     setSortDirection(currentDirection => currentDirection);
   };
+
   let statsResultsFragment = StatsResultsFragment.use(statsResultsFragment);
-  let results = statsResultsFragment.edges |> toListOfResults4;
+  let results =
+    statsResultsFragment.edges
+    ->Belt.Array.map(e => e.node->toMatchResult)
+    ->Belt.List.fromArray;
+
   let showEloRatings =
     dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone;
 

@@ -48,7 +48,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -65,22 +65,22 @@ module Query = [%relay.query
 
 let toMatchResult =
     (
-      headToHeadResult: HeadToHeadPageQuery_graphql.Types.response_results_connection_edges_node,
+      resultNode: HeadToHeadPageQuery_graphql.Types.response_results_connection_edges_node,
     )
     : matchResult => {
-  id: headToHeadResult.id,
+  id: resultNode.id,
   player1: {
-    id: headToHeadResult.player1.id,
-    name: headToHeadResult.player1.name,
+    id: resultNode.player1.id,
+    name: resultNode.player1.name,
   },
   player2: {
-    id: headToHeadResult.player2.id,
-    name: headToHeadResult.player2.name,
+    id: resultNode.player2.id,
+    name: resultNode.player2.name,
   },
-  player1goals: headToHeadResult.player1goals,
-  player2goals: headToHeadResult.player2goals,
-  date: headToHeadResult.date,
-  extratime: headToHeadResult.extratime,
+  player1goals: resultNode.player1goals,
+  player2goals: resultNode.player2goals,
+  date: resultNode.date,
+  extratime: resultNode.extratime,
 };
 
 [@react.component]
@@ -90,8 +90,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
 
   let matchResults =
     queryData.results_connection.edges
-    ->Belt.Array.map(e => e.node)
-    ->Belt.Array.map(toMatchResult)
+    ->Belt.Array.map(e => e.node->toMatchResult)
     ->Belt.List.fromArray;
 
   let stats = getPlayerStats(player1Name, matchResults);

@@ -40,7 +40,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -89,8 +89,7 @@ let make = (~playerName: string, ~communityName: string) => {
 
   let matchResults =
     queryData.results_connection.edges
-    ->Belt.Array.map(r => r.node)
-    ->Belt.Array.map(toMatchResult)
+    ->Belt.Array.map(r => r.node->toMatchResult)
     ->Belt.List.fromArray;
 
   let playerStats = getPlayerStats(playerName, matchResults);

@@ -23,10 +23,10 @@ module ResultFragment = [%relay.fragment
 ];
 
 let getHighlightedClassName =
-    (newResults: option(list(string)), currentResultId) => {
+    (newResults: option(array(string)), currentResultId) => {
   let resultIsFresh =
     newResults
-    ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResultId))
+    ->Belt.Option.map(n => n->Belt.Array.some(id => id == currentResultId))
     ->Belt.Option.getWithDefault(false);
 
   resultIsFresh ? "highlighted" : "";
@@ -63,7 +63,7 @@ let make =
       ~temp_showRatings,
       ~includeExtraTimeFragment,
       ~showGraphForPlayer,
-      ~resultIdsToHighlight: option(list(string)),
+      ~resultIdsToHighlight: option(array(string)),
     ) => {
   let result = ResultFragment.use(result);
   // let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
