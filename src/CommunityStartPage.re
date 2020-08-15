@@ -98,9 +98,6 @@ let make = (~communityName) => {
       resultsTableFragment=resultsFragment
       communitySettingsFragment
       communityName
-      dateFrom=startDate
-      dateTo=endDate
-      // highlightNewResults=true
     />
   </>;
 };

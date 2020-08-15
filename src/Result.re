@@ -66,8 +66,6 @@ let make =
       ~resultIdsToHighlight: option(array(string)),
     ) => {
   let result = ResultFragment.use(result);
-  // let lastFetchedResultsRef = React.useRef(Js.Nullable.null);
-  //  let result = resultWithRatings.result;
   let player1Won = hasPlayer1Won(result);
   let player2Won = hasPlayer2Won(result);
   let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);

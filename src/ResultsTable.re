@@ -67,12 +67,8 @@ let make =
       ~communitySettingsFragment,
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
-      // TODO: Implement highlighting
-      // ~resultIdsToHighlight: option(list(string))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
-      ~dateFrom: option(Js.Date.t)=?,
-      ~dateTo: option(Js.Date.t)=?,
     ) => {
   let lastFetchedResultIdsRef = React.useRef(Js.Nullable.null);
   let resultsTableFragment = ResultsTableFragment.use(resultsTableFragment);

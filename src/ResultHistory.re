@@ -26,7 +26,7 @@ module Query = [%relay.query
         ...ResultsTable_Results
         ...Stats_Results
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -132,8 +132,6 @@ let make = (~communityName: string) => {
       communityName
       resultsTableFragment=resultsFragment
       communitySettingsFragment
-      ?dateFrom
-      ?dateTo
       temp_showRatings={
         dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
       }
