@@ -23,14 +23,11 @@ let make = () => {
       <MaterialUi.Container maxWidth=`Sm>
         <CommunityStartPage communityName />
       </MaterialUi.Container>
-    // TODO: Extract TopBoard to top level, since it is going to be subscription-based anyway?
     | ["top"] =>
       <MaterialUi.Container maxWidth=`Lg>
         <div> {text("PLACEHOLDER FOR TOPBOARD: " ++ communityName)} </div>
       </MaterialUi.Container>
     // <TopBoard communityName />
-    // TODO: Parametrize the history route
-    // | ["history", startYear, startMonth, startDay, endYear, endMonth, endDay] =>
     | ["history"] =>
       <MaterialUi.Container maxWidth=`Sm>
         <ResultHistory communityName />
