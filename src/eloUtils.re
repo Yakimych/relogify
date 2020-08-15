@@ -15,13 +15,6 @@ type resultWithRatings = {
   player2RatingAfter: float,
 };
 
-type ratingsBeforeAndAfter = {
-  player1RatingBefore: float,
-  player1RatingAfter: float,
-  player2RatingBefore: float,
-  player2RatingAfter: float,
-};
-
 let resultsWithRatingsByDate =
     (first: resultWithRatings, second: resultWithRatings) =>
   DateFns.compareAsc(first.result.date, second.result.date);

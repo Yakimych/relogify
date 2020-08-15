@@ -58,8 +58,6 @@ module SingleResultFragment = [%relay.fragment
   |}
 ];
 
-// TODO: Consider moving the mutation here too
-
 [@react.component]
 let make =
     (

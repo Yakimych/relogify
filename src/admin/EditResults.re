@@ -26,7 +26,6 @@ let make =
 
   <>
     <Header page={AdminResultsPage(communityName)} />
-    // TODO: Move this into ResultsTable?
     {editResultsFragment.edges->Belt.Array.length === 0
        ? <MaterialUi.Card className="no-result-info">
            <MaterialUi.CardContent>

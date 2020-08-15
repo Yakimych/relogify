@@ -24,7 +24,7 @@ let make =
       ~onChange: string => unit,
       ~allowNewPlayer: bool=true,
     ) => {
-  let queryData = PlayerPickerFragment.use(playerPickerFragment);
+  let playerPickerData = PlayerPickerFragment.use(playerPickerFragment);
 
   let (isInCustomMode, setIsInCustomMode) = React.useState(_ => false);
 
@@ -47,7 +47,7 @@ let make =
   );
 
   let playerNames =
-    queryData.edges->Belt.Array.map(p => p.node.name)->distinctStrings;
+    playerPickerData.edges->Belt.Array.map(p => p.node.name)->distinctStrings;
 
   isInCustomMode || Belt.Array.length(playerNames) === 0
     ? <MaterialUi.TextField

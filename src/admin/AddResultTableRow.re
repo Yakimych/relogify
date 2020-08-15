@@ -76,7 +76,7 @@ let make =
     switch (validationResult) {
     | Error(message) => alert(message)
     | Ok((player1Name, player2Name)) =>
-      let communityInput: AddResultTableRowMutation_graphql.Types.communities_obj_rel_insert_input =
+      let communityInput =
         AddResultTableRowMutation_graphql.Utils.(
           make_communities_obj_rel_insert_input(
             ~data=make_communities_insert_input(~name=communityName, ()),

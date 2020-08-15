@@ -14,9 +14,6 @@ let make = (~communityName, ~subRoute) => {
         r->Belt.Array.some(r => r === "Admin")
       );
 
-  Js.log2("isLoggedIn: ", isLoggedIn);
-  Js.log2("isLoggedInAsAdmin: ", isLoggedInAsAdmin);
-
   switch (isLoggedIn, isLoggedInAsAdmin) {
   | (true, true) => <CommunityAdminPage communityName subRoute />
   | (true, false) => <span> {text("Access denied to admin content")} </span>
