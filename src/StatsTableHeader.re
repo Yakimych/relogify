@@ -16,7 +16,7 @@ let make =
     (
       ~scoreTypeFragment,
       ~resultsWithRatings,
-      ~requestSort, // TODO: Rename to onSortRequested?
+      ~onSortRequested,
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
       ~sortBy,
@@ -46,7 +46,9 @@ let make =
                      }
                      direction=sortDirection
                      onClick={_ =>
-                       requestSort(EloRating(resultsWithRatings.ratingMap))
+                       onSortRequested(
+                         EloRating(resultsWithRatings.ratingMap),
+                       )
                      }>
                      {text("Elo")}
                    </MaterialUi.TableSortLabel>
@@ -60,7 +62,7 @@ let make =
           <MaterialUi.TableSortLabel
             active={sortBy === WinsPerMatch}
             direction=sortDirection
-            onClick={_ => requestSort(WinsPerMatch)}>
+            onClick={_ => onSortRequested(WinsPerMatch)}>
             {text("W%")}
           </MaterialUi.TableSortLabel>
         </MaterialUi.Tooltip>
@@ -70,7 +72,7 @@ let make =
           <MaterialUi.TableSortLabel
             active={sortBy === MatchesWon}
             direction=sortDirection
-            onClick={_ => requestSort(MatchesWon)}>
+            onClick={_ => onSortRequested(MatchesWon)}>
             {text("W")}
           </MaterialUi.TableSortLabel>
         </MaterialUi.Tooltip>
@@ -80,7 +82,7 @@ let make =
           <MaterialUi.TableSortLabel
             active={sortBy === MatchesLost}
             direction=sortDirection
-            onClick={_ => requestSort(MatchesLost)}>
+            onClick={_ => onSortRequested(MatchesLost)}>
             {text("L")}
           </MaterialUi.TableSortLabel>
         </MaterialUi.Tooltip>
@@ -90,7 +92,7 @@ let make =
           <MaterialUi.TableSortLabel
             active={sortBy === GoalsScored}
             direction=sortDirection
-            onClick={_ => requestSort(GoalsScored)}>
+            onClick={_ => onSortRequested(GoalsScored)}>
             {text(texts.pointsWonShort)}
           </MaterialUi.TableSortLabel>
         </MaterialUi.Tooltip>
@@ -100,7 +102,7 @@ let make =
           <MaterialUi.TableSortLabel
             active={sortBy === GoalsConceded}
             direction=sortDirection
-            onClick={_ => requestSort(GoalsConceded)}>
+            onClick={_ => onSortRequested(GoalsConceded)}>
             {text(texts.pointsLostShort)}
           </MaterialUi.TableSortLabel>
         </MaterialUi.Tooltip>
@@ -113,7 +115,7 @@ let make =
                  <MaterialUi.TableSortLabel
                    active={sortBy === GoalDiff}
                    direction=sortDirection
-                   onClick={_ => requestSort(GoalDiff)}>
+                   onClick={_ => onSortRequested(GoalDiff)}>
                    {text("+/-")}
                  </MaterialUi.TableSortLabel>
                </MaterialUi.Tooltip>
@@ -124,7 +126,7 @@ let make =
                  <MaterialUi.TableSortLabel
                    active={sortBy === GoalsScoredPerMatch}
                    direction=sortDirection
-                   onClick={_ => requestSort(GoalsScoredPerMatch)}>
+                   onClick={_ => onSortRequested(GoalsScoredPerMatch)}>
                    {text(texts.pointsWonPerMatchShort)}
                  </MaterialUi.TableSortLabel>
                </MaterialUi.Tooltip>
@@ -135,7 +137,7 @@ let make =
                  <MaterialUi.TableSortLabel
                    active={sortBy === GoalsConcededPerMatch}
                    direction=sortDirection
-                   onClick={_ => requestSort(GoalsConcededPerMatch)}>
+                   onClick={_ => onSortRequested(GoalsConcededPerMatch)}>
                    {text(texts.pointsLostPerMatchShort)}
                  </MaterialUi.TableSortLabel>
                </MaterialUi.Tooltip>

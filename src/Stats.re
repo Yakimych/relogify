@@ -140,7 +140,7 @@ let make =
            </div>
            <MaterialUi.Table size=`Small>
              <StatsTableHeader
-               requestSort
+               onSortRequested=requestSort
                sortBy
                sortDirection
                scoreTypeFragment
