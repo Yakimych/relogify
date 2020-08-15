@@ -22,6 +22,14 @@ module ResultFragment = [%relay.fragment
   |}
 ];
 
+module ExtraTimeColumnFragment = [%relay.fragment
+  {|
+    fragment ExtraTimeColumn_IncludeExtraTime on community_settings {
+      include_extra_time
+    }
+  |}
+];
+
 let getHighlightedClassName =
     (newResults: option(array(string)), currentResultId) => {
   let resultIsFresh =
@@ -70,6 +78,9 @@ let make =
   let player2Won = hasPlayer2Won(result);
   let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
   let formattedDate = formatDate(result.date);
+
+  let includeExtraTimeFragment =
+    ExtraTimeColumnFragment.use(includeExtraTimeFragment);
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 
@@ -125,11 +136,10 @@ let make =
            />
          : React.null}
     </MaterialUi.TableCell>
-    {isWide
-       ? <ExtraTimeColumn
-           extraTime={result.extratime}
-           includeExtraTimeFragment
-         />
+    {isWide && includeExtraTimeFragment.include_extra_time
+       ? <MaterialUi.TableCell style=Styles.extraTimeStyle align=`Right>
+           {React.string(result.extratime ? "X" : "")}
+         </MaterialUi.TableCell>
        : React.null}
     {isWide
        ? <MaterialUi.TableCell> {text(formattedDate)} </MaterialUi.TableCell>
