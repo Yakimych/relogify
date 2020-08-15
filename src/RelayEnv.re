@@ -1,22 +1,13 @@
-/**
- * This file sets up the Relay environment, which is then
- * injected into the context in Index.re.
- * It's also used standalone in mutations and when using other
- * functions that does not have access to the React context.
- */
+[@bs.val]
+external apiBaseUrl: string = "process.env.REACT_APP_RELAY_API_BASE_URL";
 
-// This is just a custom exception to indicate that something went wrong.
 exception Graphql_error(string);
 
-/**
- * A standard fetch that sends our operation and variables to the
- * GraphQL server, and then decodes and returns the response.
- */
 let fetchQuery: ReasonRelay.Network.fetchFunctionPromise =
   (operation, variables, _cacheConfig) =>
     Fetch.(
       fetchWithInit(
-        "https://stage.yakim.dev/v1beta1/relay",
+        "https://" ++ apiBaseUrl,
         RequestInit.make(
           ~method_=Post,
           ~body=
@@ -48,24 +39,9 @@ let fetchQuery: ReasonRelay.Network.fetchFunctionPromise =
          )
     );
 
-/**
- * This sets up the network layer. We make a promise based network network
- * layer here, but Relay also has own observables that you could set up
- * your network layer to use instead of promises.
- */
 let network =
   ReasonRelay.Network.makePromiseBased(~fetchFunction=fetchQuery, ());
 
-/**
- * This creates the actual environment, which consists of a network layer,
- * and a store for the cache.
- *
- * The environment can be customized somewhat in addition to what's done
- * here. For example, you can provide a `getDataID` function that would
- * override how data IDs are constructed for the store. This is necessary
- * when you have a GraphQL server where ids are not globally unique for
- * example.
- */
 let environment =
   ReasonRelay.Environment.make(
     ~network,
