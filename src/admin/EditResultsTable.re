@@ -42,7 +42,6 @@ let editResultsTableReducer =
     }
   };
 
-// TODO: Extract the "returning" part into a fragment and use the same in the query?
 module UpdateMutation = [%relay.mutation
   {|
     mutation EditResultsTable_UpdateResult_Mutation(

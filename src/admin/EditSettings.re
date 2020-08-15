@@ -23,35 +23,7 @@ let defaultCommunitySettings: EditSettingsFragment_CommunitySettings_graphql.Typ
   use_dropdown_for_points: true,
 };
 
-// TODO: Solve the issue with multiple temp types
-
-let scoreTypeConversion_temp =
-    (
-      scoreType: EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
-    )
-    : EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum =>
-  switch (scoreType) {
-  | `Goals => `Goals
-  | `Points => `Points
-  | _ => `Points
-  };
-
-let scoreTypeConversion_temp2 =
-    (
-      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
-    )
-    : EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum =>
-  switch (scoreType) {
-  | `Goals => `Goals
-  | `Points => `Points
-  | _ => `Points
-  };
-
-let scoreTypeConversion_temp3 =
-    (
-      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
-    )
-    : EditSettings_CreateCommunitySettings_Mutation_graphql.enum_score_types_enum =>
+let convertScoreType = scoreType =>
   switch (scoreType) {
   | `Goals => `Goals
   | `Points => `Points
@@ -73,7 +45,7 @@ let reducer =
     }
   | SetScoreType(scoreType) => {
       ...settings,
-      score_type: scoreTypeConversion_temp(scoreType),
+      score_type: convertScoreType(scoreType),
     }
   | SetMaxSelectablePoints(maxSelectablePoints) => {
       ...settings,
@@ -81,20 +53,7 @@ let reducer =
     }
   };
 
-let scoreTypeToString =
-    (
-      scoreType: EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
-    ) =>
-  switch (scoreType) {
-  | `Goals => "Goals"
-  | `Points => "Points"
-  | _ => "Unknown score type"
-  };
-
-let scoreTypeToString2 =
-    (
-      scoreType: EditSettingsFragment_CommunitySettings_graphql.enum_score_types_enum,
-    ) =>
+let scoreTypeToString = scoreType =>
   switch (scoreType) {
   | `Goals => "Goals"
   | `Points => "Points"
@@ -102,7 +61,6 @@ let scoreTypeToString2 =
   };
 
 let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
-// let scoreTypes = [|"Goals", "Points"|];
 
 module EditSettingsFragment = [%relay.fragment
   {|
@@ -165,12 +123,7 @@ let make = (~communityName: string, ~editSettingsFragment) => {
   let (state, dispatch) =
     React.useReducer(reducer, initialCommunitySettings);
 
-  let onSaveError = _ => {
-    // TODO: Do we need both i onCreateCompleted with Some(errors) and onSaveError?
-    alert(
-      "Failed saving settings",
-    );
-  };
+  let onSaveError = _ => alert("Failed saving settings");
 
   let onCreateCompleted = (_, maybeMutationErrors) => {
     switch (maybeMutationErrors) {
@@ -199,7 +152,7 @@ let make = (~communityName: string, ~editSettingsFragment) => {
                 ),
               ~allow_draws=state.allow_draws,
               ~max_selectable_points=state.max_selectable_points,
-              ~score_type=scoreTypeConversion_temp3(state.score_type),
+              ~score_type=convertScoreType(state.score_type),
               ~include_extra_time=state.include_extra_time,
               ~use_dropdown_for_points=state.use_dropdown_for_points,
               (),
@@ -240,7 +193,7 @@ let make = (~communityName: string, ~editSettingsFragment) => {
         communityName,
         allowDraws: Some(state.allow_draws),
         maxSelectablePoints: Some(state.max_selectable_points),
-        scoreType: Some(scoreTypeConversion_temp2(state.score_type)),
+        scoreType: Some(convertScoreType(state.score_type)),
         includeExtraTime: Some(state.include_extra_time),
         useDropDownForPoints: Some(state.use_dropdown_for_points),
       },
@@ -294,7 +247,7 @@ let make = (~communityName: string, ~editSettingsFragment) => {
         {text("Score type: ")}
         // TODO: Style this without inline styles
         <MaterialUi.NativeSelect
-          value={state.score_type |> scoreTypeToString2}
+          value={state.score_type |> scoreTypeToString}
           style={ReactDOMRe.Style.make(
             ~width="200px",
             ~marginBottom="10px",

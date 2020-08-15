@@ -27,7 +27,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       players_connection(
         first: 1000
         where: { community: { name: { _eq: $communityName } } }
@@ -43,7 +43,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -62,7 +62,6 @@ module Query = [%relay.query
 
 [@react.component]
 let make = (~communityName) => {
-  // TODO: Remove? Make fragments that require start/end dates parametrizable?
   let (startDate, endDate) = getCurrentWeek();
 
   let queryData =
