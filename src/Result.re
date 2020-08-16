@@ -69,7 +69,7 @@ let make =
       ~communityName: string,
       ~mainPlayerName: option(string),
       ~temp_showRatings,
-      ~includeExtraTimeFragment,
+      ~maybeIncludeExtraTimeFragment,
       ~showGraphForPlayer,
       ~resultIdsToHighlight: option(array(string)),
     ) => {
@@ -79,8 +79,15 @@ let make =
   let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
   let formattedDate = formatDate(result.date);
 
-  let includeExtraTimeFragment =
-    ExtraTimeColumnFragment.use(includeExtraTimeFragment);
+  let includeExtraTime =
+    maybeIncludeExtraTimeFragment->Belt.Option.mapWithDefault(
+      DefaultCommunitySettings.includeExtraTime,
+      includeExtraTimeFragment => {
+        let includeExtraTimeFragment =
+          ExtraTimeColumnFragment.use(includeExtraTimeFragment);
+        includeExtraTimeFragment.include_extra_time;
+      },
+    );
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 
@@ -136,7 +143,7 @@ let make =
            />
          : React.null}
     </MaterialUi.TableCell>
-    {isWide && includeExtraTimeFragment.include_extra_time
+    {isWide && includeExtraTime
        ? <MaterialUi.TableCell style=Styles.extraTimeStyle align=`Right>
            {React.string(result.extratime ? "X" : "")}
          </MaterialUi.TableCell>

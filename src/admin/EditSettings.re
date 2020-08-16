@@ -113,9 +113,12 @@ module CreateCommunitySettingsMutation = [%relay.mutation
 ];
 
 [@react.component]
-let make = (~communityName: string, ~editSettingsFragment) => {
+let make = (~communityName: string, ~maybeEditSettingsFragment) => {
   let initialCommunitySettings =
-    EditSettingsFragment.use(editSettingsFragment);
+    maybeEditSettingsFragment->Belt.Option.mapWithDefault(
+      defaultCommunitySettings, editSettingsFragment =>
+      EditSettingsFragment.use(editSettingsFragment)
+    );
 
   let (updateSettings, _) = UpdateCommunitySettingsMutation.use();
   let (createSettings, _) = CreateCommunitySettingsMutation.use();

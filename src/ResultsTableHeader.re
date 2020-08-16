@@ -11,10 +11,18 @@ module ResultTableHeaderFragment = [%relay.fragment
 ];
 
 [@react.component]
-let make = (~communitySettingsFragment) => {
-  let resultTableHeaderFragment =
-    ResultTableHeaderFragment.use(communitySettingsFragment);
-  let texts = Texts.getScoreTypeTexts(resultTableHeaderFragment.score_type);
+let make = (~maybeCommunitySettingsFragment) => {
+  let communitySettings =
+    maybeCommunitySettingsFragment
+    ->Belt.Option.map(communitySettingsFragment =>
+        ResultTableHeaderFragment.use(communitySettingsFragment)
+      )
+    ->Belt.Option.getWithDefault({
+        score_type: DefaultCommunitySettings.scoreType,
+        include_extra_time: DefaultCommunitySettings.includeExtraTime,
+      });
+
+  let texts = Texts.getScoreTypeTexts(communitySettings.score_type);
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 
@@ -34,7 +42,7 @@ let make = (~communitySettingsFragment) => {
         {text(texts.pointsPlayerShort ++ "2")}
       </MaterialUi.TableCell>
       <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
-      {isWide && resultTableHeaderFragment.include_extra_time
+      {isWide && communitySettings.include_extra_time
          ? <MaterialUi.TableCell style=extraTimeStyle align=`Right>
              <MaterialUi.Tooltip title={text("Extra time")} placement=`Top>
                <span> {text("E")} </span>

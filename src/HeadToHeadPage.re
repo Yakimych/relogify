@@ -97,9 +97,10 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
 
   let resultsTableFragment = queryData.results_connection.fragmentRefs;
 
-  let communitySettingsFragment =
-    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
-      fragmentRefs;
+  let maybeCommunitySettingsFragment =
+    queryData.community_settings_connection.edges
+    ->Belt.Array.get(0)
+    ->Belt.Option.map(e => e.node.fragmentRefs);
 
   <>
     <Header page={HeadToHead(communityName, player1Name, player2Name)} />
@@ -155,7 +156,7 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
       />
       <ResultsTable
         resultsTableFragment
-        communitySettingsFragment
+        maybeCommunitySettingsFragment
         communityName
       />
     </>

@@ -124,7 +124,7 @@ let make =
       ~playersFragment,
       ~resultsFragment,
       ~communityName: string,
-      ~communitySettingsFragment,
+      ~maybeCommunitySettingsFragment,
     ) => {
   let resultsFragment = EditResultsTableFragment.use(resultsFragment);
 
@@ -249,7 +249,7 @@ let make =
       <MaterialUi.TableBody>
         <AddResultTableRow
           communityName
-          communitySettingsFragment
+          maybeCommunitySettingsFragment
           playerPickerFragment=playersFragment
         />
         {resultsFragment.edges
@@ -274,7 +274,7 @@ let make =
                 | Editing(id) when result.id === id =>
                   <EditResultTableRow
                     existingPlayerPickerFragment=playersFragment
-                    communitySettingsFragment
+                    maybeCommunitySettingsFragment
                     resultFragment={result.fragmentRefs}
                     id
                     disabled={apiRequestIsInProgress(state)}

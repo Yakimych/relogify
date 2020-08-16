@@ -62,7 +62,7 @@ module SingleResultFragment = [%relay.fragment
 let make =
     (
       ~existingPlayerPickerFragment,
-      ~communitySettingsFragment,
+      ~maybeCommunitySettingsFragment,
       ~id,
       ~resultFragment,
       ~disabled,
@@ -74,8 +74,16 @@ let make =
   let (valuesUnderEdit, dispatch) =
     React.useReducer(editResultReducer, initialValuesToEdit);
 
+  let defaultCommunitySettings: CommunitySettingsFragment.Types.fragment = {
+    score_type: DefaultCommunitySettings.scoreType,
+    max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
+  };
+
   let communitySettings =
-    CommunitySettingsFragment.use(communitySettingsFragment);
+    maybeCommunitySettingsFragment->Belt.Option.mapWithDefault(
+      defaultCommunitySettings, communitySettingsFragment =>
+      CommunitySettingsFragment.use(communitySettingsFragment)
+    );
 
   <>
     <MaterialUi.TableCell>

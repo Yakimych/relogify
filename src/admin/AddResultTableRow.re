@@ -43,11 +43,20 @@ module AddMutation = [%relay.mutation
 let make =
     (
       ~communityName: string,
-      ~communitySettingsFragment,
+      ~maybeCommunitySettingsFragment,
       ~playerPickerFragment,
     ) => {
+  let defaultCommunitySettings: AddResultTableRowFragment.Types.fragment = {
+    score_type: DefaultCommunitySettings.scoreType,
+    max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
+    allow_draws: DefaultCommunitySettings.allowDraws,
+  };
+
   let communitySettings =
-    AddResultTableRowFragment.use(communitySettingsFragment);
+    maybeCommunitySettingsFragment->Belt.Option.mapWithDefault(
+      defaultCommunitySettings, communitySettingsFragment =>
+      AddResultTableRowFragment.use(communitySettingsFragment)
+    );
 
   let (mutate, isAddingResult) = AddMutation.use();
 

@@ -13,7 +13,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       players_connection(
         first: 1000
         where: { community: { name: { _eq: $communityName } } }
@@ -27,7 +27,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -50,15 +50,16 @@ let make = (~communityName, ~subRoute) => {
   let playersFragment = queryData.players_connection.fragmentRefs;
   let resultsFragment = queryData.results_connection.fragmentRefs;
 
-  let communitySettingsFragment =
-    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
-      fragmentRefs;
+  let maybeCommunitySettingsFragment =
+    queryData.community_settings_connection.edges
+    ->Belt.Array.get(0)
+    ->Belt.Option.map(e => e.node.fragmentRefs);
 
   switch (subRoute) {
   | ["settings"] =>
     <EditSettings
       communityName
-      editSettingsFragment=communitySettingsFragment
+      maybeEditSettingsFragment=maybeCommunitySettingsFragment
     />
   | ["players"] =>
     <EditPlayers communityName editPlayersFragment=playersFragment />
@@ -68,7 +69,7 @@ let make = (~communityName, ~subRoute) => {
       communityName
       editResultsFragment=resultsFragment
       playersFragment
-      communitySettingsFragment
+      maybeCommunitySettingsFragment
     />
   };
 };

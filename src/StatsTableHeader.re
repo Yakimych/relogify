@@ -14,7 +14,7 @@ module StatsTableHeaderFragment = [%relay.fragment
 [@react.component]
 let make =
     (
-      ~scoreTypeFragment,
+      ~maybeScoreTypeFragment,
       ~resultsWithRatings,
       ~onSortRequested,
       ~dateFrom: option(Js.Date.t)=?,
@@ -22,8 +22,12 @@ let make =
       ~sortBy,
       ~sortDirection,
     ) => {
-  let scoreTypeFragment = StatsTableHeaderFragment.use(scoreTypeFragment);
-  let texts = Texts.getScoreTypeTexts(scoreTypeFragment.score_type);
+  let scoreType =
+    maybeScoreTypeFragment->Belt.Option.mapWithDefault(
+      DefaultCommunitySettings.scoreType, scoreTypeFragment =>
+      StatsTableHeaderFragment.use(scoreTypeFragment).score_type
+    );
+  let texts = Texts.getScoreTypeTexts(scoreType);
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   let showEloRatings =

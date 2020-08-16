@@ -93,7 +93,7 @@ let make =
     (
       ~communityName: string,
       ~statsResultsFragment,
-      ~scoreTypeFragment,
+      ~maybeScoreTypeFragment,
       ~dateFrom: option(Js.Date.t)=?,
       ~dateTo: option(Js.Date.t)=?,
       ~playerLimit: option(int)=?,
@@ -143,7 +143,7 @@ let make =
                onSortRequested=requestSort
                sortBy
                sortDirection
-               scoreTypeFragment
+               maybeScoreTypeFragment
                resultsWithRatings
                ?dateFrom
                ?dateTo

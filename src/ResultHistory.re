@@ -77,9 +77,10 @@ let make = (~communityName: string) => {
 
   let resultsFragment = queryData.results_connection.fragmentRefs;
 
-  let communitySettingsFragment =
-    queryData.community_settings_connection.edges->Belt.Array.getExn(0).node.
-      fragmentRefs;
+  let maybeCommunitySettingsFragment =
+    queryData.community_settings_connection.edges
+    ->Belt.Array.get(0)
+    ->Belt.Option.map(e => e.node.fragmentRefs);
 
   <>
     <Header page={History(communityName)} />
@@ -126,12 +127,12 @@ let make = (~communityName: string) => {
       ?dateFrom
       ?dateTo
       statsResultsFragment=resultsFragment
-      scoreTypeFragment=communitySettingsFragment
+      maybeScoreTypeFragment=maybeCommunitySettingsFragment
     />
     <ResultsTable
       communityName
       resultsTableFragment=resultsFragment
-      communitySettingsFragment
+      maybeCommunitySettingsFragment
       temp_showRatings={
         dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
       }
