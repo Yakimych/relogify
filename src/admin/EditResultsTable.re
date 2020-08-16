@@ -169,18 +169,13 @@ let make =
 
   let (state, dispatch) = React.useReducer(editResultsTableReducer, Idle);
 
-  let onDeleteSuccess = (_, _) => {
-    // TODO: Handle errors
-    // TODO: Update UI
-    dispatch(StopDeleting);
-  };
-
   let deleteResult = () => {
     switch (state) {
     | DeleteConfirmationPending(resultId) =>
       dispatch(StartDeleting);
       deleteResultMutation(
-        ~onCompleted=onDeleteSuccess,
+        ~onCompleted=(_, _) => dispatch(StopDeleting),
+        ~onError=maybeError => Js.log2("Error deleting result: ", maybeError),
         ~updater=deleteUpdater,
         ~variables={resultId: toInternalId(resultId)},
         (),
@@ -193,18 +188,13 @@ let make =
     };
   };
 
-  let onUpdateSuccess = (_, _) => {
-    // TODO: Handle errors
-    // TODO: Update UI
-    dispatch(StopEditing);
-  };
-
   let updateResult = (resultId: string, editedValues: editableResultValues) => {
     switch (state) {
     | Editing(_) =>
       dispatch(StartUpdating);
       updateResultMutation(
-        ~onCompleted=onUpdateSuccess,
+        ~onCompleted=(_, _) => dispatch(StopEditing),
+        ~onError=maybeError => Js.log2("Error updating result: ", maybeError),
         ~variables=
           EditResultsTable_UpdateResult_Mutation_graphql.Utils.makeVariables(
             ~resultId=resultId |> toInternalId,
