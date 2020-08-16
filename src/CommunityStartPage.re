@@ -27,7 +27,7 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       players_connection(
         first: 1000
         where: { community: { name: { _eq: $communityName } } }
@@ -43,13 +43,13 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
         edges {
           node {
-            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultCommunitySettings_IncludeExtraTime
             ...ResultsTableHeader_CommunitySettings
             ...AddResultFragment_CommunitySettings
             ...StatsTableHeader_ScoreType

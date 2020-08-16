@@ -22,9 +22,9 @@ module ResultFragment = [%relay.fragment
   |}
 ];
 
-module ExtraTimeColumnFragment = [%relay.fragment
+module CommunitySettingsFragment = [%relay.fragment
   {|
-    fragment ExtraTimeColumn_IncludeExtraTime on community_settings {
+    fragment ResultCommunitySettings_IncludeExtraTime on community_settings {
       include_extra_time
     }
   |}
@@ -84,7 +84,7 @@ let make =
       DefaultCommunitySettings.includeExtraTime,
       includeExtraTimeFragment => {
         let includeExtraTimeFragment =
-          ExtraTimeColumnFragment.use(includeExtraTimeFragment);
+          CommunitySettingsFragment.use(includeExtraTimeFragment);
         includeExtraTimeFragment.include_extra_time;
       },
     );

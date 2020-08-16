@@ -24,7 +24,7 @@ module Internal = {
 type t;
 type fragmentRef;
 external getFragmentRef:
-  ReasonRelay.fragmentRefs([> | `ExtraTimeColumn_IncludeExtraTime]) =>
+  ReasonRelay.fragmentRefs([> | `ResultCommunitySettings_IncludeExtraTime]) =>
   fragmentRef =
   "%identity";
 
@@ -37,7 +37,7 @@ let node: operationType = [%raw
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "ExtraTimeColumn_IncludeExtraTime",
+  "name": "ResultCommunitySettings_IncludeExtraTime",
   "selections": [
     {
       "alias": null,

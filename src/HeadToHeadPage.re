@@ -48,13 +48,13 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
         edges {
           node {
-            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultCommunitySettings_IncludeExtraTime
             ...ResultsTableHeader_CommunitySettings
           }
         }

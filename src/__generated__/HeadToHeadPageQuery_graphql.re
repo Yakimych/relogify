@@ -36,7 +36,7 @@ module Types = {
     fragmentRefs:
       ReasonRelay.fragmentRefs(
         [
-          | `ExtraTimeColumn_IncludeExtraTime
+          | `ResultCommunitySettings_IncludeExtraTime
           | `ResultsTableHeader_CommunitySettings
         ],
       ),
@@ -419,7 +419,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "ExtraTimeColumn_IncludeExtraTime"
+                    "name": "ResultCommunitySettings_IncludeExtraTime"
                   },
                   {
                     "args": null,
@@ -536,12 +536,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2589a235f130bb3066ab277dc586c5e1",
+    "cacheID": "d0b3d5bd0dfb93fdb3ea2c69f4cc71ff",
     "id": null,
     "metadata": {},
     "name": "HeadToHeadPageQuery",
     "operationKind": "query",
-    "text": "query HeadToHeadPageQuery(\n  $communityName: String!\n  $player1Name: String!\n  $player2Name: String!\n) {\n  results_connection(where: {_and: [{community: {name: {_eq: $communityName}}}, {_or: [{player1: {name: {_eq: $player1Name}}}, {player2: {name: {_eq: $player1Name}}}]}, {_or: [{player1: {name: {_eq: $player2Name}}}, {player2: {name: {_eq: $player2Name}}}]}]}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        id\n        player1 {\n          id\n          name\n        }\n        player1goals\n        player2 {\n          id\n          name\n        }\n        player2goals\n        date\n        extratime\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ExtraTimeColumn_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment ExtraTimeColumn_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
+    "text": "query HeadToHeadPageQuery(\n  $communityName: String!\n  $player1Name: String!\n  $player2Name: String!\n) {\n  results_connection(where: {_and: [{community: {name: {_eq: $communityName}}}, {_or: [{player1: {name: {_eq: $player1Name}}}, {player2: {name: {_eq: $player1Name}}}]}, {_or: [{player1: {name: {_eq: $player2Name}}}, {player2: {name: {_eq: $player2Name}}}]}]}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        id\n        player1 {\n          id\n          name\n        }\n        player1goals\n        player2 {\n          id\n          name\n        }\n        player2goals\n        date\n        extratime\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ResultCommunitySettings_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        id\n      }\n    }\n  }\n}\n\nfragment ResultCommunitySettings_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n"
   }
 };
 })() |json}

@@ -26,13 +26,13 @@ module Query = [%relay.query
         ...ResultsTable_Results
         ...Stats_Results
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
         edges {
           node {
-            ...ExtraTimeColumn_IncludeExtraTime
+            ...ResultCommunitySettings_IncludeExtraTime
             ...ResultsTableHeader_CommunitySettings
             ...StatsTableHeader_ScoreType
           }
