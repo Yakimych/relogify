@@ -24,7 +24,8 @@ module ResultFragment = [%relay.fragment
 
 module CommunitySettingsFragment = [%relay.fragment
   {|
-    fragment ResultCommunitySettings_IncludeExtraTime on community_settings {
+    fragment ResultCommunitySettings_IncludeExtraTime on community_settings
+      @relay(plural: true) {
       include_extra_time
     }
   |}
@@ -69,7 +70,7 @@ let make =
       ~communityName: string,
       ~mainPlayerName: option(string),
       ~temp_showRatings,
-      ~maybeIncludeExtraTimeFragment,
+      ~includeExtraTimeFragments,
       ~showGraphForPlayer,
       ~resultIdsToHighlight: option(array(string)),
     ) => {
@@ -80,14 +81,11 @@ let make =
   let formattedDate = formatDate(result.date);
 
   let includeExtraTime =
-    maybeIncludeExtraTimeFragment->Belt.Option.mapWithDefault(
-      DefaultCommunitySettings.includeExtraTime,
-      includeExtraTimeFragment => {
-        let includeExtraTimeFragment =
-          CommunitySettingsFragment.use(includeExtraTimeFragment);
-        includeExtraTimeFragment.include_extra_time;
-      },
-    );
+    CommunitySettingsFragment.use(includeExtraTimeFragments)
+    ->Belt.Array.get(0)
+    ->Belt.Option.mapWithDefault(DefaultCommunitySettings.includeExtraTime, f =>
+        f.include_extra_time
+      );
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
 

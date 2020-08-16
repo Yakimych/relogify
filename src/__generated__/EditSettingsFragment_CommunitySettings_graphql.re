@@ -5,13 +5,14 @@ type enum_score_types_enum = pri [> | `Goals | `Points];
 module Types = {
   [@ocaml.warning "-30"];
 
-  type fragment = {
+  type fragment_t = {
     allow_draws: bool,
     max_selectable_points: int,
     score_type: enum_score_types_enum,
     use_dropdown_for_points: bool,
     include_extra_time: bool,
   };
+  type fragment = array(fragment_t);
 };
 
 module Internal = {
@@ -32,7 +33,9 @@ module Internal = {
 type t;
 type fragmentRef;
 external getFragmentRef:
-  ReasonRelay.fragmentRefs([> | `EditSettingsFragment_CommunitySettings]) =>
+  array(
+    ReasonRelay.fragmentRefs([> | `EditSettingsFragment_CommunitySettings]),
+  ) =>
   fragmentRef =
   "%identity";
 
@@ -47,7 +50,9 @@ let node: operationType = [%raw
   {json| {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "plural": true
+  },
   "name": "EditSettingsFragment_CommunitySettings",
   "selections": [
     {

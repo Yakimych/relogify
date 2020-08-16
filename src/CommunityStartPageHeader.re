@@ -5,7 +5,7 @@ open Types;
 let make =
     (
       ~communityName: string,
-      ~maybeCommunitySettingsFragment,
+      ~communitySettingsFragments,
       ~playerPickerFragment,
     ) => {
   let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
@@ -29,7 +29,7 @@ let make =
               <span />
               <AddResult
                 communityName
-                maybeCommunitySettingsFragment
+                communitySettingsFragments
                 playerPickerFragment
                 onResultAdded={_ => setAddResultIsOpen(_ => false)}
               />

@@ -76,28 +76,27 @@ let make = (~communityName) => {
 
   let resultsFragment = queryData.results_connection.fragmentRefs;
 
-  let maybeCommunitySettingsFragment =
+  let communitySettingsFragments =
     queryData.community_settings_connection.edges
-    ->Belt.Array.get(0)
-    ->Belt.Option.map(e => e.node.fragmentRefs);
+    ->Belt.Array.map(e => e.node.fragmentRefs);
 
   let playersFragment = queryData.players_connection.fragmentRefs;
   <>
     <CommunityStartPageHeader
       communityName
-      maybeCommunitySettingsFragment
+      communitySettingsFragments
       playerPickerFragment=playersFragment
     />
     <Stats
       statsResultsFragment=resultsFragment
-      maybeScoreTypeFragment=maybeCommunitySettingsFragment
+      scoreTypeFragments=communitySettingsFragments
       communityName
       dateFrom=startDate
       dateTo=endDate
     />
     <ResultsTable
       resultsTableFragment=resultsFragment
-      maybeCommunitySettingsFragment
+      communitySettingsFragments
       communityName
     />
   </>;

@@ -5,7 +5,7 @@ open EloUtils;
 
 module StatsTableHeaderFragment = [%relay.fragment
   {|
-    fragment StatsTableHeader_ScoreType on community_settings {
+    fragment StatsTableHeader_ScoreType on community_settings @relay(plural: true) {
       score_type
     }
   |}
@@ -14,7 +14,7 @@ module StatsTableHeaderFragment = [%relay.fragment
 [@react.component]
 let make =
     (
-      ~maybeScoreTypeFragment,
+      ~scoreTypeFragments,
       ~resultsWithRatings,
       ~onSortRequested,
       ~dateFrom: option(Js.Date.t)=?,
@@ -22,12 +22,13 @@ let make =
       ~sortBy,
       ~sortDirection,
     ) => {
-  let scoreType =
-    maybeScoreTypeFragment->Belt.Option.mapWithDefault(
-      DefaultCommunitySettings.scoreType, scoreTypeFragment =>
-      StatsTableHeaderFragment.use(scoreTypeFragment).score_type
-    );
-  let texts = Texts.getScoreTypeTexts(scoreType);
+  let defaultCommunitySettings: StatsTableHeaderFragment.Types.fragment_t = {
+    score_type: DefaultCommunitySettings.scoreType,
+  };
+  let communitySettings =
+    StatsTableHeaderFragment.use(scoreTypeFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
+  let texts = Texts.getScoreTypeTexts(communitySettings.score_type);
 
   let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
   let showEloRatings =

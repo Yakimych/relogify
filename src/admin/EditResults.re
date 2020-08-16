@@ -19,7 +19,7 @@ let make =
       ~communityName: string,
       ~editResultsFragment,
       ~playersFragment,
-      ~maybeCommunitySettingsFragment,
+      ~communitySettingsFragments,
     ) => {
   let editResultsFragment = EditResultsFragment.use(editResultsFragment);
   let editResultsTableFragment = editResultsFragment.fragmentRefs;
@@ -38,7 +38,7 @@ let make =
            resultsFragment=editResultsTableFragment
            playersFragment
            communityName
-           maybeCommunitySettingsFragment
+           communitySettingsFragments
          />}
   </>;
 };

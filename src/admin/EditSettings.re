@@ -6,7 +6,7 @@ open Types;
 
 type editCommunitySettingsAction =
   | SetAllSettings(
-      EditSettingsFragment_CommunitySettings_graphql.Types.fragment,
+      EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t,
     )
   | ToggleAllowDraws
   | ToggleIncludeExtraTime
@@ -15,7 +15,7 @@ type editCommunitySettingsAction =
     )
   | SetMaxSelectablePoints(int);
 
-let defaultCommunitySettings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment = {
+let defaultCommunitySettings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t = {
   allow_draws: false,
   max_selectable_points: 9,
   score_type: `Goals,
@@ -32,10 +32,10 @@ let convertScoreType = scoreType =>
 
 let reducer =
     (
-      settings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment,
+      settings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t,
       action,
     )
-    : EditSettingsFragment_CommunitySettings_graphql.Types.fragment =>
+    : EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t =>
   switch (action) {
   | SetAllSettings(allSettings) => allSettings
   | ToggleAllowDraws => {...settings, allow_draws: !settings.allow_draws}
@@ -64,7 +64,8 @@ let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
 
 module EditSettingsFragment = [%relay.fragment
   {|
-      fragment EditSettingsFragment_CommunitySettings on community_settings {
+      fragment EditSettingsFragment_CommunitySettings on community_settings
+        @relay(plural: true) {
         allow_draws
         max_selectable_points
         score_type
@@ -113,12 +114,10 @@ module CreateCommunitySettingsMutation = [%relay.mutation
 ];
 
 [@react.component]
-let make = (~communityName: string, ~maybeEditSettingsFragment) => {
+let make = (~communityName: string, ~editSettingsFragments) => {
   let initialCommunitySettings =
-    maybeEditSettingsFragment->Belt.Option.mapWithDefault(
-      defaultCommunitySettings, editSettingsFragment =>
-      EditSettingsFragment.use(editSettingsFragment)
-    );
+    EditSettingsFragment.use(editSettingsFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
 
   let (updateSettings, _) = UpdateCommunitySettingsMutation.use();
   let (createSettings, _) = CreateCommunitySettingsMutation.use();

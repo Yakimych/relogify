@@ -32,7 +32,8 @@ module AddMutation = [%relay.mutation
 
 module AddResultFragment = [%relay.fragment
   {|
-    fragment AddResultFragment_CommunitySettings on community_settings {
+    fragment AddResultFragment_CommunitySettings on community_settings
+      @relay(plural: true) {
       include_extra_time
       score_type
       max_selectable_points
@@ -44,23 +45,21 @@ module AddResultFragment = [%relay.fragment
 [@react.component]
 let make =
     (
-      ~maybeCommunitySettingsFragment,
+      ~communitySettingsFragments,
       ~playerPickerFragment,
       ~communityName: string,
       ~onResultAdded,
     ) => {
-  let defaultCommunitySettings: AddResultFragment.Types.fragment = {
+  let defaultCommunitySettings: AddResultFragment.Types.fragment_t = {
     include_extra_time: DefaultCommunitySettings.includeExtraTime,
     score_type: DefaultCommunitySettings.scoreType,
     max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
     allow_draws: DefaultCommunitySettings.allowDraws,
   };
 
-  let communitySettingsFragment: AddResultFragment.Types.fragment =
-    maybeCommunitySettingsFragment->Belt.Option.mapWithDefault(
-      defaultCommunitySettings, communitySettingsFragment =>
-      AddResultFragment.use(communitySettingsFragment)
-    );
+  let communitySettingsFragment =
+    AddResultFragment.use(communitySettingsFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
 
   let (mutate, isAddingResult) = AddMutation.use();
 

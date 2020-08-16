@@ -64,7 +64,7 @@ let toMatchResult =
 let make =
     (
       ~resultsTableFragment,
-      ~maybeCommunitySettingsFragment,
+      ~communitySettingsFragments,
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
       ~communityName: string,
@@ -120,7 +120,7 @@ let make =
           </MaterialUi.Typography>
         </div>
         <MaterialUi.Table size=`Small>
-          <ResultsTableHeader maybeCommunitySettingsFragment />
+          <ResultsTableHeader communitySettingsFragments />
           <MaterialUi.TableBody>
             {resultsTableFragment.edges
              ->Belt.Array.map(result => {
@@ -135,7 +135,7 @@ let make =
                    resultWithRatings
                    communityName
                    mainPlayerName
-                   maybeIncludeExtraTimeFragment=maybeCommunitySettingsFragment
+                   includeExtraTimeFragments=communitySettingsFragments
                    showGraphForPlayer
                    resultIdsToHighlight={Some(newResultIds)}
                  />;

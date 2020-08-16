@@ -3,7 +3,8 @@ open Utils;
 
 module ResultTableHeaderFragment = [%relay.fragment
   {|
-    fragment ResultsTableHeader_CommunitySettings on community_settings {
+    fragment ResultsTableHeader_CommunitySettings on community_settings
+      @relay(plural: true) {
       score_type
       include_extra_time
     }
@@ -11,16 +12,15 @@ module ResultTableHeaderFragment = [%relay.fragment
 ];
 
 [@react.component]
-let make = (~maybeCommunitySettingsFragment) => {
+let make = (~communitySettingsFragments) => {
+  let defaultCommunitySettings: ResultTableHeaderFragment.Types.fragment_t = {
+    score_type: DefaultCommunitySettings.scoreType,
+    include_extra_time: DefaultCommunitySettings.includeExtraTime,
+  };
+
   let communitySettings =
-    maybeCommunitySettingsFragment
-    ->Belt.Option.map(communitySettingsFragment =>
-        ResultTableHeaderFragment.use(communitySettingsFragment)
-      )
-    ->Belt.Option.getWithDefault({
-        score_type: DefaultCommunitySettings.scoreType,
-        include_extra_time: DefaultCommunitySettings.includeExtraTime,
-      });
+    ResultTableHeaderFragment.use(communitySettingsFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
 
   let texts = Texts.getScoreTypeTexts(communitySettings.score_type);
 

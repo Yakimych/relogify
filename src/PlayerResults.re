@@ -81,16 +81,17 @@ let make = (~playerName: string, ~communityName: string) => {
 
   let resultsTableFragment = queryData.results_connection.fragmentRefs;
 
-  let maybeCommunitySettings =
-    queryData.community_settings_connection.edges->Belt.Array.get(0);
-  let maybeCommunitySettingsFragment =
-    maybeCommunitySettings->Belt.Option.map(e => e.node.fragmentRefs);
+  let communitySettingsFragments =
+    queryData.community_settings_connection.edges
+    ->Belt.Array.map(e => e.node.fragmentRefs);
 
   let scoreType =
-    maybeCommunitySettings->Belt.Option.mapWithDefault(
-      DefaultCommunitySettings.scoreType, communitySettings =>
-      communitySettings.node.score_type
-    );
+    queryData.community_settings_connection.edges
+    ->Belt.Array.get(0)
+    ->Belt.Option.mapWithDefault(
+        DefaultCommunitySettings.scoreType, communitySettings =>
+        communitySettings.node.score_type
+      );
   let texts = Texts.getScoreTypeTexts(scoreType);
 
   let matchResults =
@@ -171,7 +172,7 @@ let make = (~playerName: string, ~communityName: string) => {
     </MaterialUi.Box>
     <ResultsTable
       resultsTableFragment
-      maybeCommunitySettingsFragment
+      communitySettingsFragments
       mainPlayerName=playerName
       communityName
     />

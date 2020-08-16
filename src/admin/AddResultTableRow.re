@@ -6,7 +6,8 @@ open Styles;
 
 module AddResultTableRowFragment = [%relay.fragment
   {|
-    fragment AddResultTableRowFragment_CommunitySettings on community_settings {
+    fragment AddResultTableRowFragment_CommunitySettings on community_settings
+      @relay(plural: true) {
       score_type
       max_selectable_points
       allow_draws
@@ -43,20 +44,18 @@ module AddMutation = [%relay.mutation
 let make =
     (
       ~communityName: string,
-      ~maybeCommunitySettingsFragment,
+      ~communitySettingsFragments,
       ~playerPickerFragment,
     ) => {
-  let defaultCommunitySettings: AddResultTableRowFragment.Types.fragment = {
+  let defaultCommunitySettings: AddResultTableRowFragment.Types.fragment_t = {
     score_type: DefaultCommunitySettings.scoreType,
     max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
     allow_draws: DefaultCommunitySettings.allowDraws,
   };
 
   let communitySettings =
-    maybeCommunitySettingsFragment->Belt.Option.mapWithDefault(
-      defaultCommunitySettings, communitySettingsFragment =>
-      AddResultTableRowFragment.use(communitySettingsFragment)
-    );
+    AddResultTableRowFragment.use(communitySettingsFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
 
   let (mutate, isAddingResult) = AddMutation.use();
 
