@@ -162,3 +162,7 @@ input[type="date"]::-webkit-clear-button {
   display: flex;
   flex-direction: column;
 }
+
+a {
+  cursor: pointer;
+}
