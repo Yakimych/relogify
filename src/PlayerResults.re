@@ -40,7 +40,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -170,11 +170,13 @@ let make = (~playerName: string, ~communityName: string) => {
            <StreakView streak streakName="Ongoing winning streak" playerName />
          )}
     </MaterialUi.Box>
-    <ResultsTable
-      resultsTableFragment
-      communitySettingsFragments
-      mainPlayerName=playerName
-      communityName
-    />
+    <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+      <ResultsTable
+        resultsTableFragment
+        communitySettingsFragments
+        mainPlayerName=playerName
+        communityName
+      />
+    </React.Suspense>
   </>;
 };

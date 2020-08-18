@@ -48,7 +48,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -153,11 +153,13 @@ let make = (~communityName, ~player1Name, ~player2Name) => {
           (),
         )}
       />
-      <ResultsTable
-        resultsTableFragment
-        communitySettingsFragments
-        communityName
-      />
+      <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+        <ResultsTable
+          resultsTableFragment
+          communitySettingsFragments
+          communityName
+        />
+      </React.Suspense>
     </>
   </>;
 };

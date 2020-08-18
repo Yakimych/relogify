@@ -27,12 +27,14 @@ let make =
           <div className="add-result">
             <MaterialUi.ExpansionPanel expanded=addResultIsOpen>
               <span />
-              <AddResult
-                communityName
-                communitySettingsFragments
-                playerPickerFragment
-                onResultAdded={_ => setAddResultIsOpen(_ => false)}
-              />
+              <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+                <AddResult
+                  communityName
+                  communitySettingsFragments
+                  playerPickerFragment
+                  onResultAdded={_ => setAddResultIsOpen(_ => false)}
+                />
+              </React.Suspense>
             </MaterialUi.ExpansionPanel>
           </div>
           <RouteLink
