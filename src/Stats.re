@@ -104,7 +104,9 @@ let make =
 
   let requestSort = (columnType: columnType) => {
     setSortBy(_ => columnType);
-    setSortDirection(currentDirection => currentDirection);
+    setSortDirection(currentDirection =>
+      currentDirection === `Asc ? `Desc : `Asc
+    );
   };
 
   let statsResultsFragment = StatsResultsFragment.use(statsResultsFragment);
