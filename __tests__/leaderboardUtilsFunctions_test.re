@@ -5,13 +5,13 @@ open LeaderboardUtils;
 
 describe("leaderboardFunctions", () => {
   let singleDrawResult = {
-    id: 0,
+    id: "0",
     player1: {
-      id: 1,
+      id: "1",
       name: "Bob",
     },
     player2: {
-      id: 2,
+      id: "2",
       name: "Alice",
     },
     player1goals: 1,

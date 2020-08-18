@@ -34,3 +34,9 @@ let validNumberOfGoals = (goalsString: string): int =>
 
 let takeMax = (list, maxNumberToTake) =>
   list->Belt.List.take(maxNumberToTake)->Belt.Option.getWithDefault(list);
+
+let distinctStrings = (strings: array(string)) =>
+  strings->Belt.Set.String.fromArray->Belt.Set.String.toArray;
+
+let headWithDefault = (defaultValue: 'a, arr: array('a)): 'a =>
+  arr->Belt.Array.get(0)->Belt.Option.getWithDefault(defaultValue);

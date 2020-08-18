@@ -9,6 +9,39 @@ let nextPrevWeekButtonStyle =
     (),
   );
 
+module Query = [%relay.query
+  {|
+    query ResultHistoryQuery(
+      $communityName: String!
+      $dateFrom: timestamptz
+      $dateTo: timestamptz
+    ) {
+      results_connection(
+        where: {
+          community: { name: { _eq: $communityName } }
+          date: { _gte: $dateFrom, _lte: $dateTo }
+        }
+        order_by: { date: desc }
+      ) {
+        ...ResultsTable_Results
+        ...Stats_Results
+      }
+    
+      community_settings_connection(
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
+        edges {
+          node {
+            ...ResultCommunitySettings_IncludeExtraTime
+            ...ResultsTableHeader_CommunitySettings
+            ...StatsTableHeader_ScoreType
+          }
+        }
+      }
+    }
+  |}
+];
+
 [@react.component]
 let make = (~communityName: string) => {
   let weekStartDate =
@@ -38,6 +71,15 @@ let make = (~communityName: string) => {
     setDateFrom(df => df->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
     setDateTo(dt => dt->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
   };
+
+  let queryData =
+    Query.use(~variables={communityName, dateFrom, dateTo}, ());
+
+  let resultsFragment = queryData.results_connection.fragmentRefs;
+
+  let communitySettingsFragments =
+    queryData.community_settings_connection.edges
+    ->Belt.Array.map(e => e.node.fragmentRefs);
 
   <>
     <Header page={History(communityName)} />
@@ -79,15 +121,22 @@ let make = (~communityName: string) => {
         {text(">>")}
       </MaterialUi.Button>
     </MaterialUi.Box>
-    <Stats communityName ?dateFrom ?dateTo />
-    <Results
-      communityName
-      ?dateFrom
-      ?dateTo
-      highlightNewResults=false
-      temp_showRatings={
-        dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
-      }
-    />
+    <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+      <Stats
+        communityName
+        ?dateFrom
+        ?dateTo
+        statsResultsFragment=resultsFragment
+        scoreTypeFragments=communitySettingsFragments
+      />
+      <ResultsTable
+        communityName
+        resultsTableFragment=resultsFragment
+        communitySettingsFragments
+        temp_showRatings={
+          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
+        }
+      />
+    </React.Suspense>
   </>;
 };

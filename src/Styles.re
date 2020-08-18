@@ -30,4 +30,17 @@ let colonStyle =
     (),
   );
 
+let headToHeadStyle =
+  ReactDOMRe.Style.make(
+    ~width="20px",
+    ~paddingLeft="10px",
+    ~paddingRight="0",
+    (),
+  );
+
+let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
+
 let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
+
+let getPlayerStyle = (isWinningPlayer: bool) =>
+  ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());

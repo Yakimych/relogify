@@ -1,35 +1,34 @@
-open Styles;
 open Utils;
 open Types;
 open EloUtils;
-open UseCommunitySettings;
-open PlayerStatsUtils;
 
-let getPlayerStyle = (isWinningPlayer: bool) =>
-  ReactDOMRe.Style.make(~fontWeight=isWinningPlayer ? "bold" : "normal", ());
-
-let headToHeadStyle =
-  ReactDOMRe.Style.make(
-    ~width="20px",
-    ~paddingLeft="10px",
-    ~paddingRight="0",
-    (),
-  );
-
-let colonStyle =
-  ReactDOMRe.Style.make(
-    ~width="5px",
-    ~paddingLeft="0",
-    ~paddingRight="0",
-    (),
-  );
-
-let dateStyle = ReactDOMRe.Style.make(~width="100px", ());
-
-let extraTimeStyle = ReactDOMRe.Style.make(~width="20px", ());
+module ResultsTableFragment = [%relay.fragment
+  {|
+    fragment ResultsTable_Results on resultsConnection {
+      edges {
+        node {
+          ...Result_SingleResult
+          player1 {
+            id
+            name
+          }
+          player2 {
+            id
+            name
+          }
+          player2goals
+          player1goals
+          extratime
+          date
+          id
+        }
+      }
+    }
+  |}
+];
 
 let getHighlightedClassName =
-    (newResults: option(list(int)), currentResult: matchResult) => {
+    (newResults: option(list(string)), currentResult: matchResult) => {
   let resultIsFresh =
     newResults
     ->Belt.Option.map(n => n->Belt.List.some(id => id == currentResult.id))
@@ -41,17 +40,38 @@ let getHighlightedClassName =
 let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
   mainPlayerWon ? "winning-row" : "";
 
+let toMatchResult =
+    (resultNode: ResultsTable_Results_graphql.Types.fragment_edges_node)
+    : matchResult => {
+  {
+    id: resultNode.id,
+    player1: {
+      id: resultNode.player1.id,
+      name: resultNode.player1.name,
+    },
+    player2: {
+      id: resultNode.player2.id,
+      name: resultNode.player2.name,
+    },
+    player1goals: resultNode.player1goals,
+    player2goals: resultNode.player2goals,
+    date: resultNode.date,
+    extratime: resultNode.extratime,
+  };
+};
+
 [@react.component]
 let make =
     (
-      ~results: list(resultWithRatings),
+      ~resultsTableFragment,
+      ~communitySettingsFragments,
       // This can be removed as soon as ratings are persisted. Ratings will always be shown then.
       ~temp_showRatings: bool=false,
-      ~resultIdsToHighlight: option(list(int))=?,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
     ) => {
-  let settingsQuery = useCommunitySettings(communityName);
+  let lastFetchedResultIdsRef = React.useRef(Js.Nullable.null);
+  let resultsTableFragment = ResultsTableFragment.use(resultsTableFragment);
 
   let (graphIsShownForPlayer, setGraphIsShownForPlayer) =
     React.useState(_ => None);
@@ -61,148 +81,76 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  let isWide = MaterialUi.Core.useMediaQueryString("(min-width: 600px)");
+  let newlyFetchedResults =
+    resultsTableFragment.edges->Belt.Array.map(e => e.node->toMatchResult);
 
-  switch (settingsQuery) {
-  | Loading => <MaterialUi.CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(communitySettings) =>
-    let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
+  let newResultIds =
+    lastFetchedResultIdsRef.current
+    ->Js.Nullable.toOption
+    ->Belt.Option.mapWithDefault([||], lastFetchedResultIds =>
+        resultsTableFragment.edges
+        ->Belt.Array.map(r => r.node.id)
+        ->Belt.Array.keep(r =>
+            lastFetchedResultIds
+            |> Array.exists(lastResult => lastResult == r)
+            |> (!)
+          )
+      );
 
-    <MaterialUi.Paper>
-      <div className="title">
-        <MaterialUi.Typography variant=`H6>
-          {text("Results")}
-        </MaterialUi.Typography>
-      </div>
-      <MaterialUi.Table size=`Small>
-        <MaterialUi.TableHead>
-          <MaterialUi.TableRow>
-            <MaterialUi.TableCell style=headToHeadStyle>
-              {text("H2H")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell align=`Right>
-              {text("Player1")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=numberCellStyle>
-              {text(texts.pointsPlayerShort ++ "1")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell style=colonStyle />
-            <MaterialUi.TableCell style=numberCellStyle>
-              {text(texts.pointsPlayerShort ++ "2")}
-            </MaterialUi.TableCell>
-            <MaterialUi.TableCell> {text("Player2")} </MaterialUi.TableCell>
-            {isWide && communitySettings.includeExtraTime
-               ? <MaterialUi.TableCell style=extraTimeStyle align=`Right>
-                   <MaterialUi.Tooltip
-                     title={text("Extra time")} placement=`Top>
-                     <span> {text("E")} </span>
-                   </MaterialUi.Tooltip>
-                 </MaterialUi.TableCell>
-               : React.null}
-            {isWide
-               ? <MaterialUi.TableCell style=dateStyle>
-                   {text("Date")}
-                 </MaterialUi.TableCell>
-               : React.null}
-          </MaterialUi.TableRow>
-        </MaterialUi.TableHead>
-        <MaterialUi.TableBody>
-          {results
-           ->Belt.List.map(resultWithRatings => {
-               let result = resultWithRatings.result;
-               let player1Won = hasPlayer1Won(result);
-               let player2Won = hasPlayer2Won(result);
-               let mainPlayerWon = hasMainPlayerWon(mainPlayerName, result);
-               let formattedDate = formatDate(result.date);
+  lastFetchedResultIdsRef.current =
+    Js.Nullable.fromOption(
+      Some(resultsTableFragment.edges->Belt.Array.map(e => e.node.id)),
+    );
 
-               <MaterialUi.TableRow
-                 key={string_of_int(result.id)}
-                 className={
-                   getHighlightedClassName(resultIdsToHighlight, result)
-                   ++ " "
-                   ++ getWinningLosingRowClassName(mainPlayerWon)
-                 }>
-                 <MaterialUi.TableCell style=headToHeadStyle>
-                   <RouteLink
-                     toPage={
-                       HeadToHead(
-                         communityName,
-                         result.player1.name,
-                         result.player2.name,
-                       )
-                     }>
-                     {text("H2H")}
-                   </RouteLink>
-                 </MaterialUi.TableCell>
-                 <MaterialUi.TableCell
-                   style={getPlayerStyle(player1Won)} align=`Right>
-                   <RouteLink
-                     toPage={PlayerHome(communityName, result.player1.name)}
-                     style=playerLinkStyle>
-                     {text(result.player1.name)}
-                   </RouteLink>
-                   {temp_showRatings && isWide
-                      ? <Rating
-                          onClick={_ =>
-                            showGraphForPlayer(result.player1.name)
-                          }
-                          ratingBefore={resultWithRatings.player1RatingBefore}
-                          ratingAfter={resultWithRatings.player1RatingAfter}
-                        />
-                      : React.null}
-                 </MaterialUi.TableCell>
-                 <MaterialUi.TableCell style=numberCellStyle>
-                   {text(string_of_int(result.player1goals))}
-                 </MaterialUi.TableCell>
-                 <MaterialUi.TableCell style=colonStyle>
-                   {text(":")}
-                 </MaterialUi.TableCell>
-                 <MaterialUi.TableCell style=numberCellStyle>
-                   {text(string_of_int(result.player2goals))}
-                 </MaterialUi.TableCell>
-                 <MaterialUi.TableCell style={getPlayerStyle(player2Won)}>
-                   <RouteLink
-                     toPage={PlayerHome(communityName, result.player2.name)}
-                     style=playerLinkStyle>
-                     {text(result.player2.name)}
-                   </RouteLink>
-                   {temp_showRatings && isWide
-                      ? <Rating
-                          onClick={_ =>
-                            showGraphForPlayer(result.player2.name)
-                          }
-                          ratingBefore={resultWithRatings.player2RatingBefore}
-                          ratingAfter={resultWithRatings.player2RatingAfter}
-                        />
-                      : React.null}
-                 </MaterialUi.TableCell>
-                 {isWide && communitySettings.includeExtraTime
-                    ? <MaterialUi.TableCell style=extraTimeStyle align=`Right>
-                        {text(result.extratime ? "X" : "")}
-                      </MaterialUi.TableCell>
-                    : React.null}
-                 {isWide
-                    ? <MaterialUi.TableCell>
-                        {text(formattedDate)}
-                      </MaterialUi.TableCell>
-                    : React.null}
-               </MaterialUi.TableRow>;
-             })
-           ->Array.of_list
-           ->React.array}
-        </MaterialUi.TableBody>
-      </MaterialUi.Table>
-      {graphIsShownForPlayer->Belt.Option.mapWithDefault(
-         React.null, playerName =>
-         <EloGraphDialog
-           isOpen=true
-           onClose=hideGraphForPlayer
-           playerName
-           resultsWithRatings=results
-         />
-       )}
-    </MaterialUi.Paper>;
-  };
+  let resultsWithRatingMap =
+    newlyFetchedResults |> Array.to_list |> attachRatings;
+
+  resultsTableFragment.edges->Belt.Array.length === 0
+    ? <MaterialUi.Card className="no-result-info">
+        <MaterialUi.CardContent>
+          <MaterialUi.Typography variant=`H6>
+            {text("No results reported")}
+          </MaterialUi.Typography>
+        </MaterialUi.CardContent>
+      </MaterialUi.Card>
+    : <MaterialUi.Paper>
+        <div className="title">
+          <MaterialUi.Typography variant=`H6>
+            {text("Results")}
+          </MaterialUi.Typography>
+        </div>
+        <MaterialUi.Table size=`Small>
+          <ResultsTableHeader communitySettingsFragments />
+          <MaterialUi.TableBody>
+            {resultsTableFragment.edges
+             ->Belt.Array.map(result => {
+                 let resultWithRatings: resultWithRatings =
+                   resultsWithRatingMap.resultsWithRatings
+                   |> List.find(r => r.result.id === result.node.id);
+
+                 <Result
+                   key={result.node.id}
+                   temp_showRatings
+                   result={result.node.fragmentRefs}
+                   resultWithRatings
+                   communityName
+                   mainPlayerName
+                   includeExtraTimeFragments=communitySettingsFragments
+                   showGraphForPlayer
+                   resultIdsToHighlight={Some(newResultIds)}
+                 />;
+               })
+             ->React.array}
+          </MaterialUi.TableBody>
+        </MaterialUi.Table>
+        {graphIsShownForPlayer->Belt.Option.mapWithDefault(
+           React.null, playerName =>
+           <EloGraphDialog
+             isOpen=true
+             onClose=hideGraphForPlayer
+             playerName
+             resultsWithRatings={resultsWithRatingMap.resultsWithRatings}
+           />
+         )}
+      </MaterialUi.Paper>;
 };

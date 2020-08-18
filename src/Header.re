@@ -3,7 +3,6 @@ open Types;
 
 [@react.component]
 let make = (~page: page) => {
-  let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
   let identity = ReactNetlifyIdentity.useIdentityContextSimple();
   let userEmail = identity.user->Belt.Option.mapWithDefault("", u => u.email);
   let isAdmin =
@@ -27,33 +26,7 @@ let make = (~page: page) => {
          | CreateCommunityPage => <div> {text("Create new community")} </div>
          | CommunityAdmin(communityName) =>
            <div> {text("Admin for " ++ communityName)} </div>
-         | CommunityStart(communityName) =>
-           <>
-             <div className="app-header-grouping">
-               <HomeIcon className="app-header-item" />
-               <MyPlayerHeaderLink communityName />
-             </div>
-             <div className="app-header-grow" />
-             <MaterialUi.Fab
-               onClick={_ => setAddResultIsOpen(oldIsOpen => !oldIsOpen)}
-               color=`Secondary
-               className="add-result-button">
-               {addResultIsOpen ? <ArrowDropUp /> : <AddIcon />}
-             </MaterialUi.Fab>
-             <div className="add-result">
-               <MaterialUi.ExpansionPanel expanded=addResultIsOpen>
-                 <span />
-                 <AddResult
-                   communityName
-                   onResultAdded={_ => setAddResultIsOpen(_ => false)}
-                 />
-               </MaterialUi.ExpansionPanel>
-             </div>
-             <RouteLink
-               className="app-header-item" toPage={History(communityName)}>
-               {text("History")}
-             </RouteLink>
-           </>
+         | CommunityStart(_) => React.null // TODO: Break up the header into smaller components (Extracted this one into CommunityStartPageHeader)
          | TopX(communityName) =>
            <>
              <div className="app-header-grouping">

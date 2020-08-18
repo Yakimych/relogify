@@ -1,5 +1,5 @@
 {
-  "name": "react-hooks-template",
+  "name": "relogify",
   "reason": {
     "react-jsx": 3
   },
@@ -23,15 +23,16 @@
   "namespace": true,
   "bs-dependencies": [
     "reason-react",
-    "reason-apollo-hooks",
-    "reason-apollo",
     "@ahrefs/bs-recharts",
     "@glennsl/bs-json",
     "bs-react-netlify-identity",
     "@jsiebern/bs-material-ui",
-    "bs-date-fns"
+    "bs-date-fns",
+    "reason-relay",
+    "reason-promise",
+    "bs-fetch"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx6"]
+  "ppx-flags": ["reason-relay/ppx"]
 }

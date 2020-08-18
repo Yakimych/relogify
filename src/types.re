@@ -12,12 +12,12 @@ type page =
   | HeadToHead(string, string, string);
 
 type player = {
-  id: int,
+  id: string,
   name: string,
 };
 
 type matchResult = {
-  id: int,
+  id: string,
   player1: player,
   player2: player,
   player1goals: int,
@@ -52,7 +52,7 @@ let endedAt = (streak: streak) =>
 let endedBy = (streak: streak, playerName: string) =>
   streak.endingResult
   ->Belt.Option.map(r =>
-      r.player1.name === playerName ? r.player2 : r.player1
+      r.player1.name === playerName ? r.player2.name : r.player1.name
     );
 
 type streaks = {
@@ -61,11 +61,6 @@ type streaks = {
 };
 
 type scoreType = [ | `Goals | `Points];
-
-let scoreTypeToString =
-  fun
-  | `Goals => "Goals"
-  | `Points => "Points";
 
 let toScoreType =
   fun
@@ -76,29 +71,23 @@ let toScoreType =
 type communitySettings = {
   allowDraws: bool,
   maxSelectablePoints: int,
-  scoreType,
+  scoreType: EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
   includeExtraTime: bool,
   useDropDownForPoints: bool,
 };
 
-let defaultCommunitySettings = {
-  allowDraws: false,
-  maxSelectablePoints: 9,
-  scoreType: `Goals,
-  includeExtraTime: true,
-  useDropDownForPoints: true,
-};
-
 type editableResultValues = {
-  player1Id: int,
-  player2Id: int,
+  player1Id: string,
+  player2Id: string,
   player1Goals: int,
   player2Goals: int,
   extraTime: bool,
   date: Js.Date.t,
 };
 
-let toEditableResultValues = (result: matchResult): editableResultValues => {
+let toEditableResultValues =
+    (result: EditResultTableRow_SingleResult_graphql.Types.fragment)
+    : editableResultValues => {
   player1Id: result.player1.id,
   player2Id: result.player2.id,
   player1Goals: result.player1goals,

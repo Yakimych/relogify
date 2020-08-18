@@ -58,4 +58,5 @@ let scoreTypePointTexts = {
 let getScoreTypeTexts =
   fun
   | `Goals => scoreTypeGoalsTexts
-  | `Points => scoreTypePointTexts;
+  | `Points => scoreTypePointTexts
+  | _ => scoreTypePointTexts;

@@ -47,14 +47,12 @@ let useMostUsedPlayer = (communityName: string) => {
   let updateMostUsedPlayer = (player1Name, player2Name) => {
     updatePlayersAfterAddingResult(communityName, player1Name, player2Name);
 
-    React.Ref.setCurrent(
-      mostUsedPlayerRef,
-      communityName |> getMostOftenSavedPlayerName |> Js.Nullable.fromOption,
-    );
+    mostUsedPlayerRef.current =
+      communityName |> getMostOftenSavedPlayerName |> Js.Nullable.fromOption;
   };
 
   (
-    () => mostUsedPlayerRef->React.Ref.current->Js.Nullable.toOption,
+    () => mostUsedPlayerRef.current->Js.Nullable.toOption,
     updateMostUsedPlayer,
   );
 };

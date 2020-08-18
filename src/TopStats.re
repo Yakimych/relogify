@@ -1,7 +1,6 @@
 open Utils;
 open EloUtils;
 open LeaderboardUtils;
-open UseCommunitySettings;
 
 let topNumberOfRows = 5;
 
@@ -29,16 +28,22 @@ let byTupleValue = ((_, r1), (_, r2)) =>
   | (a, b) => sortCompareDesc(a, b)
   };
 
+module TopStatsFragment = [%relay.fragment
+  {|
+    fragment TopStatsColumn_ScoreType on community_settings {
+      score_type
+    }
+  |}
+];
+
 [@react.component]
 let make =
     (
-      ~communityName,
+      ~scoreTypeFragment,
       ~title,
       ~resultsWithMap: temp_resultsWithRatingMap,
       ~startDate,
     ) => {
-  let settingsQuery = useCommunitySettings(communityName);
-
   switch (
     resultsWithMap.resultsWithRatings
     ->Belt.List.keep(r => r.result.date >= startDate)
@@ -86,38 +91,33 @@ let make =
           (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
         );
 
-    switch (settingsQuery) {
-    | Loading => <MaterialUi.CircularProgress />
-    | NoData
-    | Error(_) => <span> {text("Error")} </span>
-    | Data(communitySettings) =>
-      let texts = Texts.getScoreTypeTexts(communitySettings.scoreType);
+    let scoreTypeFragment = TopStatsFragment.use(scoreTypeFragment);
+    let texts = Texts.getScoreTypeTexts(scoreTypeFragment.score_type);
 
-      <MaterialUi.Paper>
-        <div className="title">
-          <MaterialUi.Typography variant=`H6>
-            {text(title)}
-          </MaterialUi.Typography>
-        </div>
-        <div className="top-stats-container">
-          <SingleStatCard
-            playersWithStat=topWinPercentageRows
-            statName="Win Percentage"
-          />
-          <SingleStatCard
-            playersWithStat=topGoalsScoredPerMatchRows
-            statName={texts.pointsWonPerMatch}
-          />
-          <SingleStatCard
-            playersWithStat=topGoalsConcededPerMatchRows
-            statName={texts.pointsLostPerMatch}
-          />
-          <SingleStatCard
-            playersWithStat=topEloDiffRows
-            statName="Elo Difference"
-          />
-        </div>
-      </MaterialUi.Paper>;
-    };
+    <MaterialUi.Paper>
+      <div className="title">
+        <MaterialUi.Typography variant=`H6>
+          {text(title)}
+        </MaterialUi.Typography>
+      </div>
+      <div className="top-stats-container">
+        <SingleStatCard
+          playersWithStat=topWinPercentageRows
+          statName="Win Percentage"
+        />
+        <SingleStatCard
+          playersWithStat=topGoalsScoredPerMatchRows
+          statName={texts.pointsWonPerMatch}
+        />
+        <SingleStatCard
+          playersWithStat=topGoalsConcededPerMatchRows
+          statName={texts.pointsLostPerMatch}
+        />
+        <SingleStatCard
+          playersWithStat=topEloDiffRows
+          statName="Elo Difference"
+        />
+      </div>
+    </MaterialUi.Paper>;
   };
 };

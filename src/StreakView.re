@@ -25,10 +25,10 @@ let make = (~streakName: string, ~streak: streak, ~playerName: string) =>
            <span className="date-time"> {text(formatDateTime(date))} </span>
            {streak
             ->endedBy(playerName)
-            ->Belt.Option.mapWithDefault(React.null, player =>
+            ->Belt.Option.mapWithDefault(React.null, playerName =>
                 <>
                   {text(" by ")}
-                  <span className="marked"> {text(player.name)} </span>
+                  <span className="marked"> {text(playerName)} </span>
                 </>
               )}
          </MaterialUi.Typography>

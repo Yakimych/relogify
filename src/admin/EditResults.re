@@ -1,50 +1,44 @@
-open Queries;
 open Utils;
-open ApolloHooks;
+
+module EditResultsFragment = [%relay.fragment
+  {|
+    fragment EditResultsFragment on resultsConnection {
+      ...EditResultsTable_Results
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  |}
+];
 
 [@react.component]
 let make =
     (
       ~communityName: string,
-      ~dateFrom: option(Js.Date.t)=?,
-      ~dateTo: option(Js.Date.t)=?,
+      ~editResultsFragment,
+      ~playersFragment,
+      ~communitySettingsFragments,
     ) => {
-  let allResultsQuery =
-    AllResultsQuery.make(
-      ~communityName,
-      ~dateFrom=?dateFrom->Belt.Option.map(toJsonDate),
-      ~dateTo=?dateTo->Belt.Option.map(toJsonDate),
-      (),
-    );
-
-  let (resultsQuery, _) =
-    useQuery(
-      ~variables=allResultsQuery##variables,
-      AllResultsQuery.definition,
-    );
+  let editResultsFragment = EditResultsFragment.use(editResultsFragment);
+  let editResultsTableFragment = editResultsFragment.fragmentRefs;
 
   <>
     <Header page={AdminResultsPage(communityName)} />
-    {switch (resultsQuery) {
-     | Loading => <MaterialUi.CircularProgress />
-     | NoData
-     | Error(_) => <span> {text("Error")} </span>
-     | Data(data) =>
-       let results = data##results |> toListOfResults;
-
-       results->Belt.List.length === 0
-         ? <MaterialUi.Card className="no-result-info">
-             <MaterialUi.CardContent>
-               <MaterialUi.Typography variant=`H6>
-                 {text("No results reported during the selected time period")}
-               </MaterialUi.Typography>
-             </MaterialUi.CardContent>
-           </MaterialUi.Card>
-         : <EditResultsTable
-             communityName
-             results
-             queryToRefetch={ApolloHooks.toQueryObj(allResultsQuery)}
-           />;
-     }}
+    {editResultsFragment.edges->Belt.Array.length === 0
+       ? <MaterialUi.Card className="no-result-info">
+           <MaterialUi.CardContent>
+             <MaterialUi.Typography variant=`H6>
+               {text("No results reported during the selected time period")}
+             </MaterialUi.Typography>
+           </MaterialUi.CardContent>
+         </MaterialUi.Card>
+       : <EditResultsTable
+           resultsFragment=editResultsTableFragment
+           playersFragment
+           communityName
+           communitySettingsFragments
+         />}
   </>;
 };

@@ -1,47 +1,58 @@
 open Utils;
-open Queries;
-open ApolloHooks;
+
+module ExistingPlayerPickerFragment = [%relay.fragment
+  {|
+    fragment ExistingPlayerPicker_Players on playersConnection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  |}
+];
+
+let distinctNodeValues =
+    (edges: array(ExistingPlayerPicker_Players_graphql.Types.fragment_edges)) =>
+  edges
+  ->Belt.Array.map(e => (e.node.id, e.node))
+  ->Belt_MapString.fromArray
+  ->Belt_MapString.toArray
+  ->Belt.Array.map(((_, value)) => value);
 
 [@react.component]
 let make =
     (
-      ~communityName: string,
-      ~selectedPlayerId: int,
+      ~existingPlayerPickerFragment,
+      ~selectedPlayerId: string,
       ~disabled: bool,
-      ~onChange: int => unit,
+      ~onChange: string => unit,
     ) => {
-  let (playersQuery, _) =
-    useQuery(
-      ~variables=AllPlayersQuery.makeVariables(~communityName, ()),
-      AllPlayersQuery.definition,
-    );
+  let queryData =
+    ExistingPlayerPickerFragment.use(existingPlayerPickerFragment);
 
-  switch (playersQuery) {
-  | Loading => <MaterialUi.CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(data) =>
-    <MaterialUi.NativeSelect
-      disabled
-      style={ReactDOMRe.Style.make(~width="200px", ())}
-      onChange={e => {
-        let newId = ReactEvent.Form.target(e)##value;
-        onChange(newId);
-      }}
-      value={string_of_int(selectedPlayerId)}
-      input={
-        <MaterialUi.OutlinedInput
-          style={ReactDOMRe.Style.make(~width="60px", ())}
-          labelWidth={`Int(0)}
-        />
-      }>
-      {data##players
-       ->Belt.Array.map(p =>
-           <option value={string_of_int(p##id)} key={"players_" ++ p##name}>
-             {text(p##name)}
-           </option>
-         )
-       ->React.array}
-    </MaterialUi.NativeSelect>
-  };
+  <MaterialUi.NativeSelect
+    disabled
+    style={ReactDOMRe.Style.make(~width="200px", ())}
+    onChange={e => {
+      let newId = ReactEvent.Form.target(e)##value;
+      onChange(newId);
+    }}
+    value=selectedPlayerId
+    input={
+      <MaterialUi.OutlinedInput
+        style={ReactDOMRe.Style.make(~width="60px", ())}
+        labelWidth={`Int(0)}
+      />
+    }>
+    {queryData.edges
+     ->distinctNodeValues
+     ->Belt.Array.map(p =>
+         <option value={p.id} key={"players_" ++ p.name}>
+           {text(p.name)}
+         </option>
+       )
+     ->React.array}
+  </MaterialUi.NativeSelect>;
 };

@@ -21,13 +21,13 @@ type getStreaksTestCase = {
 };
 
 let toResult = (testScore: testResult) => {
-  id: 0,
+  id: "0",
   player1: {
-    id: 1,
+    id: "1",
     name: testScore.name1,
   },
   player2: {
-    id: 2,
+    id: "2",
     name: testScore.name2,
   },
   player1goals: testScore.goals1,
@@ -180,7 +180,6 @@ getStreaksTestCases->Belt.List.forEach(testData =>
       let streaks = testData.results |> toTestResults |> getAllStreaks("a");
       let expectedResult =
         testData.expectedStreaks |> toTempStreaks |> List.rev;
-
       expect(streaks) |> toEqual(expectedResult);
     })
   )

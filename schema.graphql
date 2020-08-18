@@ -1,0 +1,2267 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+# expression to compare columns of type Boolean. All fields are combined with logical 'AND'.
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
+# columns and relationships of "communities"
+type communities implements Node {
+  # An array relationship
+  community_settings(
+    # distinct select on columns
+    distinct_on: [community_settings_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [community_settings_order_by!]
+
+    # filter the rows returned
+    where: community_settings_bool_exp
+  ): [community_settings!]!
+
+  # An aggregated array relationship
+  community_settings_aggregate(
+    # distinct select on columns
+    distinct_on: [community_settings_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [community_settings_order_by!]
+
+    # filter the rows returned
+    where: community_settings_bool_exp
+  ): community_settings_aggregate!
+
+  # An array relationship connection
+  community_settings_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [community_settings_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [community_settings_order_by!]
+
+    # filter the rows returned
+    where: community_settings_bool_exp
+  ): community_settingsConnection!
+  description: String
+  id: ID!
+  name: String!
+
+  # An array relationship
+  players(
+    # distinct select on columns
+    distinct_on: [players_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [players_order_by!]
+
+    # filter the rows returned
+    where: players_bool_exp
+  ): [players!]!
+
+  # An aggregated array relationship
+  players_aggregate(
+    # distinct select on columns
+    distinct_on: [players_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [players_order_by!]
+
+    # filter the rows returned
+    where: players_bool_exp
+  ): players_aggregate!
+
+  # An array relationship connection
+  players_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [players_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [players_order_by!]
+
+    # filter the rows returned
+    where: players_bool_exp
+  ): playersConnection!
+
+  # An array relationship
+  results(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): [results!]!
+
+  # An aggregated array relationship
+  results_aggregate(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): results_aggregate!
+
+  # An array relationship connection
+  results_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): resultsConnection!
+}
+
+# aggregated selection of "communities"
+type communities_aggregate {
+  aggregate: communities_aggregate_fields
+  nodes: [communities!]!
+}
+
+# aggregate fields of "communities"
+type communities_aggregate_fields {
+  avg: communities_avg_fields
+  count(columns: [communities_select_column!], distinct: Boolean): Int
+  max: communities_max_fields
+  min: communities_min_fields
+  stddev: communities_stddev_fields
+  stddev_pop: communities_stddev_pop_fields
+  stddev_samp: communities_stddev_samp_fields
+  sum: communities_sum_fields
+  var_pop: communities_var_pop_fields
+  var_samp: communities_var_samp_fields
+  variance: communities_variance_fields
+}
+
+# order by aggregate values of table "communities"
+input communities_aggregate_order_by {
+  avg: communities_avg_order_by
+  count: order_by
+  max: communities_max_order_by
+  min: communities_min_order_by
+  stddev: communities_stddev_order_by
+  stddev_pop: communities_stddev_pop_order_by
+  stddev_samp: communities_stddev_samp_order_by
+  sum: communities_sum_order_by
+  var_pop: communities_var_pop_order_by
+  var_samp: communities_var_samp_order_by
+  variance: communities_variance_order_by
+}
+
+# input type for inserting array relation for remote table "communities"
+input communities_arr_rel_insert_input {
+  data: [communities_insert_input!]!
+  on_conflict: communities_on_conflict
+}
+
+# aggregate avg on columns
+type communities_avg_fields {
+  id: Float
+}
+
+# order by avg() on columns of table "communities"
+input communities_avg_order_by {
+  id: order_by
+}
+
+# Boolean expression to filter rows from the table "communities". All fields are combined with a logical 'AND'.
+input communities_bool_exp {
+  _and: [communities_bool_exp]
+  _not: communities_bool_exp
+  _or: [communities_bool_exp]
+  community_settings: community_settings_bool_exp
+  description: String_comparison_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+  players: players_bool_exp
+  results: results_bool_exp
+}
+
+# unique or primary key constraints on table "communities"
+enum communities_constraint {
+  # unique or primary key constraint
+  communities_name_key
+
+  # unique or primary key constraint
+  communities_pkey
+}
+
+# input type for incrementing integer column in table "communities"
+input communities_inc_input {
+  id: Int
+}
+
+# input type for inserting data into table "communities"
+input communities_insert_input {
+  community_settings: community_settings_arr_rel_insert_input
+  description: String
+  id: Int
+  name: String
+  players: players_arr_rel_insert_input
+  results: results_arr_rel_insert_input
+}
+
+# aggregate max on columns
+type communities_max_fields {
+  description: String
+  id: Int
+  name: String
+}
+
+# order by max() on columns of table "communities"
+input communities_max_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+}
+
+# aggregate min on columns
+type communities_min_fields {
+  description: String
+  id: Int
+  name: String
+}
+
+# order by min() on columns of table "communities"
+input communities_min_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+}
+
+# response of any mutation on the table "communities"
+type communities_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [communities!]!
+}
+
+# input type for inserting object relation for remote table "communities"
+input communities_obj_rel_insert_input {
+  data: communities_insert_input!
+  on_conflict: communities_on_conflict
+}
+
+# on conflict condition type for table "communities"
+input communities_on_conflict {
+  constraint: communities_constraint!
+  update_columns: [communities_update_column!]!
+  where: communities_bool_exp
+}
+
+# ordering options when selecting data from "communities"
+input communities_order_by {
+  community_settings_aggregate: community_settings_aggregate_order_by
+  description: order_by
+  id: order_by
+  name: order_by
+  players_aggregate: players_aggregate_order_by
+  results_aggregate: results_aggregate_order_by
+}
+
+# primary key columns input for table: "communities"
+input communities_pk_columns_input {
+  id: Int!
+}
+
+# select columns of table "communities"
+enum communities_select_column {
+  # column name
+  description
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# input type for updating data in table "communities"
+input communities_set_input {
+  description: String
+  id: Int
+  name: String
+}
+
+# aggregate stddev on columns
+type communities_stddev_fields {
+  id: Float
+}
+
+# order by stddev() on columns of table "communities"
+input communities_stddev_order_by {
+  id: order_by
+}
+
+# aggregate stddev_pop on columns
+type communities_stddev_pop_fields {
+  id: Float
+}
+
+# order by stddev_pop() on columns of table "communities"
+input communities_stddev_pop_order_by {
+  id: order_by
+}
+
+# aggregate stddev_samp on columns
+type communities_stddev_samp_fields {
+  id: Float
+}
+
+# order by stddev_samp() on columns of table "communities"
+input communities_stddev_samp_order_by {
+  id: order_by
+}
+
+# aggregate sum on columns
+type communities_sum_fields {
+  id: Int
+}
+
+# order by sum() on columns of table "communities"
+input communities_sum_order_by {
+  id: order_by
+}
+
+# update columns of table "communities"
+enum communities_update_column {
+  # column name
+  description
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# aggregate var_pop on columns
+type communities_var_pop_fields {
+  id: Float
+}
+
+# order by var_pop() on columns of table "communities"
+input communities_var_pop_order_by {
+  id: order_by
+}
+
+# aggregate var_samp on columns
+type communities_var_samp_fields {
+  id: Float
+}
+
+# order by var_samp() on columns of table "communities"
+input communities_var_samp_order_by {
+  id: order_by
+}
+
+# aggregate variance on columns
+type communities_variance_fields {
+  id: Float
+}
+
+# order by variance() on columns of table "communities"
+input communities_variance_order_by {
+  id: order_by
+}
+
+# A Relay Connection object on "communities"
+type communitiesConnection {
+  edges: [communitiesEdge!]!
+  pageInfo: PageInfo!
+}
+
+type communitiesEdge {
+  cursor: String!
+  node: communities!
+}
+
+# columns and relationships of "community_settings"
+type community_settings implements Node {
+  allow_draws: Boolean!
+
+  # An object relationship
+  community: communities!
+  community_id: Int!
+  id: ID!
+  include_extra_time: Boolean!
+  max_selectable_points: Int!
+  score_type: score_types_enum!
+  use_dropdown_for_points: Boolean!
+}
+
+# aggregated selection of "community_settings"
+type community_settings_aggregate {
+  aggregate: community_settings_aggregate_fields
+  nodes: [community_settings!]!
+}
+
+# aggregate fields of "community_settings"
+type community_settings_aggregate_fields {
+  avg: community_settings_avg_fields
+  count(columns: [community_settings_select_column!], distinct: Boolean): Int
+  max: community_settings_max_fields
+  min: community_settings_min_fields
+  stddev: community_settings_stddev_fields
+  stddev_pop: community_settings_stddev_pop_fields
+  stddev_samp: community_settings_stddev_samp_fields
+  sum: community_settings_sum_fields
+  var_pop: community_settings_var_pop_fields
+  var_samp: community_settings_var_samp_fields
+  variance: community_settings_variance_fields
+}
+
+# order by aggregate values of table "community_settings"
+input community_settings_aggregate_order_by {
+  avg: community_settings_avg_order_by
+  count: order_by
+  max: community_settings_max_order_by
+  min: community_settings_min_order_by
+  stddev: community_settings_stddev_order_by
+  stddev_pop: community_settings_stddev_pop_order_by
+  stddev_samp: community_settings_stddev_samp_order_by
+  sum: community_settings_sum_order_by
+  var_pop: community_settings_var_pop_order_by
+  var_samp: community_settings_var_samp_order_by
+  variance: community_settings_variance_order_by
+}
+
+# input type for inserting array relation for remote table "community_settings"
+input community_settings_arr_rel_insert_input {
+  data: [community_settings_insert_input!]!
+  on_conflict: community_settings_on_conflict
+}
+
+# aggregate avg on columns
+type community_settings_avg_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by avg() on columns of table "community_settings"
+input community_settings_avg_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# Boolean expression to filter rows from the table "community_settings". All fields are combined with a logical 'AND'.
+input community_settings_bool_exp {
+  _and: [community_settings_bool_exp]
+  _not: community_settings_bool_exp
+  _or: [community_settings_bool_exp]
+  allow_draws: Boolean_comparison_exp
+  community: communities_bool_exp
+  community_id: Int_comparison_exp
+  include_extra_time: Boolean_comparison_exp
+  max_selectable_points: Int_comparison_exp
+  score_type: score_types_enum_comparison_exp
+  use_dropdown_for_points: Boolean_comparison_exp
+}
+
+# unique or primary key constraints on table "community_settings"
+enum community_settings_constraint {
+  # unique or primary key constraint
+  community_settings_pkey
+}
+
+# input type for incrementing integer column in table "community_settings"
+input community_settings_inc_input {
+  community_id: Int
+  max_selectable_points: Int
+}
+
+# input type for inserting data into table "community_settings"
+input community_settings_insert_input {
+  allow_draws: Boolean
+  community: communities_obj_rel_insert_input
+  community_id: Int
+  include_extra_time: Boolean
+  max_selectable_points: Int
+  score_type: score_types_enum
+  use_dropdown_for_points: Boolean
+}
+
+# aggregate max on columns
+type community_settings_max_fields {
+  community_id: Int
+  max_selectable_points: Int
+}
+
+# order by max() on columns of table "community_settings"
+input community_settings_max_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate min on columns
+type community_settings_min_fields {
+  community_id: Int
+  max_selectable_points: Int
+}
+
+# order by min() on columns of table "community_settings"
+input community_settings_min_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# response of any mutation on the table "community_settings"
+type community_settings_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [community_settings!]!
+}
+
+# input type for inserting object relation for remote table "community_settings"
+input community_settings_obj_rel_insert_input {
+  data: community_settings_insert_input!
+  on_conflict: community_settings_on_conflict
+}
+
+# on conflict condition type for table "community_settings"
+input community_settings_on_conflict {
+  constraint: community_settings_constraint!
+  update_columns: [community_settings_update_column!]!
+  where: community_settings_bool_exp
+}
+
+# ordering options when selecting data from "community_settings"
+input community_settings_order_by {
+  allow_draws: order_by
+  community: communities_order_by
+  community_id: order_by
+  include_extra_time: order_by
+  max_selectable_points: order_by
+  score_type: order_by
+  use_dropdown_for_points: order_by
+}
+
+# primary key columns input for table: "community_settings"
+input community_settings_pk_columns_input {
+  community_id: Int!
+}
+
+# select columns of table "community_settings"
+enum community_settings_select_column {
+  # column name
+  allow_draws
+
+  # column name
+  community_id
+
+  # column name
+  include_extra_time
+
+  # column name
+  max_selectable_points
+
+  # column name
+  score_type
+
+  # column name
+  use_dropdown_for_points
+}
+
+# input type for updating data in table "community_settings"
+input community_settings_set_input {
+  allow_draws: Boolean
+  community_id: Int
+  include_extra_time: Boolean
+  max_selectable_points: Int
+  score_type: score_types_enum
+  use_dropdown_for_points: Boolean
+}
+
+# aggregate stddev on columns
+type community_settings_stddev_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by stddev() on columns of table "community_settings"
+input community_settings_stddev_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate stddev_pop on columns
+type community_settings_stddev_pop_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by stddev_pop() on columns of table "community_settings"
+input community_settings_stddev_pop_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate stddev_samp on columns
+type community_settings_stddev_samp_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by stddev_samp() on columns of table "community_settings"
+input community_settings_stddev_samp_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate sum on columns
+type community_settings_sum_fields {
+  community_id: Int
+  max_selectable_points: Int
+}
+
+# order by sum() on columns of table "community_settings"
+input community_settings_sum_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# update columns of table "community_settings"
+enum community_settings_update_column {
+  # column name
+  allow_draws
+
+  # column name
+  community_id
+
+  # column name
+  include_extra_time
+
+  # column name
+  max_selectable_points
+
+  # column name
+  score_type
+
+  # column name
+  use_dropdown_for_points
+}
+
+# aggregate var_pop on columns
+type community_settings_var_pop_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by var_pop() on columns of table "community_settings"
+input community_settings_var_pop_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate var_samp on columns
+type community_settings_var_samp_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by var_samp() on columns of table "community_settings"
+input community_settings_var_samp_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# aggregate variance on columns
+type community_settings_variance_fields {
+  community_id: Float
+  max_selectable_points: Float
+}
+
+# order by variance() on columns of table "community_settings"
+input community_settings_variance_order_by {
+  community_id: order_by
+  max_selectable_points: order_by
+}
+
+# A Relay Connection object on "community_settings"
+type community_settingsConnection {
+  edges: [community_settingsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type community_settingsEdge {
+  cursor: String!
+  node: community_settings!
+}
+
+# expression to compare columns of type Int. All fields are combined with logical 'AND'.
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+# mutation root
+type mutation_root {
+  # delete data from the table: "communities"
+  delete_communities(
+    # filter the rows which have to be deleted
+    where: communities_bool_exp!
+  ): communities_mutation_response
+
+  # delete single row from the table: "communities"
+  delete_communities_by_pk(id: Int!): communities
+
+  # delete data from the table: "community_settings"
+  delete_community_settings(
+    # filter the rows which have to be deleted
+    where: community_settings_bool_exp!
+  ): community_settings_mutation_response
+
+  # delete single row from the table: "community_settings"
+  delete_community_settings_by_pk(community_id: Int!): community_settings
+
+  # delete data from the table: "players"
+  delete_players(
+    # filter the rows which have to be deleted
+    where: players_bool_exp!
+  ): players_mutation_response
+
+  # delete single row from the table: "players"
+  delete_players_by_pk(id: Int!): players
+
+  # delete data from the table: "results"
+  delete_results(
+    # filter the rows which have to be deleted
+    where: results_bool_exp!
+  ): results_mutation_response
+
+  # delete single row from the table: "results"
+  delete_results_by_pk(id: Int!): results
+
+  # delete data from the table: "score_types"
+  delete_score_types(
+    # filter the rows which have to be deleted
+    where: score_types_bool_exp!
+  ): score_types_mutation_response
+
+  # delete single row from the table: "score_types"
+  delete_score_types_by_pk(name: String!): score_types
+
+  # insert data into the table: "communities"
+  insert_communities(
+    # the rows to be inserted
+    objects: [communities_insert_input!]!
+
+    # on conflict condition
+    on_conflict: communities_on_conflict
+  ): communities_mutation_response
+
+  # insert a single row into the table: "communities"
+  insert_communities_one(
+    # the row to be inserted
+    object: communities_insert_input!
+
+    # on conflict condition
+    on_conflict: communities_on_conflict
+  ): communities
+
+  # insert data into the table: "community_settings"
+  insert_community_settings(
+    # the rows to be inserted
+    objects: [community_settings_insert_input!]!
+
+    # on conflict condition
+    on_conflict: community_settings_on_conflict
+  ): community_settings_mutation_response
+
+  # insert a single row into the table: "community_settings"
+  insert_community_settings_one(
+    # the row to be inserted
+    object: community_settings_insert_input!
+
+    # on conflict condition
+    on_conflict: community_settings_on_conflict
+  ): community_settings
+
+  # insert data into the table: "players"
+  insert_players(
+    # the rows to be inserted
+    objects: [players_insert_input!]!
+
+    # on conflict condition
+    on_conflict: players_on_conflict
+  ): players_mutation_response
+
+  # insert a single row into the table: "players"
+  insert_players_one(
+    # the row to be inserted
+    object: players_insert_input!
+
+    # on conflict condition
+    on_conflict: players_on_conflict
+  ): players
+
+  # insert data into the table: "results"
+  insert_results(
+    # the rows to be inserted
+    objects: [results_insert_input!]!
+
+    # on conflict condition
+    on_conflict: results_on_conflict
+  ): results_mutation_response
+
+  # insert a single row into the table: "results"
+  insert_results_one(
+    # the row to be inserted
+    object: results_insert_input!
+
+    # on conflict condition
+    on_conflict: results_on_conflict
+  ): results
+
+  # insert data into the table: "score_types"
+  insert_score_types(
+    # the rows to be inserted
+    objects: [score_types_insert_input!]!
+
+    # on conflict condition
+    on_conflict: score_types_on_conflict
+  ): score_types_mutation_response
+
+  # insert a single row into the table: "score_types"
+  insert_score_types_one(
+    # the row to be inserted
+    object: score_types_insert_input!
+
+    # on conflict condition
+    on_conflict: score_types_on_conflict
+  ): score_types
+
+  # update data of the table: "communities"
+  update_communities(
+    # increments the integer columns with given value of the filtered values
+    _inc: communities_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: communities_set_input
+
+    # filter the rows which have to be updated
+    where: communities_bool_exp!
+  ): communities_mutation_response
+
+  # update single row of the table: "communities"
+  update_communities_by_pk(
+    # increments the integer columns with given value of the filtered values
+    _inc: communities_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: communities_set_input
+    pk_columns: communities_pk_columns_input!
+  ): communities
+
+  # update data of the table: "community_settings"
+  update_community_settings(
+    # increments the integer columns with given value of the filtered values
+    _inc: community_settings_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: community_settings_set_input
+
+    # filter the rows which have to be updated
+    where: community_settings_bool_exp!
+  ): community_settings_mutation_response
+
+  # update single row of the table: "community_settings"
+  update_community_settings_by_pk(
+    # increments the integer columns with given value of the filtered values
+    _inc: community_settings_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: community_settings_set_input
+    pk_columns: community_settings_pk_columns_input!
+  ): community_settings
+
+  # update data of the table: "players"
+  update_players(
+    # increments the integer columns with given value of the filtered values
+    _inc: players_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: players_set_input
+
+    # filter the rows which have to be updated
+    where: players_bool_exp!
+  ): players_mutation_response
+
+  # update single row of the table: "players"
+  update_players_by_pk(
+    # increments the integer columns with given value of the filtered values
+    _inc: players_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: players_set_input
+    pk_columns: players_pk_columns_input!
+  ): players
+
+  # update data of the table: "results"
+  update_results(
+    # increments the integer columns with given value of the filtered values
+    _inc: results_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: results_set_input
+
+    # filter the rows which have to be updated
+    where: results_bool_exp!
+  ): results_mutation_response
+
+  # update single row of the table: "results"
+  update_results_by_pk(
+    # increments the integer columns with given value of the filtered values
+    _inc: results_inc_input
+
+    # sets the columns of the filtered rows to the given values
+    _set: results_set_input
+    pk_columns: results_pk_columns_input!
+  ): results
+
+  # update data of the table: "score_types"
+  update_score_types(
+    # sets the columns of the filtered rows to the given values
+    _set: score_types_set_input
+
+    # filter the rows which have to be updated
+    where: score_types_bool_exp!
+  ): score_types_mutation_response
+
+  # update single row of the table: "score_types"
+  update_score_types_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: score_types_set_input
+    pk_columns: score_types_pk_columns_input!
+  ): score_types
+}
+
+# An object with globally unique ID
+interface Node {
+  # A globally unique identifier
+  id: ID!
+}
+
+# column ordering options
+enum order_by {
+  # in the ascending order, nulls last
+  asc
+
+  # in the ascending order, nulls first
+  asc_nulls_first
+
+  # in the ascending order, nulls last
+  asc_nulls_last
+
+  # in the descending order, nulls first
+  desc
+
+  # in the descending order, nulls first
+  desc_nulls_first
+
+  # in the descending order, nulls last
+  desc_nulls_last
+}
+
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+}
+
+# columns and relationships of "players"
+type players implements Node {
+  # An object relationship
+  community: communities!
+  communityId: Int!
+  id: ID!
+  name: String!
+
+  # An array relationship
+  resultsAsPlayer1(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): [results!]!
+
+  # An aggregated array relationship
+  resultsAsPlayer1_aggregate(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): results_aggregate!
+
+  # An array relationship connection
+  resultsAsPlayer1_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): resultsConnection!
+
+  # An array relationship
+  resultsAsPlayer2(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): [results!]!
+
+  # An aggregated array relationship
+  resultsAsPlayer2_aggregate(
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): results_aggregate!
+
+  # An array relationship connection
+  resultsAsPlayer2_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): resultsConnection!
+}
+
+# aggregated selection of "players"
+type players_aggregate {
+  aggregate: players_aggregate_fields
+  nodes: [players!]!
+}
+
+# aggregate fields of "players"
+type players_aggregate_fields {
+  avg: players_avg_fields
+  count(columns: [players_select_column!], distinct: Boolean): Int
+  max: players_max_fields
+  min: players_min_fields
+  stddev: players_stddev_fields
+  stddev_pop: players_stddev_pop_fields
+  stddev_samp: players_stddev_samp_fields
+  sum: players_sum_fields
+  var_pop: players_var_pop_fields
+  var_samp: players_var_samp_fields
+  variance: players_variance_fields
+}
+
+# order by aggregate values of table "players"
+input players_aggregate_order_by {
+  avg: players_avg_order_by
+  count: order_by
+  max: players_max_order_by
+  min: players_min_order_by
+  stddev: players_stddev_order_by
+  stddev_pop: players_stddev_pop_order_by
+  stddev_samp: players_stddev_samp_order_by
+  sum: players_sum_order_by
+  var_pop: players_var_pop_order_by
+  var_samp: players_var_samp_order_by
+  variance: players_variance_order_by
+}
+
+# input type for inserting array relation for remote table "players"
+input players_arr_rel_insert_input {
+  data: [players_insert_input!]!
+  on_conflict: players_on_conflict
+}
+
+# aggregate avg on columns
+type players_avg_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by avg() on columns of table "players"
+input players_avg_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# Boolean expression to filter rows from the table "players". All fields are combined with a logical 'AND'.
+input players_bool_exp {
+  _and: [players_bool_exp]
+  _not: players_bool_exp
+  _or: [players_bool_exp]
+  community: communities_bool_exp
+  communityId: Int_comparison_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+  resultsAsPlayer1: results_bool_exp
+  resultsAsPlayer2: results_bool_exp
+}
+
+# unique or primary key constraints on table "players"
+enum players_constraint {
+  # unique or primary key constraint
+  players_name_communityId_key
+
+  # unique or primary key constraint
+  players_pkey
+}
+
+# input type for incrementing integer column in table "players"
+input players_inc_input {
+  communityId: Int
+  id: Int
+}
+
+# input type for inserting data into table "players"
+input players_insert_input {
+  community: communities_obj_rel_insert_input
+  communityId: Int
+  id: Int
+  name: String
+  resultsAsPlayer1: results_arr_rel_insert_input
+  resultsAsPlayer2: results_arr_rel_insert_input
+}
+
+# aggregate max on columns
+type players_max_fields {
+  communityId: Int
+  id: Int
+  name: String
+}
+
+# order by max() on columns of table "players"
+input players_max_order_by {
+  communityId: order_by
+  id: order_by
+  name: order_by
+}
+
+# aggregate min on columns
+type players_min_fields {
+  communityId: Int
+  id: Int
+  name: String
+}
+
+# order by min() on columns of table "players"
+input players_min_order_by {
+  communityId: order_by
+  id: order_by
+  name: order_by
+}
+
+# response of any mutation on the table "players"
+type players_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [players!]!
+}
+
+# input type for inserting object relation for remote table "players"
+input players_obj_rel_insert_input {
+  data: players_insert_input!
+  on_conflict: players_on_conflict
+}
+
+# on conflict condition type for table "players"
+input players_on_conflict {
+  constraint: players_constraint!
+  update_columns: [players_update_column!]!
+  where: players_bool_exp
+}
+
+# ordering options when selecting data from "players"
+input players_order_by {
+  community: communities_order_by
+  communityId: order_by
+  id: order_by
+  name: order_by
+  resultsAsPlayer1_aggregate: results_aggregate_order_by
+  resultsAsPlayer2_aggregate: results_aggregate_order_by
+}
+
+# primary key columns input for table: "players"
+input players_pk_columns_input {
+  id: Int!
+}
+
+# select columns of table "players"
+enum players_select_column {
+  # column name
+  communityId
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# input type for updating data in table "players"
+input players_set_input {
+  communityId: Int
+  id: Int
+  name: String
+}
+
+# aggregate stddev on columns
+type players_stddev_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by stddev() on columns of table "players"
+input players_stddev_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# aggregate stddev_pop on columns
+type players_stddev_pop_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by stddev_pop() on columns of table "players"
+input players_stddev_pop_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# aggregate stddev_samp on columns
+type players_stddev_samp_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by stddev_samp() on columns of table "players"
+input players_stddev_samp_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# aggregate sum on columns
+type players_sum_fields {
+  communityId: Int
+  id: Int
+}
+
+# order by sum() on columns of table "players"
+input players_sum_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# update columns of table "players"
+enum players_update_column {
+  # column name
+  communityId
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# aggregate var_pop on columns
+type players_var_pop_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by var_pop() on columns of table "players"
+input players_var_pop_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# aggregate var_samp on columns
+type players_var_samp_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by var_samp() on columns of table "players"
+input players_var_samp_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# aggregate variance on columns
+type players_variance_fields {
+  communityId: Float
+  id: Float
+}
+
+# order by variance() on columns of table "players"
+input players_variance_order_by {
+  communityId: order_by
+  id: order_by
+}
+
+# A Relay Connection object on "players"
+type playersConnection {
+  edges: [playersEdge!]!
+  pageInfo: PageInfo!
+}
+
+type playersEdge {
+  cursor: String!
+  node: players!
+}
+
+# query root
+type query_root {
+  # fetch data from the table: "communities"
+  communities_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [communities_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [communities_order_by!]
+
+    # filter the rows returned
+    where: communities_bool_exp
+  ): communitiesConnection!
+
+  # fetch data from the table: "community_settings"
+  community_settings_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [community_settings_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [community_settings_order_by!]
+
+    # filter the rows returned
+    where: community_settings_bool_exp
+  ): community_settingsConnection!
+  node(
+    # A globally unique id
+    id: ID!
+  ): Node
+
+  # fetch data from the table: "players"
+  players_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [players_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [players_order_by!]
+
+    # filter the rows returned
+    where: players_bool_exp
+  ): playersConnection!
+
+  # fetch data from the table: "results"
+  results_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): resultsConnection!
+
+  # fetch data from the table: "score_types"
+  score_types_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [score_types_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [score_types_order_by!]
+
+    # filter the rows returned
+    where: score_types_bool_exp
+  ): score_typesConnection!
+}
+
+# columns and relationships of "results"
+type results implements Node {
+  comment: String
+
+  # An object relationship
+  community: communities!
+  communityId: Int!
+  date: timestamptz!
+  extratime: Boolean!
+  id: ID!
+
+  # An object relationship
+  player1: players!
+  player1Id: Int!
+  player1goals: Int!
+
+  # An object relationship
+  player2: players!
+  player2Id: Int!
+  player2goals: Int!
+}
+
+# aggregated selection of "results"
+type results_aggregate {
+  aggregate: results_aggregate_fields
+  nodes: [results!]!
+}
+
+# aggregate fields of "results"
+type results_aggregate_fields {
+  avg: results_avg_fields
+  count(columns: [results_select_column!], distinct: Boolean): Int
+  max: results_max_fields
+  min: results_min_fields
+  stddev: results_stddev_fields
+  stddev_pop: results_stddev_pop_fields
+  stddev_samp: results_stddev_samp_fields
+  sum: results_sum_fields
+  var_pop: results_var_pop_fields
+  var_samp: results_var_samp_fields
+  variance: results_variance_fields
+}
+
+# order by aggregate values of table "results"
+input results_aggregate_order_by {
+  avg: results_avg_order_by
+  count: order_by
+  max: results_max_order_by
+  min: results_min_order_by
+  stddev: results_stddev_order_by
+  stddev_pop: results_stddev_pop_order_by
+  stddev_samp: results_stddev_samp_order_by
+  sum: results_sum_order_by
+  var_pop: results_var_pop_order_by
+  var_samp: results_var_samp_order_by
+  variance: results_variance_order_by
+}
+
+# input type for inserting array relation for remote table "results"
+input results_arr_rel_insert_input {
+  data: [results_insert_input!]!
+  on_conflict: results_on_conflict
+}
+
+# aggregate avg on columns
+type results_avg_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by avg() on columns of table "results"
+input results_avg_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# Boolean expression to filter rows from the table "results". All fields are combined with a logical 'AND'.
+input results_bool_exp {
+  _and: [results_bool_exp]
+  _not: results_bool_exp
+  _or: [results_bool_exp]
+  comment: String_comparison_exp
+  community: communities_bool_exp
+  communityId: Int_comparison_exp
+  date: timestamptz_comparison_exp
+  extratime: Boolean_comparison_exp
+  id: Int_comparison_exp
+  player1: players_bool_exp
+  player1Id: Int_comparison_exp
+  player1goals: Int_comparison_exp
+  player2: players_bool_exp
+  player2Id: Int_comparison_exp
+  player2goals: Int_comparison_exp
+}
+
+# unique or primary key constraints on table "results"
+enum results_constraint {
+  # unique or primary key constraint
+  results_pkey
+}
+
+# input type for incrementing integer column in table "results"
+input results_inc_input {
+  communityId: Int
+  id: Int
+  player1Id: Int
+  player1goals: Int
+  player2Id: Int
+  player2goals: Int
+}
+
+# input type for inserting data into table "results"
+input results_insert_input {
+  comment: String
+  community: communities_obj_rel_insert_input
+  communityId: Int
+  date: timestamptz
+  extratime: Boolean
+  id: Int
+  player1: players_obj_rel_insert_input
+  player1Id: Int
+  player1goals: Int
+  player2: players_obj_rel_insert_input
+  player2Id: Int
+  player2goals: Int
+}
+
+# aggregate max on columns
+type results_max_fields {
+  comment: String
+  communityId: Int
+  date: timestamptz
+  id: Int
+  player1Id: Int
+  player1goals: Int
+  player2Id: Int
+  player2goals: Int
+}
+
+# order by max() on columns of table "results"
+input results_max_order_by {
+  comment: order_by
+  communityId: order_by
+  date: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate min on columns
+type results_min_fields {
+  comment: String
+  communityId: Int
+  date: timestamptz
+  id: Int
+  player1Id: Int
+  player1goals: Int
+  player2Id: Int
+  player2goals: Int
+}
+
+# order by min() on columns of table "results"
+input results_min_order_by {
+  comment: order_by
+  communityId: order_by
+  date: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# response of any mutation on the table "results"
+type results_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [results!]!
+}
+
+# input type for inserting object relation for remote table "results"
+input results_obj_rel_insert_input {
+  data: results_insert_input!
+  on_conflict: results_on_conflict
+}
+
+# on conflict condition type for table "results"
+input results_on_conflict {
+  constraint: results_constraint!
+  update_columns: [results_update_column!]!
+  where: results_bool_exp
+}
+
+# ordering options when selecting data from "results"
+input results_order_by {
+  comment: order_by
+  community: communities_order_by
+  communityId: order_by
+  date: order_by
+  extratime: order_by
+  id: order_by
+  player1: players_order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2: players_order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# primary key columns input for table: "results"
+input results_pk_columns_input {
+  id: Int!
+}
+
+# select columns of table "results"
+enum results_select_column {
+  # column name
+  comment
+
+  # column name
+  communityId
+
+  # column name
+  date
+
+  # column name
+  extratime
+
+  # column name
+  id
+
+  # column name
+  player1Id
+
+  # column name
+  player1goals
+
+  # column name
+  player2Id
+
+  # column name
+  player2goals
+}
+
+# input type for updating data in table "results"
+input results_set_input {
+  comment: String
+  communityId: Int
+  date: timestamptz
+  extratime: Boolean
+  id: Int
+  player1Id: Int
+  player1goals: Int
+  player2Id: Int
+  player2goals: Int
+}
+
+# aggregate stddev on columns
+type results_stddev_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by stddev() on columns of table "results"
+input results_stddev_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate stddev_pop on columns
+type results_stddev_pop_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by stddev_pop() on columns of table "results"
+input results_stddev_pop_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate stddev_samp on columns
+type results_stddev_samp_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by stddev_samp() on columns of table "results"
+input results_stddev_samp_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate sum on columns
+type results_sum_fields {
+  communityId: Int
+  id: Int
+  player1Id: Int
+  player1goals: Int
+  player2Id: Int
+  player2goals: Int
+}
+
+# order by sum() on columns of table "results"
+input results_sum_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# update columns of table "results"
+enum results_update_column {
+  # column name
+  comment
+
+  # column name
+  communityId
+
+  # column name
+  date
+
+  # column name
+  extratime
+
+  # column name
+  id
+
+  # column name
+  player1Id
+
+  # column name
+  player1goals
+
+  # column name
+  player2Id
+
+  # column name
+  player2goals
+}
+
+# aggregate var_pop on columns
+type results_var_pop_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by var_pop() on columns of table "results"
+input results_var_pop_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate var_samp on columns
+type results_var_samp_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by var_samp() on columns of table "results"
+input results_var_samp_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# aggregate variance on columns
+type results_variance_fields {
+  communityId: Float
+  id: Float
+  player1Id: Float
+  player1goals: Float
+  player2Id: Float
+  player2goals: Float
+}
+
+# order by variance() on columns of table "results"
+input results_variance_order_by {
+  communityId: order_by
+  id: order_by
+  player1Id: order_by
+  player1goals: order_by
+  player2Id: order_by
+  player2goals: order_by
+}
+
+# A Relay Connection object on "results"
+type resultsConnection {
+  edges: [resultsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type resultsEdge {
+  cursor: String!
+  node: results!
+}
+
+# columns and relationships of "score_types"
+type score_types implements Node {
+  id: ID!
+  name: String!
+}
+
+# aggregated selection of "score_types"
+type score_types_aggregate {
+  aggregate: score_types_aggregate_fields
+  nodes: [score_types!]!
+}
+
+# aggregate fields of "score_types"
+type score_types_aggregate_fields {
+  count(columns: [score_types_select_column!], distinct: Boolean): Int
+  max: score_types_max_fields
+  min: score_types_min_fields
+}
+
+# order by aggregate values of table "score_types"
+input score_types_aggregate_order_by {
+  count: order_by
+  max: score_types_max_order_by
+  min: score_types_min_order_by
+}
+
+# input type for inserting array relation for remote table "score_types"
+input score_types_arr_rel_insert_input {
+  data: [score_types_insert_input!]!
+  on_conflict: score_types_on_conflict
+}
+
+# Boolean expression to filter rows from the table "score_types". All fields are combined with a logical 'AND'.
+input score_types_bool_exp {
+  _and: [score_types_bool_exp]
+  _not: score_types_bool_exp
+  _or: [score_types_bool_exp]
+  name: String_comparison_exp
+}
+
+# unique or primary key constraints on table "score_types"
+enum score_types_constraint {
+  # unique or primary key constraint
+  score_types_name_key
+
+  # unique or primary key constraint
+  score_types_pkey
+}
+
+enum score_types_enum {
+  Goals
+  Points
+}
+
+# expression to compare columns of type score_types_enum. All fields are combined with logical 'AND'.
+input score_types_enum_comparison_exp {
+  _eq: score_types_enum
+  _in: [score_types_enum!]
+  _is_null: Boolean
+  _neq: score_types_enum
+  _nin: [score_types_enum!]
+}
+
+# input type for inserting data into table "score_types"
+input score_types_insert_input {
+  name: String
+}
+
+# aggregate max on columns
+type score_types_max_fields {
+  name: String
+}
+
+# order by max() on columns of table "score_types"
+input score_types_max_order_by {
+  name: order_by
+}
+
+# aggregate min on columns
+type score_types_min_fields {
+  name: String
+}
+
+# order by min() on columns of table "score_types"
+input score_types_min_order_by {
+  name: order_by
+}
+
+# response of any mutation on the table "score_types"
+type score_types_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [score_types!]!
+}
+
+# input type for inserting object relation for remote table "score_types"
+input score_types_obj_rel_insert_input {
+  data: score_types_insert_input!
+  on_conflict: score_types_on_conflict
+}
+
+# on conflict condition type for table "score_types"
+input score_types_on_conflict {
+  constraint: score_types_constraint!
+  update_columns: [score_types_update_column!]!
+  where: score_types_bool_exp
+}
+
+# ordering options when selecting data from "score_types"
+input score_types_order_by {
+  name: order_by
+}
+
+# primary key columns input for table: "score_types"
+input score_types_pk_columns_input {
+  name: String!
+}
+
+# select columns of table "score_types"
+enum score_types_select_column {
+  # column name
+  name
+}
+
+# input type for updating data in table "score_types"
+input score_types_set_input {
+  name: String
+}
+
+# update columns of table "score_types"
+enum score_types_update_column {
+  # column name
+  name
+}
+
+# A Relay Connection object on "score_types"
+type score_typesConnection {
+  edges: [score_typesEdge!]!
+  pageInfo: PageInfo!
+}
+
+type score_typesEdge {
+  cursor: String!
+  node: score_types!
+}
+
+# expression to compare columns of type String. All fields are combined with logical 'AND'.
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+  _ilike: String
+  _in: [String!]
+  _is_null: Boolean
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+  _nilike: String
+  _nin: [String!]
+  _nlike: String
+  _nsimilar: String
+  _similar: String
+}
+
+# subscription root
+type subscription_root {
+  # fetch data from the table: "communities"
+  communities_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [communities_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [communities_order_by!]
+
+    # filter the rows returned
+    where: communities_bool_exp
+  ): communitiesConnection!
+
+  # fetch data from the table: "community_settings"
+  community_settings_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [community_settings_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [community_settings_order_by!]
+
+    # filter the rows returned
+    where: community_settings_bool_exp
+  ): community_settingsConnection!
+  node(
+    # A globally unique id
+    id: ID!
+  ): Node
+
+  # fetch data from the table: "players"
+  players_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [players_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [players_order_by!]
+
+    # filter the rows returned
+    where: players_bool_exp
+  ): playersConnection!
+
+  # fetch data from the table: "results"
+  results_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [results_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [results_order_by!]
+
+    # filter the rows returned
+    where: results_bool_exp
+  ): resultsConnection!
+
+  # fetch data from the table: "score_types"
+  score_types_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [score_types_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [score_types_order_by!]
+
+    # filter the rows returned
+    where: score_types_bool_exp
+  ): score_typesConnection!
+}
+
+scalar timestamptz
+
+# expression to compare columns of type timestamptz. All fields are combined with logical 'AND'.
+input timestamptz_comparison_exp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _is_null: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}
+

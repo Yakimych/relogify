@@ -1,10 +1,10 @@
+open Types;
 open Styles;
 open Utils;
-open Types;
 
 type editResultAction =
-  | SetPlayer1Id(int)
-  | SetPlayer2Id(int)
+  | SetPlayer1Id(string)
+  | SetPlayer2Id(string)
   | SetPlayer1Goals(int)
   | SetPlayer2Goals(int)
   | ToggleExtraTime
@@ -29,19 +29,60 @@ let editResultReducer =
     };
   };
 
+module CommunitySettingsFragment = [%relay.fragment
+  {|
+    fragment EditResultTableRowFragment_CommunitySettings on community_settings
+      @relay(plural: true) {
+      score_type
+      max_selectable_points
+    }
+  |}
+];
+
+module SingleResultFragment = [%relay.fragment
+  {|
+    fragment EditResultTableRow_SingleResult on results {
+      player1 {
+        id
+        name
+      }
+      player2 {
+        id
+        name
+      }
+      player2goals
+      player1goals
+      extratime
+      date
+      id
+    }
+  |}
+];
+
 [@react.component]
 let make =
     (
-      ~communityName,
-      ~communitySettings: communitySettings,
+      ~existingPlayerPickerFragment,
+      ~communitySettingsFragments,
       ~id,
-      ~initialValuesToEdit: editableResultValues,
+      ~resultFragment,
       ~disabled,
       ~onSave,
       ~onCancel,
     ) => {
+  let resultFragment = SingleResultFragment.use(resultFragment);
+  let initialValuesToEdit = resultFragment |> toEditableResultValues;
   let (valuesUnderEdit, dispatch) =
     React.useReducer(editResultReducer, initialValuesToEdit);
+
+  let defaultCommunitySettings: CommunitySettingsFragment.Types.fragment_t = {
+    score_type: DefaultCommunitySettings.scoreType,
+    max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
+  };
+
+  let communitySettings =
+    CommunitySettingsFragment.use(communitySettingsFragments)
+    |> headWithDefault(defaultCommunitySettings);
 
   <>
     <MaterialUi.TableCell>
@@ -53,7 +94,7 @@ let make =
     <MaterialUi.TableCell align=`Right>
       <ExistingPlayerPicker
         disabled
-        communityName
+        existingPlayerPickerFragment
         selectedPlayerId={valuesUnderEdit.player1Id}
         onChange={id => dispatch(SetPlayer1Id(id))}
       />
@@ -63,8 +104,8 @@ let make =
         disabled
         selectedGoals={valuesUnderEdit.player1Goals}
         onChange={g => dispatch(SetPlayer1Goals(g))}
-        maxSelectablePoints={communitySettings.maxSelectablePoints}
-        scoreType={communitySettings.scoreType}
+        maxSelectablePoints={communitySettings.max_selectable_points}
+        scoreType={communitySettings.score_type}
       />
     </MaterialUi.TableCell>
     <MaterialUi.TableCell style=colonStyle>
@@ -75,14 +116,14 @@ let make =
         disabled
         selectedGoals={valuesUnderEdit.player2Goals}
         onChange={g => dispatch(SetPlayer2Goals(g))}
-        maxSelectablePoints={communitySettings.maxSelectablePoints}
-        scoreType={communitySettings.scoreType}
+        maxSelectablePoints={communitySettings.max_selectable_points}
+        scoreType={communitySettings.score_type}
       />
     </MaterialUi.TableCell>
     <MaterialUi.TableCell>
       <ExistingPlayerPicker
         disabled
-        communityName
+        existingPlayerPickerFragment
         selectedPlayerId={valuesUnderEdit.player2Id}
         onChange={id => dispatch(SetPlayer2Id(id))}
       />

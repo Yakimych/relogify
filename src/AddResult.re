@@ -1,18 +1,67 @@
+open StoreUpdater;
 open Utils;
-open Queries;
-open Mutations;
 open StorageUtils;
-open UseCommunitySettings;
-open ApolloHooks;
 
 // TODO: Implement a pretty dialog instead
 [@bs.val] external alert: string => unit = "alert";
 
-[@react.component]
-let make = (~communityName: string, ~onResultAdded) => {
-  let settingsQuery = useCommunitySettings(communityName);
+let nameOfPlayersConnectionToUpdate = "CommunityStartPage_query_players_connection";
+let nameOfResultsConnectionToUpdate = "CommunityStartPage_query_results_connection";
+let mutationFieldName = "insert_results_one";
+module AddMutation = [%relay.mutation
+  {|
+    mutation AddResultMutation($input: results_insert_input!) {
+      insert_results_one(object: $input) {
+        player1 {
+          id
+          name
+        }
+        player2 {
+          id
+          name
+        }
+        player2goals
+        player1goals
+        extratime
+        date
+        id
+      }
+    }
+  |}
+];
 
-  let (addResultMutation, _, _) = useMutation(AddResultMutation.definition);
+module AddResultFragment = [%relay.fragment
+  {|
+    fragment AddResultFragment_CommunitySettings on community_settings
+      @relay(plural: true) {
+      include_extra_time
+      score_type
+      max_selectable_points
+      allow_draws
+    }
+  |}
+];
+
+[@react.component]
+let make =
+    (
+      ~communitySettingsFragments,
+      ~playerPickerFragment,
+      ~communityName: string,
+      ~onResultAdded,
+    ) => {
+  let defaultCommunitySettings: AddResultFragment.Types.fragment_t = {
+    include_extra_time: DefaultCommunitySettings.includeExtraTime,
+    score_type: DefaultCommunitySettings.scoreType,
+    max_selectable_points: DefaultCommunitySettings.maxSelectablePoints,
+    allow_draws: DefaultCommunitySettings.allowDraws,
+  };
+
+  let communitySettingsFragment =
+    AddResultFragment.use(communitySettingsFragments)
+    |> Utils.headWithDefault(defaultCommunitySettings);
+
+  let (mutate, isAddingResult) = AddMutation.use();
 
   let (getMostUsedPlayer, updateUsedPlayers) =
     useMostUsedPlayer(communityName);
@@ -28,7 +77,6 @@ let make = (~communityName: string, ~onResultAdded) => {
   let toggleExtraTime = () => setExtraTime(oldExtraTime => !oldExtraTime);
 
   let (date, setDate) = React.useState(_ => Js.Date.make());
-  let (isAddingResult, setIsAddingResult) = React.useState(_ => false);
 
   let resetState = () => {
     setMaybePlayer1Name(_ => getMostUsedPlayer());
@@ -53,134 +101,172 @@ let make = (~communityName: string, ~onResultAdded) => {
     switch (validationResult) {
     | Error(message) => alert(message)
     | Ok((player1Name, player2Name)) =>
-      setIsAddingResult(_ => true);
       updateUsedPlayers(player1Name, player2Name);
 
-      // Will refetch query for current week after adding result
-      let (startDate, endDate) = getCurrentWeek();
-      addResultMutation(
-        ~variables=
-          AddResultMutation.makeVariables(
-            ~communityName,
-            ~player1Name,
-            ~player2Name,
-            ~date=date->withCurrentTime(Js.Date.make())->toJsonDate,
-            ~player1Goals=goals1,
-            ~player2Goals=goals2,
-            ~extraTime,
+      let communityInput: AddResultMutation_graphql.Types.communities_obj_rel_insert_input =
+        AddResultMutation_graphql.Utils.(
+          make_communities_obj_rel_insert_input(
+            ~data=make_communities_insert_input(~name=communityName, ()),
+            ~on_conflict={
+              constraint_: `communities_name_key,
+              update_columns: [|`name|],
+              where: None,
+            },
             (),
-          ),
-        ~refetchQueries=
-          _ =>
-            [|
-              ApolloHooks.toQueryObj(
-                AllResultsQuery.make(
-                  ~communityName,
-                  ~dateFrom=startDate |> toJsonDate,
-                  ~dateTo=endDate |> toJsonDate,
+          )
+        );
+
+      let playersOnConflictInput: AddResultMutation_graphql.Types.players_on_conflict = {
+        constraint_: `players_name_communityId_key,
+        update_columns: [|`name|],
+        where: None,
+      };
+
+      mutate(
+        ~updater=
+          (store: ReasonRelay.RecordSourceSelectorProxy.t, response) => {
+            switch (response.insert_results_one) {
+            | Some(insertedResult) =>
+              updateResultList(
+                store,
+                insertedResult.id,
+                nameOfResultsConnectionToUpdate,
+              );
+              updatePlayerList(
+                store,
+                insertedResult.player1.id,
+                nameOfPlayersConnectionToUpdate,
+              );
+              updatePlayerList(
+                store,
+                insertedResult.player2.id,
+                nameOfPlayersConnectionToUpdate,
+              );
+            | None => ()
+            }
+          },
+        ~onCompleted=
+          (_, maybeMutationErrors) => {
+            switch (maybeMutationErrors) {
+            | Some(e) => Js.Console.error2("Error adding result", e)
+            | None =>
+              resetState();
+              onResultAdded();
+            }
+          },
+        ~variables=
+          AddResultMutation_graphql.Utils.(
+            AddMutation.makeVariables(
+              ~input=
+                make_results_insert_input(
+                  ~community=communityInput,
+                  ~player1=
+                    make_players_obj_rel_insert_input(
+                      ~data=
+                        make_players_insert_input(
+                          ~community=communityInput,
+                          ~name=player1Name,
+                          (),
+                        ),
+                      ~on_conflict=playersOnConflictInput,
+                      (),
+                    ),
+                  ~player2=
+                    make_players_obj_rel_insert_input(
+                      ~data=
+                        make_players_insert_input(
+                          ~community=communityInput,
+                          ~name=player2Name,
+                          (),
+                        ),
+                      ~on_conflict=playersOnConflictInput,
+                      (),
+                    ),
+                  ~date,
+                  ~extratime=extraTime,
+                  ~player1goals=goals1,
+                  ~player2goals=goals2,
                   (),
                 ),
-              ),
-              ApolloHooks.toQueryObj(
-                AllPlayersQuery.make(~communityName, ()),
-              ),
-            |],
+            )
+          ),
         (),
       )
-      |> Js.Promise.then_(_ => {
-           resetState();
-           setIsAddingResult(_ => false);
-           onResultAdded() |> Js.Promise.resolve;
-         })
-      |> Js.Promise.catch(e => {
-           Js.Console.error2("Error: ", e);
-           setIsAddingResult(_ => false) |> Js.Promise.resolve;
-         })
       |> ignore;
     };
   };
 
-  switch (settingsQuery) {
-  | Loading => <MaterialUi.CircularProgress />
-  | NoData
-  | Error(_) => <span> {text("Error")} </span>
-  | Data(communitySettings) =>
-    <MaterialUi.Paper
-      elevation={`Int(6)}
-      style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~marginBottom="10px",
-          (),
-        )}>
-        <PlayerPicker
-          disabled=isAddingResult
-          placeholderText="Player1"
-          communityName
-          selectedPlayerName=maybePlayer1Name
-          onChange={v => setMaybePlayer1Name(_ => Some(v))}
-        />
-        <GoalsPicker
-          disabled=isAddingResult
-          selectedGoals=goals1
-          onChange={v => setGoals1(_ => v)}
-          scoreType={communitySettings.scoreType}
-          maxSelectablePoints={communitySettings.maxSelectablePoints}
-        />
-        <GoalsPicker
-          disabled=isAddingResult
-          selectedGoals=goals2
-          onChange={v => setGoals2(_ => v)}
-          scoreType={communitySettings.scoreType}
-          maxSelectablePoints={communitySettings.maxSelectablePoints}
-        />
-        <PlayerPicker
-          disabled=isAddingResult
-          placeholderText="Player2"
-          communityName
-          selectedPlayerName=maybePlayer2Name
-          onChange={v => setMaybePlayer2Name(_ => Some(v))}
-        />
-      </div>
-      <div
-        style={ReactDOMRe.Style.make(
-          ~display="flex",
-          ~justifyContent="space-between",
-          (),
-        )}>
-        <MaterialUi.Button
-          disabled=isAddingResult
-          variant=`Contained
-          color=`Primary
-          onClick={_ => addResult(communitySettings.allowDraws)}>
-          {text("Submit")}
-        </MaterialUi.Button>
-        {communitySettings.includeExtraTime
-           ? <MaterialUi.FormControlLabel
-               control={
-                 <MaterialUi.Checkbox
-                   disabled=isAddingResult
-                   color=`Default
-                   checked=extraTime
-                   onChange={_ => toggleExtraTime()}
-                 />
-               }
-               label={text("Extra Time")}
-             />
-           : React.null}
-        <MaterialUi.TextField
-          disabled=isAddingResult
-          type_="date"
-          value={`String(formatDate(date))}
-          onChange={e => {
-            let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
-            if (DateFns.isValid(date)) {
-              setDate(_ => date);
-            };
-          }}
-        />
-      </div>
-    </MaterialUi.Paper>
-  };
+  <MaterialUi.Paper
+    elevation={`Int(6)}
+    style={ReactDOMRe.Style.make(~padding="25px 10px 10px 10px", ())}>
+    <div
+      style={ReactDOMRe.Style.make(~display="flex", ~marginBottom="10px", ())}>
+      <PlayerPicker
+        disabled=isAddingResult
+        placeholderText="Player1"
+        playerPickerFragment
+        selectedPlayerName=maybePlayer1Name
+        onChange={v => setMaybePlayer1Name(_ => Some(v))}
+      />
+      <GoalsPicker
+        disabled=isAddingResult
+        selectedGoals=goals1
+        onChange={v => setGoals1(_ => v)}
+        scoreType={communitySettingsFragment.score_type}
+        maxSelectablePoints={communitySettingsFragment.max_selectable_points}
+      />
+      <GoalsPicker
+        disabled=isAddingResult
+        selectedGoals=goals2
+        onChange={v => setGoals2(_ => v)}
+        scoreType={communitySettingsFragment.score_type}
+        maxSelectablePoints={communitySettingsFragment.max_selectable_points}
+      />
+      <PlayerPicker
+        disabled=isAddingResult
+        placeholderText="Player2"
+        playerPickerFragment
+        selectedPlayerName=maybePlayer2Name
+        onChange={v => setMaybePlayer2Name(_ => Some(v))}
+      />
+    </div>
+    <div
+      style={ReactDOMRe.Style.make(
+        ~display="flex",
+        ~justifyContent="space-between",
+        (),
+      )}>
+      <MaterialUi.Button
+        disabled=isAddingResult
+        variant=`Contained
+        color=`Primary
+        onClick={_ => addResult(communitySettingsFragment.allow_draws)}>
+        {text("Submit")}
+      </MaterialUi.Button>
+      {communitySettingsFragment.include_extra_time
+         ? <MaterialUi.FormControlLabel
+             control={
+               <MaterialUi.Checkbox
+                 disabled=isAddingResult
+                 color=`Default
+                 checked=extraTime
+                 onChange={_ => toggleExtraTime()}
+               />
+             }
+             label={text("Extra Time")}
+           />
+         : React.null}
+      <MaterialUi.TextField
+        disabled=isAddingResult
+        type_="date"
+        value={`String(formatDate(date))}
+        onChange={e => {
+          let date = Js.Date.fromString(ReactEvent.Form.target(e)##value);
+          if (DateFns.isValid(date)) {
+            setDate(_ => date);
+          };
+        }}
+      />
+    </div>
+  </MaterialUi.Paper>;
 };
