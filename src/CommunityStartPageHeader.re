@@ -10,7 +10,7 @@ let make =
     ) => {
   let (addResultIsOpen, setAddResultIsOpen) = React.useState(_ => false);
   <>
-    <MaterialUi.AppBar position=`Fixed color=`Secondary className="app-header">
+    <MaterialUi.AppBar position=`Fixed color=`Primary className="app-header">
       <MaterialUi.Toolbar>
         <>
           <div className="app-header-grouping">
