@@ -15,7 +15,7 @@
 ## Frontend
 
 - [ReasonML](https://reasonml.github.io/) with [ReasonReact](https://reasonml.github.io/reason-react/)
-- [GraphQL](https://graphql.org/) powered by [reason-apollo-hooks](https://github.com/Astrocoders/reason-apollo-hooks)
+- [GraphQL](https://graphql.org/) powered by [reason-relay](https://github.com/zth/reason-relay)
 
 ## Backend
 
