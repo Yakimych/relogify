@@ -28,6 +28,7 @@ let make =
       ~style: option(ReactDOMRe.Style.t)=?,
       ~children: React.element,
     ) =>
-  <MaterialUi.Link ?className href={getUrl(toPage)} ?style>
+  <MaterialUi.Link
+    ?className onClick={_ => ReasonReactRouter.push(getUrl(toPage))} ?style>
     children
   </MaterialUi.Link>;

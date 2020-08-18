@@ -26,7 +26,7 @@ module Query = [%relay.query
         ...ResultsTable_Results
         ...Stats_Results
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -121,20 +121,22 @@ let make = (~communityName: string) => {
         {text(">>")}
       </MaterialUi.Button>
     </MaterialUi.Box>
-    <Stats
-      communityName
-      ?dateFrom
-      ?dateTo
-      statsResultsFragment=resultsFragment
-      scoreTypeFragments=communitySettingsFragments
-    />
-    <ResultsTable
-      communityName
-      resultsTableFragment=resultsFragment
-      communitySettingsFragments
-      temp_showRatings={
-        dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
-      }
-    />
+    <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+      <Stats
+        communityName
+        ?dateFrom
+        ?dateTo
+        statsResultsFragment=resultsFragment
+        scoreTypeFragments=communitySettingsFragments
+      />
+      <ResultsTable
+        communityName
+        resultsTableFragment=resultsFragment
+        communitySettingsFragments
+        temp_showRatings={
+          dateFrom->Belt.Option.isNone && dateTo->Belt.Option.isNone
+        }
+      />
+    </React.Suspense>
   </>;
 };

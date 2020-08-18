@@ -27,7 +27,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       players_connection(
         first: 1000
         where: { community: { name: { _eq: $communityName } } }
@@ -43,7 +43,7 @@ module Query = [%relay.query
           }
         }
       }
-
+    
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -87,17 +87,19 @@ let make = (~communityName) => {
       communitySettingsFragments
       playerPickerFragment=playersFragment
     />
-    <Stats
-      statsResultsFragment=resultsFragment
-      scoreTypeFragments=communitySettingsFragments
-      communityName
-      dateFrom=startDate
-      dateTo=endDate
-    />
-    <ResultsTable
-      resultsTableFragment=resultsFragment
-      communitySettingsFragments
-      communityName
-    />
+    <React.Suspense fallback={<MaterialUi.CircularProgress />}>
+      <Stats
+        statsResultsFragment=resultsFragment
+        scoreTypeFragments=communitySettingsFragments
+        communityName
+        dateFrom=startDate
+        dateTo=endDate
+      />
+      <ResultsTable
+        resultsTableFragment=resultsFragment
+        communitySettingsFragments
+        communityName
+      />
+    </React.Suspense>
   </>;
 };

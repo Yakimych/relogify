@@ -3,7 +3,7 @@
 ReactExperimental.renderConcurrentRootAtElementWithId(
   <ReasonRelay.Context.Provider environment=RelayEnv.environment>
     <ReactNetlifyIdentity.IdentityContextProvider url=identityUrl>
-      <React.Suspense fallback={<div> {React.string("Loading...")} </div>}>
+      <React.Suspense fallback={<MaterialUi.CircularProgress />}>
         <Routing />
       </React.Suspense>
     </ReactNetlifyIdentity.IdentityContextProvider>

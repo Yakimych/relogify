@@ -46,6 +46,10 @@ let environment =
   ReasonRelay.Environment.make(
     ~network,
     ~store=
-      ReasonRelay.Store.make(~source=ReasonRelay.RecordSource.make(), ()),
+      ReasonRelay.Store.make(
+        ~source=ReasonRelay.RecordSource.make(),
+        ~gcReleaseBufferSize=50,
+        (),
+      ),
     (),
   );
