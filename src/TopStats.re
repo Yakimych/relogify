@@ -28,9 +28,11 @@ let byTupleValue = ((_, r1), (_, r2)) =>
   | (a, b) => sortCompareDesc(a, b)
   };
 
+// TODO: Fragment for results (within a date range)
+
 module TopStatsFragment = [%relay.fragment
   {|
-    fragment TopStatsColumn_ScoreType on community_settings {
+    fragment TopStatsColumn_ScoreType on community_settings @relay(plural: true) {
       score_type
     }
   |}
@@ -44,6 +46,14 @@ let make =
       ~resultsWithMap: temp_resultsWithRatingMap,
       ~startDate,
     ) => {
+  let defaultCommunitySettings: TopStatsFragment.Types.fragment_t = {
+    score_type: DefaultCommunitySettings.scoreType,
+  };
+
+  let scoreTypeFragment =
+    TopStatsFragment.use(scoreTypeFragment)
+    |> Utils.headWithDefault(defaultCommunitySettings);
+
   switch (
     resultsWithMap.resultsWithRatings
     ->Belt.List.keep(r => r.result.date >= startDate)
@@ -91,7 +101,6 @@ let make =
           (playerName, rating |> Js.Math.round |> int_of_float |> formatDiff)
         );
 
-    let scoreTypeFragment = TopStatsFragment.use(scoreTypeFragment);
     let texts = Texts.getScoreTypeTexts(scoreTypeFragment.score_type);
 
     <MaterialUi.Paper>

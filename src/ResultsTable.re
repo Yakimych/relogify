@@ -69,6 +69,7 @@ let make =
       ~temp_showRatings: bool=false,
       ~communityName: string,
       ~mainPlayerName: option(string)=?,
+      ~maybeDateFrom: option(Js.Date.t)=?,
     ) => {
   let lastFetchedResultIdsRef = React.useRef(Js.Nullable.null);
   let resultsTableFragment = ResultsTableFragment.use(resultsTableFragment);
@@ -81,15 +82,23 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  let newlyFetchedResults =
-    resultsTableFragment.edges->Belt.Array.map(e => e.node->toMatchResult);
+  let relevantResults =
+    resultsTableFragment.edges
+    ->Belt.Array.map(e => e.node)
+    ->Belt.Array.keep(e =>
+        maybeDateFrom->Belt.Option.mapWithDefault(true, dateFrom =>
+          dateFrom <= e.date
+        )
+      );
+
+  let newlyFetchedResults = relevantResults->Belt.Array.map(toMatchResult);
 
   let newResultIds =
     lastFetchedResultIdsRef.current
     ->Js.Nullable.toOption
     ->Belt.Option.mapWithDefault([||], lastFetchedResultIds =>
-        resultsTableFragment.edges
-        ->Belt.Array.map(r => r.node.id)
+        relevantResults
+        ->Belt.Array.map(r => r.id)
         ->Belt.Array.keep(r =>
             lastFetchedResultIds
             |> Array.exists(lastResult => lastResult == r)
@@ -98,9 +107,7 @@ let make =
       );
 
   lastFetchedResultIdsRef.current =
-    Js.Nullable.fromOption(
-      Some(resultsTableFragment.edges->Belt.Array.map(e => e.node.id)),
-    );
+    Js.Nullable.fromOption(Some(relevantResults->Belt.Array.map(e => e.id)));
 
   let resultsWithRatingMap =
     newlyFetchedResults |> Array.to_list |> attachRatings;
@@ -122,16 +129,16 @@ let make =
         <MaterialUi.Table size=`Small>
           <ResultsTableHeader communitySettingsFragments />
           <MaterialUi.TableBody>
-            {resultsTableFragment.edges
+            {relevantResults
              ->Belt.Array.map(result => {
                  let resultWithRatings: resultWithRatings =
                    resultsWithRatingMap.resultsWithRatings
-                   |> List.find(r => r.result.id === result.node.id);
+                   |> List.find(r => r.result.id === result.id);
 
                  <Result
-                   key={result.node.id}
+                   key={result.id}
                    temp_showRatings
-                   result={result.node.fragmentRefs}
+                   result={result.fragmentRefs}
                    resultWithRatings
                    communityName
                    mainPlayerName
