@@ -39,8 +39,33 @@ let fetchQuery: ReasonRelay.Network.fetchFunctionPromise =
          )
     );
 
+let subscriptionClient =
+  SubscriptionsTransportWs.createSubscriptionClient(
+    "wss://" ++ apiBaseUrl,
+    {"reconnect": true},
+  );
+
+let subscriptionFunction: ReasonRelay.Network.subscribeFn =
+  (config, variables, _cacheConfig) => {
+    let query = config.text;
+    let subscriptionQuery: SubscriptionsTransportWs.requestParams = {
+      query,
+      variables,
+    };
+
+    ReasonRelay.Observable.make(sink => {
+      let observable = subscriptionClient##request(subscriptionQuery);
+      let subscription = observable##subscribe(sink);
+      Some(subscription);
+    });
+  };
+
 let network =
-  ReasonRelay.Network.makePromiseBased(~fetchFunction=fetchQuery, ());
+  ReasonRelay.Network.makePromiseBased(
+    ~fetchFunction=fetchQuery,
+    ~subscriptionFunction,
+    (),
+  );
 
 let environment =
   ReasonRelay.Environment.make(
