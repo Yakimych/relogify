@@ -108,47 +108,14 @@ var v0 = [
   }
 ],
 v1 = {
-  "fields": [
-    {
-      "fields": [
-        {
-          "fields": [
-            {
-              "kind": "Variable",
-              "name": "_eq",
-              "variableName": "communityName"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "name"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "community"
-    }
-  ],
-  "kind": "ObjectValue",
-  "name": "where"
-},
-v2 = [
-  {
-    "kind": "Literal",
-    "name": "order_by",
-    "value": {
-      "date": "desc"
-    }
-  },
-  (v1/*: any*/)
-],
-v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = [
-  (v3/*: any*/),
+v2 = [
+  (v1/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -157,7 +124,7 @@ v4 = [
     "storageKey": null
   }
 ],
-v5 = {
+v3 = {
   "alias": null,
   "args": null,
   "concreteType": "resultsEdge",
@@ -180,7 +147,7 @@ v5 = {
           "kind": "LinkedField",
           "name": "player1",
           "plural": false,
-          "selections": (v4/*: any*/),
+          "selections": (v2/*: any*/),
           "storageKey": null
         },
         {
@@ -190,7 +157,7 @@ v5 = {
           "kind": "LinkedField",
           "name": "player2",
           "plural": false,
-          "selections": (v4/*: any*/),
+          "selections": (v2/*: any*/),
           "storageKey": null
         },
         {
@@ -221,15 +188,92 @@ v5 = {
           "name": "date",
           "storageKey": null
         },
-        (v3/*: any*/)
+        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "__typename",
+          "storageKey": null
+        }
       ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "cursor",
       "storageKey": null
     }
   ],
   "storageKey": null
 },
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PageInfo",
+  "kind": "LinkedField",
+  "name": "pageInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "endCursor",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v5 = {
+  "fields": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "_eq",
+              "variableName": "communityName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "community"
+    }
+  ],
+  "kind": "ObjectValue",
+  "name": "where"
+},
 v6 = [
-  (v1/*: any*/)
+  (v5/*: any*/)
+],
+v7 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 1000
+  },
+  {
+    "kind": "Literal",
+    "name": "order_by",
+    "value": {
+      "date": "desc"
+    }
+  },
+  (v5/*: any*/)
 ];
 return {
   "fragment": {
@@ -239,14 +283,15 @@ return {
     "name": "TopBoardQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v2/*: any*/),
+        "alias": "results_connection",
+        "args": null,
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
-        "name": "results_connection",
+        "name": "__TopBoard_query_results_connection_connection",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -315,15 +360,25 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "resultsConnection",
         "kind": "LinkedField",
         "name": "results_connection",
         "plural": false,
         "selections": [
-          (v5/*: any*/)
+          (v3/*: any*/),
+          (v4/*: any*/)
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v7/*: any*/),
+        "filters": [],
+        "handle": "connection",
+        "key": "TopBoard_query_results_connection",
+        "kind": "LinkedHandle",
+        "name": "results_connection"
       },
       {
         "alias": null,
@@ -363,7 +418,7 @@ return {
                     "name": "score_type",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -376,12 +431,23 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fe95e9934359e83f64a7f56c463684e7",
+    "cacheID": "cf86669824469cbdb7a4b63c5f4f0775",
     "id": null,
-    "metadata": {},
+    "metadata": {
+      "connection": [
+        {
+          "count": null,
+          "cursor": null,
+          "direction": "forward",
+          "path": [
+            "results_connection"
+          ]
+        }
+      ]
+    },
     "name": "TopBoardQuery",
     "operationKind": "query",
-    "text": "query TopBoardQuery(\n  $communityName: String!\n) {\n  results_connection(where: {community: {name: {_eq: $communityName}}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n      }\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ResultCommunitySettings_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...TopStatsColumn_ScoreType\n        id\n      }\n    }\n  }\n}\n\nfragment ResultCommunitySettings_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n\nfragment TopStatsColumn_ScoreType on community_settings {\n  score_type\n}\n"
+    "text": "query TopBoardQuery(\n  $communityName: String!\n) {\n  results_connection(first: 1000, where: {community: {name: {_eq: $communityName}}}, order_by: {date: desc}) {\n    ...ResultsTable_Results\n    edges {\n      node {\n        player1 {\n          id\n          name\n        }\n        player2 {\n          id\n          name\n        }\n        player2goals\n        player1goals\n        extratime\n        date\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  community_settings_connection(where: {community: {name: {_eq: $communityName}}}) {\n    edges {\n      node {\n        ...ResultCommunitySettings_IncludeExtraTime\n        ...ResultsTableHeader_CommunitySettings\n        ...TopStatsColumn_ScoreType\n        id\n      }\n    }\n  }\n}\n\nfragment ResultCommunitySettings_IncludeExtraTime on community_settings {\n  include_extra_time\n}\n\nfragment Result_SingleResult on results {\n  player1 {\n    id\n    name\n  }\n  player2 {\n    id\n    name\n  }\n  player2goals\n  player1goals\n  extratime\n  date\n  id\n}\n\nfragment ResultsTableHeader_CommunitySettings on community_settings {\n  score_type\n  include_extra_time\n}\n\nfragment ResultsTable_Results on resultsConnection {\n  edges {\n    node {\n      ...Result_SingleResult\n      player1 {\n        id\n        name\n      }\n      player2 {\n        id\n        name\n      }\n      player2goals\n      player1goals\n      extratime\n      date\n      id\n    }\n  }\n}\n\nfragment TopStatsColumn_ScoreType on community_settings {\n  score_type\n}\n"
   }
 };
 })() |json}

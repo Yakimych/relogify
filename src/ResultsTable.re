@@ -60,6 +60,29 @@ let toMatchResult =
   };
 };
 
+let dateSortFunc = (d1: Js.Date.t, d2: Js.Date.t) =>
+  if (d1 < d2) {
+    1;
+  } else if (d1 > d2) {
+    (-1);
+  } else {
+    0;
+  };
+
+let sortedDistinctNodeValues =
+    (edges: array(ResultsTableFragment.Types.fragment_edges)) =>
+  edges
+  |> Array.map((e: ResultsTableFragment.Types.fragment_edges) => e.node)
+  |> Array.to_list
+  |> List.sort_uniq(
+       (
+         node1: ResultsTableFragment.Types.fragment_edges_node,
+         node2: ResultsTableFragment.Types.fragment_edges_node,
+       ) =>
+       dateSortFunc(node1.date, node2.date)
+     )
+  |> Array.of_list;
+
 [@react.component]
 let make =
     (
@@ -84,7 +107,7 @@ let make =
 
   let relevantResults =
     resultsTableFragment.edges
-    ->Belt.Array.map(e => e.node)
+    ->sortedDistinctNodeValues
     ->Belt.Array.keep(e =>
         maybeDateFrom->Belt.Option.mapWithDefault(true, dateFrom =>
           dateFrom <= e.date

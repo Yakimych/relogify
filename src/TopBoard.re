@@ -5,9 +5,10 @@ module Query = [%relay.query
   {|
     query TopBoardQuery($communityName: String!) {
       results_connection(
+        first: 1000
         where: { community: { name: { _eq: $communityName } } }
         order_by: { date: desc }
-      ) {
+      ) @connection(key: "TopBoard_query_results_connection", filters: []) {
         ...ResultsTable_Results
         edges {
           node {
@@ -43,6 +44,37 @@ module Query = [%relay.query
   |}
 ];
 
+module TopBoardSubscription = [%relay.subscription
+  {|
+    subscription TopBoardSubscription($communityName: String!) {
+      results_connection(
+        first: 1
+        order_by: { date: desc }
+        where: { community: { name: { _eq: $communityName } } }
+      ) {
+        ...ResultsTable_Results
+        edges {
+          node {
+            player1 {
+              id
+              name
+            }
+            player2 {
+              id
+              name
+            }
+            player2goals
+            player1goals
+            extratime
+            date
+            id
+          }
+        }
+      }
+    }
+  |}
+];
+
 let toMatchResult =
     (
       resultNode: TopBoardQuery_graphql.Types.response_results_connection_edges_node,
@@ -63,6 +95,17 @@ let toMatchResult =
   extratime: resultNode.extratime,
 };
 
+let distinctNodeValues =
+    (
+      edges:
+        array(TopBoardQuery_graphql.Types.response_results_connection_edges),
+    ) =>
+  edges
+  ->Belt.Array.map(e => (e.node.id, e.node))
+  ->Belt_MapString.fromArray
+  ->Belt_MapString.toArray
+  ->Belt.Array.map(((_, value)) => value);
+
 [@react.component]
 let make = (~communityName: string) => {
   let now = Js.Date.make();
@@ -78,7 +121,8 @@ let make = (~communityName: string) => {
 
   let results =
     queryData.results_connection.edges
-    ->Belt.Array.map(e => e.node->toMatchResult)
+    ->distinctNodeValues
+    ->Belt.Array.map(e => e->toMatchResult)
     ->Belt.List.fromArray;
 
   let resultsWithRatingMap = results |> attachRatings;
@@ -86,6 +130,38 @@ let make = (~communityName: string) => {
   let communitySettingsFragments =
     queryData.community_settings_connection.edges
     ->Belt.Array.map(e => e.node.fragmentRefs);
+
+  let environment = ReasonRelay.useEnvironmentFromContext();
+  React.useEffect1(
+    () => {
+      let subscription =
+        TopBoardSubscription.subscribe(
+          ~environment,
+          ~variables={communityName: communityName},
+          ~updater=
+            (
+              store: ReasonRelay.RecordSourceSelectorProxy.t,
+              response: TopBoardSubscription.Types.response,
+            ) => {
+              Js.log2("store: ", store);
+              Js.log2("response: ", response);
+
+              switch (response.results_connection.edges) {
+              | [|newest_result|] =>
+                StoreUpdater.updateResultList(
+                  store,
+                  newest_result.node.id,
+                  "TopBoard_query_results_connection",
+                )
+              | _ => Js.log("Expected exactly 1 result (0 or >1 received)")
+              };
+            },
+          (),
+        );
+      Some(() => ReasonRelay.Disposable.dispose(subscription));
+    },
+    [|communityName|],
+  );
 
   <>
     <Header page={TopX(communityName)} />
