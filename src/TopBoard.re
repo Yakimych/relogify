@@ -1,7 +1,7 @@
 open DateFns;
 open EloUtils;
 
-module Query = [%relay.query
+module TopBoardQuery = [%relay.query
   {|
     query TopBoardQuery($communityName: String!) {
       results_connection(
@@ -76,9 +76,7 @@ module TopBoardSubscription = [%relay.subscription
 ];
 
 let toMatchResult =
-    (
-      resultNode: TopBoardQuery_graphql.Types.response_results_connection_edges_node,
-    )
+    (resultNode: TopBoardQuery.Types.response_results_connection_edges_node)
     : Types.matchResult => {
   id: resultNode.id,
   player1: {
@@ -96,10 +94,7 @@ let toMatchResult =
 };
 
 let distinctNodeValues =
-    (
-      edges:
-        array(TopBoardQuery_graphql.Types.response_results_connection_edges),
-    ) =>
+    (edges: array(TopBoardQuery.Types.response_results_connection_edges)) =>
   edges
   ->Belt.Array.map(e => (e.node.id, e.node))
   ->Belt_MapString.fromArray
@@ -116,7 +111,8 @@ let make = (~communityName: string) => {
   let monthStartDate = now->startOfMonth;
   let yearStartDate = now->startOfYear;
 
-  let queryData = Query.use(~variables={communityName: communityName}, ());
+  let queryData =
+    TopBoardQuery.use(~variables={communityName: communityName}, ());
   let resultsFragment = queryData.results_connection.fragmentRefs;
 
   let results =
@@ -143,9 +139,6 @@ let make = (~communityName: string) => {
               store: ReasonRelay.RecordSourceSelectorProxy.t,
               response: TopBoardSubscription.Types.response,
             ) => {
-              Js.log2("store: ", store);
-              Js.log2("response: ", response);
-
               switch (response.results_connection.edges) {
               | [|newest_result|] =>
                 StoreUpdater.updateResultList(
@@ -154,7 +147,7 @@ let make = (~communityName: string) => {
                   "TopBoard_query_results_connection",
                 )
               | _ => Js.log("Expected exactly 1 result (0 or >1 received)")
-              };
+              }
             },
           (),
         );
