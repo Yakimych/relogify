@@ -105,22 +105,23 @@ let make =
 
   let hideGraphForPlayer = () => setGraphIsShownForPlayer(_ => None);
 
-  let relevantResults =
-    resultsTableFragment.edges
-    ->sortedDistinctNodeValues
-    ->Belt.Array.keep(e =>
-        maybeDateFrom->Belt.Option.mapWithDefault(true, dateFrom =>
-          dateFrom <= e.date
-        )
-      );
+  let sortedDistinctResults =
+    resultsTableFragment.edges->sortedDistinctNodeValues;
+  let resultsToDisplay =
+    sortedDistinctResults->Belt.Array.keep(e =>
+      maybeDateFrom->Belt.Option.mapWithDefault(true, dateFrom =>
+        dateFrom <= e.date
+      )
+    );
 
-  let newlyFetchedResults = relevantResults->Belt.Array.map(toMatchResult);
+  let newlyFetchedResults =
+    sortedDistinctResults->Belt.Array.map(toMatchResult);
 
   let newResultIds =
     lastFetchedResultIdsRef.current
     ->Js.Nullable.toOption
     ->Belt.Option.mapWithDefault([||], lastFetchedResultIds =>
-        relevantResults
+        resultsToDisplay
         ->Belt.Array.map(r => r.id)
         ->Belt.Array.keep(r =>
             lastFetchedResultIds
@@ -130,7 +131,9 @@ let make =
       );
 
   lastFetchedResultIdsRef.current =
-    Js.Nullable.fromOption(Some(relevantResults->Belt.Array.map(e => e.id)));
+    Js.Nullable.fromOption(
+      Some(resultsToDisplay->Belt.Array.map(e => e.id)),
+    );
 
   let resultsWithRatingMap =
     newlyFetchedResults |> Array.to_list |> attachRatings;
@@ -152,7 +155,7 @@ let make =
         <MaterialUi.Table size=`Small>
           <ResultsTableHeader communitySettingsFragments />
           <MaterialUi.TableBody>
-            {relevantResults
+            {resultsToDisplay
              ->Belt.Array.map(result => {
                  let resultWithRatings: resultWithRatings =
                    resultsWithRatingMap.resultsWithRatings
