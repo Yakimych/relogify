@@ -44,10 +44,10 @@ let getHighlightedClassName =
 let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
   mainPlayerWon ? "winning-row" : "";
 
-let hasPlayer1Won = (result: Result_SingleResult_graphql.Types.fragment) =>
+let hasPlayer1Won = (result: ResultFragment.Types.fragment) =>
   PlayerStatsUtils.isWin(result.player1goals, result.player2goals);
 
-let hasPlayer2Won = (result: Result_SingleResult_graphql.Types.fragment) =>
+let hasPlayer2Won = (result: ResultFragment.Types.fragment) =>
   PlayerStatsUtils.isWin(result.player2goals, result.player1goals);
 
 let hasMainPlayerWon = (mainPlayerName: option(string), result) => {

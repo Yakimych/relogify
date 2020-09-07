@@ -4,64 +4,6 @@ open Types;
 // TODO: Style this component (including the alert)
 [@bs.val] external alert: string => unit = "alert";
 
-type editCommunitySettingsAction =
-  | SetAllSettings(
-      EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t,
-    )
-  | ToggleAllowDraws
-  | ToggleIncludeExtraTime
-  | SetScoreType(
-      EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
-    )
-  | SetMaxSelectablePoints(int);
-
-let defaultCommunitySettings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t = {
-  allow_draws: false,
-  max_selectable_points: 9,
-  score_type: `Goals,
-  include_extra_time: true,
-  use_dropdown_for_points: true,
-};
-
-let convertScoreType = scoreType =>
-  switch (scoreType) {
-  | `Goals => `Goals
-  | `Points => `Points
-  | _ => `Points
-  };
-
-let reducer =
-    (
-      settings: EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t,
-      action,
-    )
-    : EditSettingsFragment_CommunitySettings_graphql.Types.fragment_t =>
-  switch (action) {
-  | SetAllSettings(allSettings) => allSettings
-  | ToggleAllowDraws => {...settings, allow_draws: !settings.allow_draws}
-  | ToggleIncludeExtraTime => {
-      ...settings,
-      include_extra_time: !settings.include_extra_time,
-    }
-  | SetScoreType(scoreType) => {
-      ...settings,
-      score_type: convertScoreType(scoreType),
-    }
-  | SetMaxSelectablePoints(maxSelectablePoints) => {
-      ...settings,
-      max_selectable_points: maxSelectablePoints,
-    }
-  };
-
-let scoreTypeToString = scoreType =>
-  switch (scoreType) {
-  | `Goals => "Goals"
-  | `Points => "Points"
-  | _ => "Unknown score type"
-  };
-
-let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
-
 module EditSettingsFragment = [%relay.fragment
   {|
       fragment EditSettingsFragment_CommunitySettings on community_settings
@@ -113,6 +55,59 @@ module CreateCommunitySettingsMutation = [%relay.mutation
   |}
 ];
 
+type editCommunitySettingsAction =
+  | SetAllSettings(EditSettingsFragment.Types.fragment_t)
+  | ToggleAllowDraws
+  | ToggleIncludeExtraTime
+  | SetScoreType(
+      EditSettings_UpdateCommunitySettings_Mutation_graphql.enum_score_types_enum,
+    )
+  | SetMaxSelectablePoints(int);
+
+let defaultCommunitySettings: EditSettingsFragment.Types.fragment_t = {
+  allow_draws: false,
+  max_selectable_points: 9,
+  score_type: `Goals,
+  include_extra_time: true,
+  use_dropdown_for_points: true,
+};
+
+let convertScoreType = scoreType =>
+  switch (scoreType) {
+  | `Goals => `Goals
+  | `Points => `Points
+  | _ => `Points
+  };
+
+let reducer =
+    (settings: EditSettingsFragment.Types.fragment_t, action)
+    : EditSettingsFragment.Types.fragment_t =>
+  switch (action) {
+  | SetAllSettings(allSettings) => allSettings
+  | ToggleAllowDraws => {...settings, allow_draws: !settings.allow_draws}
+  | ToggleIncludeExtraTime => {
+      ...settings,
+      include_extra_time: !settings.include_extra_time,
+    }
+  | SetScoreType(scoreType) => {
+      ...settings,
+      score_type: convertScoreType(scoreType),
+    }
+  | SetMaxSelectablePoints(maxSelectablePoints) => {
+      ...settings,
+      max_selectable_points: maxSelectablePoints,
+    }
+  };
+
+let scoreTypeToString = scoreType =>
+  switch (scoreType) {
+  | `Goals => "Goals"
+  | `Points => "Points"
+  | _ => "Unknown score type"
+  };
+
+let scoreTypes = [|`Goals, `Points|]->Belt.Array.map(scoreTypeToString);
+
 [@react.component]
 let make = (~communityName: string, ~editSettingsFragments) => {
   let initialCommunitySettings =
@@ -138,7 +133,7 @@ let make = (~communityName: string, ~editSettingsFragments) => {
     let mutationVariables =
       CreateCommunitySettingsMutation.makeVariables(
         ~input=
-          EditSettings_CreateCommunitySettings_Mutation_graphql.Utils.(
+          CreateCommunitySettingsMutation.Operation.Utils.(
             make_community_settings_insert_input(
               ~community=
                 make_communities_obj_rel_insert_input(

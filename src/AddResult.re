@@ -103,8 +103,8 @@ let make =
     | Ok((player1Name, player2Name)) =>
       updateUsedPlayers(player1Name, player2Name);
 
-      let communityInput: AddResultMutation_graphql.Types.communities_obj_rel_insert_input =
-        AddResultMutation_graphql.Utils.(
+      let communityInput: AddMutation.Types.communities_obj_rel_insert_input =
+        AddMutation.Operation.Utils.(
           make_communities_obj_rel_insert_input(
             ~data=make_communities_insert_input(~name=communityName, ()),
             ~on_conflict={
@@ -116,7 +116,7 @@ let make =
           )
         );
 
-      let playersOnConflictInput: AddResultMutation_graphql.Types.players_on_conflict = {
+      let playersOnConflictInput: AddMutation.Types.players_on_conflict = {
         constraint_: `players_name_communityId_key,
         update_columns: [|`name|],
         where: None,
@@ -155,7 +155,7 @@ let make =
             }
           },
         ~variables=
-          AddResultMutation_graphql.Utils.(
+          AddMutation.Operation.Utils.(
             AddMutation.makeVariables(
               ~input=
                 make_results_insert_input(

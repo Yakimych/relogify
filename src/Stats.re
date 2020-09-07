@@ -72,7 +72,7 @@ module StatsResultsFragment = [%relay.fragment
 ];
 
 let toMatchResult =
-    (resultNode: Stats_Results_graphql.Types.fragment_edges_node) => {
+    (resultNode: StatsResultsFragment.Types.fragment_edges_node) => {
   id: resultNode.id,
   player1: {
     id: resultNode.player1.id,

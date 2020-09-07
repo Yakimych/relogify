@@ -41,8 +41,7 @@ let getWinningLosingRowClassName = (mainPlayerWon: bool) =>
   mainPlayerWon ? "winning-row" : "";
 
 let toMatchResult =
-    (resultNode: ResultsTable_Results_graphql.Types.fragment_edges_node)
-    : matchResult => {
+    (resultNode: ResultsTableFragment.Types.fragment_edges_node): matchResult => {
   {
     id: resultNode.id,
     player1: {

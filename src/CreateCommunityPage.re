@@ -28,7 +28,7 @@ let make = () => {
         queryData.communities_connection.edges
         |> Array.exists(
              (
-               communityEdge: CreateCommunityPageQuery_graphql.Types.response_communities_connection_edges,
+               communityEdge: Query.Types.response_communities_connection_edges,
              ) =>
              communityEdge.node.name == communityName
            )

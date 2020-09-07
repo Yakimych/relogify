@@ -196,7 +196,7 @@ let make =
         ~onCompleted=(_, _) => dispatch(StopEditing),
         ~onError=maybeError => Js.log2("Error updating result: ", maybeError),
         ~variables=
-          EditResultsTable_UpdateResult_Mutation_graphql.Utils.makeVariables(
+          UpdateMutation.Operation.Utils.makeVariables(
             ~resultId=resultId |> toInternalId,
             ~player1Id=editedValues.player1Id |> toInternalId,
             ~player2Id=editedValues.player2Id |> toInternalId,

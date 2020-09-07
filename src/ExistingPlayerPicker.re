@@ -14,7 +14,7 @@ module ExistingPlayerPickerFragment = [%relay.fragment
 ];
 
 let distinctNodeValues =
-    (edges: array(ExistingPlayerPicker_Players_graphql.Types.fragment_edges)) =>
+    (edges: array(ExistingPlayerPickerFragment.Types.fragment_edges)) =>
   edges
   ->Belt.Array.map(e => (e.node.id, e.node))
   ->Belt_MapString.fromArray

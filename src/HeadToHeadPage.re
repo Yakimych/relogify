@@ -48,7 +48,7 @@ module Query = [%relay.query
           }
         }
       }
-    
+
       community_settings_connection(
         where: { community: { name: { _eq: $communityName } } }
       ) {
@@ -64,9 +64,7 @@ module Query = [%relay.query
 ];
 
 let toMatchResult =
-    (
-      resultNode: HeadToHeadPageQuery_graphql.Types.response_results_connection_edges_node,
-    )
+    (resultNode: Query.Types.response_results_connection_edges_node)
     : matchResult => {
   id: resultNode.id,
   player1: {
