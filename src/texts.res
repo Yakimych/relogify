@@ -15,7 +15,7 @@ type scoreTypeTexts = {
   allTimePointDiff: string,
   totalPointsWonPerMatch: string,
   totalPointsLostPerMatch: string,
-};
+}
 
 let scoreTypeGoalsTexts = {
   morePoints: "More goals",
@@ -34,7 +34,7 @@ let scoreTypeGoalsTexts = {
   allTimePointDiff: "All-time goals difference",
   totalPointsWonPerMatch: "Total goals scored per match",
   totalPointsLostPerMatch: "Total goals conceded per match",
-};
+}
 
 let scoreTypePointTexts = {
   morePoints: "More points",
@@ -53,10 +53,11 @@ let scoreTypePointTexts = {
   allTimePointDiff: "All-time point difference",
   totalPointsWonPerMatch: "Total points won per match",
   totalPointsLostPerMatch: "Total points lost per match",
-};
+}
 
-let getScoreTypeTexts =
-  fun
-  | `Goals => scoreTypeGoalsTexts
-  | `Points => scoreTypePointTexts
-  | _ => scoreTypePointTexts;
+let getScoreTypeTexts = a =>
+  switch a {
+  | #Goals => scoreTypeGoalsTexts
+  | #Points => scoreTypePointTexts
+  | _ => scoreTypePointTexts
+  }
