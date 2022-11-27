@@ -72,8 +72,11 @@ let make = (~communityName: string) => {
     setDateTo(dt => dt->Belt.Option.map(d => d->DateFns.addWeeks(-1)));
   };
 
+  let queryDateFrom = dateFrom->Belt.Option.mapWithDefault(Js.Date.fromString("2000-01-01"), x => x)
+  let queryDateTo = dateTo->Belt.Option.mapWithDefault(Js.Date.fromString("2100-01-01"), x => x)
+
   let queryData =
-    Query.use(~variables={communityName, dateFrom, dateTo}, ());
+    Query.use(~variables={communityName, queryDateFrom, queryDateTo}, ());
 
   let resultsFragment = queryData.results_connection.fragmentRefs;
 
